@@ -1,0 +1,8 @@
+# Maven build
+target
+
+# Jenkins
+work
+
+# IntelliJ
+.idea
