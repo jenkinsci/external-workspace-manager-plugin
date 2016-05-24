@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="Disk Pool ID" field="diskPoolId">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="Display Name" field="name">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="Description" field="description">
+        <f:textbox/>
+    </f:entry>
+    <f:entry>
+        <f:hetero-list name="disks" items="${instance.disks}" descriptors="${descriptor.getDescriptors()}"
+                       hasHeader="true" addCaption="Add Disk"/>
+    </f:entry>
+</j:jelly>

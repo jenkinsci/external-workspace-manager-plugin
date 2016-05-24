@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:section title="External Workspace Templates">
+        <f:entry>
+            <f:hetero-list name="templates" items="${instance.templates}" descriptors="${descriptor.getDescriptors()}"
+                           hasHeader="true" addCaption="Add Template"/>
+        </f:entry>
+    </f:section>
+</j:jelly>
