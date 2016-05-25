@@ -8,6 +8,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -73,6 +74,7 @@ public class DiskPool implements Describable<DiskPool> {
             return super.configure(req, formData);
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "Disk Pool";

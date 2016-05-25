@@ -1,10 +1,11 @@
-package org.jenkinsci.plugins.ewm.definitions;
+package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
-import hudson.model.Describable;
-import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
+import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -13,32 +14,33 @@ import java.util.List;
 
 /**
  * @author Alexandru Somai
- *         date 5/24/16
+ *         date 5/25/16
  */
-public class ExternalWorkspaceDefinition implements Describable<ExternalWorkspaceDefinition> {
+public final class ExwsAllocateStep extends AbstractStepImpl {
 
-    private final List<DiskPool> diskPools;
+    private final String diskPoolId;
 
     @DataBoundConstructor
-    public ExternalWorkspaceDefinition(List<DiskPool> diskPools) {
-        this.diskPools = diskPools;
+    public ExwsAllocateStep(String diskPoolId) {
+        this.diskPoolId = diskPoolId;
+    }
+
+    public String getDiskPoolId() {
+        return diskPoolId;
     }
 
     @Override
     public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) Jenkins.getInstance().getDescriptorOrDie(getClass());
-    }
-
-    public List<DiskPool> getDiskPools() {
-        return diskPools;
+        return (DescriptorImpl) super.getDescriptor();
     }
 
     @Extension
-    public static class DescriptorImpl extends Descriptor<ExternalWorkspaceDefinition> {
+    public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
         private List<DiskPool> diskPools;
 
         public DescriptorImpl() {
+            super(ExwsAllocateExecution.class);
             load();
         }
 
@@ -61,10 +63,15 @@ public class ExternalWorkspaceDefinition implements Describable<ExternalWorkspac
             this.diskPools = diskPools;
         }
 
+        @Override
+        public String getFunctionName() {
+            return "exwsAllocate";
+        }
+
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "External Workspace Definition";
+            return "Allocate external workspace";
         }
     }
 }
