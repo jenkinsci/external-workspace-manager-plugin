@@ -18,13 +18,13 @@ import java.util.List;
  */
 public class Template implements Describable<Template> {
 
-    private final String diskRefId;
+    private final String diskPoolRefId;
     private final String label;
     private final List<DiskNode> diskNodes;
 
     @DataBoundConstructor
-    public Template(String diskRefId, String label, List<DiskNode> diskNodes) {
-        this.diskRefId = diskRefId;
+    public Template(String diskPoolRefId, String label, List<DiskNode> diskNodes) {
+        this.diskPoolRefId = diskPoolRefId;
         this.label = label;
         this.diskNodes = diskNodes;
     }
@@ -34,8 +34,8 @@ public class Template implements Describable<Template> {
         return (TemplateDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
     }
 
-    public String getDiskRefId() {
-        return diskRefId;
+    public String getDiskPoolRefId() {
+        return diskPoolRefId;
     }
 
     public String getLabel() {
