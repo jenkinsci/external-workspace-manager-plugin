@@ -9,4 +9,9 @@
     <f:entry title="Physical path on disk" field="physicalPathOnDisk">
         <f:textbox/>
     </f:entry>
+    <f:entry>
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
+    </f:entry>
 </j:jelly>

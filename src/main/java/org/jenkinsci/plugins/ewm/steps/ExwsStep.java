@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
-import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
@@ -43,10 +42,6 @@ public class ExwsStep extends AbstractStepImpl implements Serializable {
         public DescriptorImpl() {
             super(ExwsExecution.class);
             load();
-        }
-
-        public static List<Template.TemplateDescriptor> getDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(Template.class);
         }
 
         @Override

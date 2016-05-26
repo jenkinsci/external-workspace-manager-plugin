@@ -63,10 +63,6 @@ public class DiskPool implements Describable<DiskPool> {
             load();
         }
 
-        public static List<Disk.DiskDescriptor> getDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(Disk.class);
-        }
-
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             req.bindJSON(this, formData);

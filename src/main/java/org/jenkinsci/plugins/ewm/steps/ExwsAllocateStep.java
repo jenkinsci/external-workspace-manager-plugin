@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
-import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
@@ -42,10 +41,6 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
             load();
-        }
-
-        public static List<DiskPool.DiskPoolDescriptor> getDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(DiskPool.class);
         }
 
         @Override

@@ -57,10 +57,6 @@ public class Template implements Describable<Template> {
             load();
         }
 
-        public static List<DiskNode.DiskNodeDescriptor> getDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(DiskNode.class);
-        }
-
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             req.bindJSON(this, formData);

@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.model.Node;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
-import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -38,10 +37,6 @@ public class ExternalWorkspaceProperty extends NodeProperty<Node> {
 
         private String diskPoolRefId;
         private List<DiskNode> diskNodes;
-
-        public static List<DiskNode.DiskNodeDescriptor> getDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(DiskNode.class);
-        }
 
         @Nonnull
         @Override

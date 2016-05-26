@@ -10,7 +10,11 @@
         <f:textbox/>
     </f:entry>
     <f:entry>
-        <f:hetero-list name="disks" items="${instance.disks}" descriptors="${descriptor.getDescriptors()}"
-                       hasHeader="true" addCaption="Add Disk"/>
+        <f:repeatableProperty field="disks" add="Add Disk" header="Disk"/>
+    </f:entry>
+    <f:entry>
+        <div align="right">
+            <f:repeatableDeleteButton/>
+        </div>
     </f:entry>
 </j:jelly>
