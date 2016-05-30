@@ -2,19 +2,24 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.List;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 /**
+ * TODO - To be added when I'll implement the step
+ *
  * @author Alexandru Somai
- *         date 5/25/16
  */
 public class ExwsStep extends AbstractStepImpl implements Serializable {
 
@@ -22,9 +27,10 @@ public class ExwsStep extends AbstractStepImpl implements Serializable {
 
     @DataBoundConstructor
     public ExwsStep(String path) {
-        this.path = path;
+        this.path = fixEmptyAndTrim(path);
     }
 
+    @CheckForNull
     public String getPath() {
         return path;
     }
@@ -67,7 +73,7 @@ public class ExwsStep extends AbstractStepImpl implements Serializable {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Use external workspace";
+            return Messages.steps_ExwsStep_DisplayName();
         }
 
         @Override

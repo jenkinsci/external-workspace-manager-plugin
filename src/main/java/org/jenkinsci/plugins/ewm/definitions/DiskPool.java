@@ -3,17 +3,25 @@ package org.jenkinsci.plugins.ewm.definitions;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 /**
+ * Describable for defining a disk pool information in the Jenkins global config.
+ * Each disk pool should have at least one {@link Disk} entry.
+ *
  * @author Alexandru Somai
- *         date 5/24/16
  */
 public class DiskPool implements Describable<DiskPool> {
 
@@ -24,10 +32,10 @@ public class DiskPool implements Describable<DiskPool> {
 
     @DataBoundConstructor
     public DiskPool(String diskPoolId, String name, String description, List<Disk> disks) {
-        this.diskPoolId = diskPoolId;
-        this.name = name;
-        this.description = description;
-        this.disks = disks;
+        this.diskPoolId = fixEmptyAndTrim(diskPoolId);
+        this.name = fixEmptyAndTrim(name);
+        this.description = fixEmptyAndTrim(description);
+        this.disks = disks != null ? disks : new ArrayList<Disk>();
     }
 
     @Override
@@ -35,14 +43,17 @@ public class DiskPool implements Describable<DiskPool> {
         return (DiskPoolDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
     }
 
+    @CheckForNull
     public String getDiskPoolId() {
         return diskPoolId;
     }
 
+    @CheckForNull
     public String getName() {
         return name;
     }
 
+    @CheckForNull
     public String getDescription() {
         return description;
     }
@@ -54,58 +65,18 @@ public class DiskPool implements Describable<DiskPool> {
     @Extension
     public static class DiskPoolDescriptor extends Descriptor<DiskPool> {
 
-        private String diskPoolId;
-        private String name;
-        private String description;
-        private List<Disk> disks;
-
-        public DiskPoolDescriptor() {
-            load();
+        public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
+            return FormValidationUtil.doCheckValue(value);
         }
 
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            req.bindJSON(this, formData);
-            save();
-            return super.configure(req, formData);
+        public FormValidation doCheckName(@QueryParameter String value) {
+            return FormValidationUtil.doCheckValue(value);
         }
 
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Disk Pool";
-        }
-
-        public String getDiskPoolId() {
-            return diskPoolId;
-        }
-
-        public void setDiskPoolId(String diskPoolId) {
-            this.diskPoolId = diskPoolId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public List<Disk> getDisks() {
-            return disks;
-        }
-
-        public void setDisks(List<Disk> disks) {
-            this.disks = disks;
+            return Messages.definitions_DiskPool_DisplayName();
         }
     }
 }

@@ -3,16 +3,22 @@ package org.jenkinsci.plugins.ewm.definitions;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 /**
+ * Describable used to define the disk information within a {@link DiskPool}.
+ *
  * @author Alexandru Somai
- *         date 5/24/16
  */
 public class Disk implements Describable<Disk> {
 
@@ -22,9 +28,9 @@ public class Disk implements Describable<Disk> {
 
     @DataBoundConstructor
     public Disk(String diskId, String name, String physicalPathOnDisk) {
-        this.diskId = diskId;
-        this.name = name;
-        this.physicalPathOnDisk = physicalPathOnDisk;
+        this.diskId = fixEmptyAndTrim(diskId);
+        this.name = fixEmptyAndTrim(name);
+        this.physicalPathOnDisk = fixEmptyAndTrim(physicalPathOnDisk);
     }
 
     @Override
@@ -32,14 +38,17 @@ public class Disk implements Describable<Disk> {
         return (DiskDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
     }
 
+    @CheckForNull
     public String getDiskId() {
         return diskId;
     }
 
+    @CheckForNull
     public String getName() {
         return name;
     }
 
+    @CheckForNull
     public String getPhysicalPathOnDisk() {
         return physicalPathOnDisk;
     }
@@ -47,48 +56,22 @@ public class Disk implements Describable<Disk> {
     @Extension
     public static class DiskDescriptor extends Descriptor<Disk> {
 
-        private String diskId;
-        private String name;
-        private String physicalPathOnDisk;
-
-        public DiskDescriptor() {
-            load();
+        public FormValidation doCheckDiskId(@QueryParameter String value) {
+            return FormValidationUtil.doCheckValue(value);
         }
 
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            req.bindJSON(this, formData);
-            save();
-            return super.configure(req, formData);
+        public FormValidation doCheckName(@QueryParameter String value) {
+            return FormValidationUtil.doCheckValue(value);
+        }
+
+        public FormValidation doCheckPhysicalPathOnDisk(@QueryParameter String value) {
+            return FormValidationUtil.doCheckValue(value);
         }
 
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Disk";
-        }
-
-        public String getDiskId() {
-            return diskId;
-        }
-
-        public void setDiskId(String diskId) {
-            this.diskId = diskId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getPhysicalPathOnDisk() {
-            return physicalPathOnDisk;
-        }
-        public void setPhysicalPathOnDisk(String physicalPathOnDisk) {
-            this.physicalPathOnDisk = physicalPathOnDisk;
+            return Messages.definitions_Disk_DisplayName();
         }
     }
 }

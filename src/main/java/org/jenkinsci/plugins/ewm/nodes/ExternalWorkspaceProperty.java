@@ -4,14 +4,23 @@ import hudson.Extension;
 import hudson.model.Node;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
+import hudson.util.FormValidation;
+import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 /**
+ * A {@link NodeProperty} where are defined the {@link DiskNode} definitions.
+ *
  * @author Alexandru Somai
- *         date 5/24/16
  */
 public class ExternalWorkspaceProperty extends NodeProperty<Node> {
 
@@ -20,10 +29,11 @@ public class ExternalWorkspaceProperty extends NodeProperty<Node> {
 
     @DataBoundConstructor
     public ExternalWorkspaceProperty(String diskPoolRefId, List<DiskNode> diskNodes) {
-        this.diskPoolRefId = diskPoolRefId;
-        this.diskNodes = diskNodes;
+        this.diskPoolRefId = fixEmptyAndTrim(diskPoolRefId);
+        this.diskNodes = diskNodes != null ? diskNodes : new ArrayList<DiskNode>();
     }
 
+    @CheckForNull
     public String getDiskPoolRefId() {
         return diskPoolRefId;
     }
@@ -35,29 +45,14 @@ public class ExternalWorkspaceProperty extends NodeProperty<Node> {
     @Extension
     public static class DescriptorImpl extends NodePropertyDescriptor {
 
-        private String diskPoolRefId;
-        private List<DiskNode> diskNodes;
+        public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
+            return FormValidationUtil.doCheckValue(value);
+        }
 
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "External Workspace";
-        }
-
-        public List<DiskNode> getDiskNodes() {
-            return diskNodes;
-        }
-
-        public void setDiskNodes(List<DiskNode> diskNodes) {
-            this.diskNodes = diskNodes;
-        }
-
-        public String getDiskPoolRefId() {
-            return diskPoolRefId;
-        }
-
-        public void setDiskPoolRefId(String diskPoolRefId) {
-            this.diskPoolRefId = diskPoolRefId;
+            return Messages.nodes_ExternalWorkspaceProperty_DisplayName();
         }
     }
 }

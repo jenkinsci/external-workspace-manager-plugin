@@ -2,18 +2,23 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 /**
+ * TODO - To be added when I'll implement the step
+ *
  * @author Alexandru Somai
- *         date 5/25/16
  */
 public final class ExwsAllocateStep extends AbstractStepImpl {
 
@@ -21,9 +26,10 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
-        this.diskPoolId = diskPoolId;
+        this.diskPoolId = fixEmptyAndTrim(diskPoolId);
     }
 
+    @CheckForNull
     public String getDiskPoolId() {
         return diskPoolId;
     }
@@ -66,7 +72,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Allocate external workspace";
+            return Messages.steps_ExwsAllocateStep_DisplayName();
         }
     }
 }
