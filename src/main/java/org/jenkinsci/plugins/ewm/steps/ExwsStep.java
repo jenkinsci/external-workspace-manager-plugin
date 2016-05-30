@@ -4,6 +4,7 @@ import hudson.Extension;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Template;
+import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -14,25 +15,24 @@ import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.List;
 
-import static hudson.Util.fixEmptyAndTrim;
-
 /**
- * TODO - To be added when I'll implement the step
+ * The 'exws' step.
+ * Allocates the final external workspace on the current node and uses that as the default directory for nested steps.
  *
  * @author Alexandru Somai
  */
 public class ExwsStep extends AbstractStepImpl implements Serializable {
 
-    private final String path;
+    private final ExternalWorkspace externalWorkspace;
 
     @DataBoundConstructor
-    public ExwsStep(String path) {
-        this.path = fixEmptyAndTrim(path);
+    public ExwsStep(ExternalWorkspace externalWorkspace) {
+        this.externalWorkspace = externalWorkspace;
     }
 
     @CheckForNull
-    public String getPath() {
-        return path;
+    public ExternalWorkspace getExternalWorkspace() {
+        return externalWorkspace;
     }
 
     @Override

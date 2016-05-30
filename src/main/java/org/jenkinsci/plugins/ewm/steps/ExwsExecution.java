@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * TODO - To be added when I'll implement the step
+ * The execution of {@link ExwsStep}.
  *
  * @author Alexandru Somai
  */
