@@ -6,6 +6,9 @@
     <f:entry title="${%Name}" field="name">
         <f:textbox/>
     </f:entry>
+    <f:entry title="${%Master mount point}" field="masterMountPoint">
+        <f:textbox/>
+    </f:entry>
     <f:entry title="${%Physical path on disk}" field="physicalPathOnDisk">
         <f:textbox/>
     </f:entry>
