@@ -5,6 +5,7 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
@@ -12,6 +13,7 @@ import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepEx
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * The execution of the {@link ExwsAllocateStep}.
@@ -33,11 +35,26 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         if (step.getUpstream() == null) {
             // this is the upstream job
 
-            DiskAllocationStrategy allocationStrategy = new MostUsableSpaceStrategy(step.getDiskPoolId(), step.getDescriptor().getDiskPools());
+            String diskPoolId = step.getDiskPoolId();
+            if (diskPoolId == null) {
+                throw new Exception("Disk Pool ID was not provided as step parameter");
+            }
+
+            List<DiskPool> diskPools = step.getDescriptor().getDiskPools();
+            DiskAllocationStrategy allocationStrategy = new MostUsableSpaceStrategy(diskPoolId, diskPools);
             Disk disk = allocationStrategy.allocateDisk();
 
-            String pathOnDisk = computePathOnDisk(disk.getPhysicalPathOnDisk());
-            ExternalWorkspace externalWorkspace = new ExternalWorkspace(disk.getDiskId(), pathOnDisk);
+            String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
+            if (physicalPathOnDisk == null) {
+                throw new Exception("Physical path on disk was not provided in the Jenkins global config");
+            }
+            String diskId = disk.getDiskId();
+            if (diskId == null) {
+                throw new Exception("Disk ID was not provided in the Jenkins global config");
+            }
+
+            String pathOnDisk = computePathOnDisk(physicalPathOnDisk);
+            ExternalWorkspace externalWorkspace = new ExternalWorkspace(diskId, pathOnDisk);
 
             listener.getLogger().println(String.format("Selected disk id is: %s", externalWorkspace.getDiskId()));
             listener.getLogger().println(String.format("The path on disk is: %s", externalWorkspace.getPathOnDisk()));
