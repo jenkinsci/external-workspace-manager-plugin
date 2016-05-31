@@ -68,7 +68,7 @@ public class Disk implements Describable<Disk> {
         }
 
         public FormValidation doCheckMasterMountPoint(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         public FormValidation doCheckName(@QueryParameter String value) {

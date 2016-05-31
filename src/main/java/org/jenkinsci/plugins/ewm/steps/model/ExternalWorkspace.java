@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.ewm.steps.model;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -14,15 +15,17 @@ public final class ExternalWorkspace implements Serializable {
     private final String diskId;
     private final String pathOnDisk;
 
-    public ExternalWorkspace(String diskId, String pathOnDisk) {
+    public ExternalWorkspace(@Nonnull String diskId, @Nonnull String pathOnDisk) {
         this.diskId = diskId;
         this.pathOnDisk = pathOnDisk;
     }
 
+    @Nonnull
     public String getDiskId() {
         return diskId;
     }
 
+    @Nonnull
     public String getPathOnDisk() {
         return pathOnDisk;
     }

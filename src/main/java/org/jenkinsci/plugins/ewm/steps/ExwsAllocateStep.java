@@ -12,6 +12,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
@@ -54,7 +55,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<DiskPool> diskPools;
+        private List<DiskPool> diskPools = new ArrayList<>();
 
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
@@ -63,17 +64,14 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            req.bindJSON(this, formData);
+            diskPools = req.bindJSONToList(DiskPool.class, formData.get("diskPools"));
             save();
             return super.configure(req, formData);
         }
 
+        @Nonnull
         public List<DiskPool> getDiskPools() {
             return diskPools;
-        }
-
-        public void setDiskPools(List<DiskPool> diskPools) {
-            this.diskPools = diskPools;
         }
 
         @Override

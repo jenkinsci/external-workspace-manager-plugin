@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.strategies;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public abstract class DiskAllocationStrategy {
     private final String diskPoolId;
     private final List<DiskPool> diskPools;
 
-    protected DiskAllocationStrategy(String diskPoolId, List<DiskPool> diskPools) {
+    protected DiskAllocationStrategy(@Nonnull String diskPoolId, @Nonnull List<DiskPool> diskPools) {
         this.diskPoolId = diskPoolId;
         this.diskPools = diskPools;
     }
@@ -29,6 +30,7 @@ public abstract class DiskAllocationStrategy {
      * @see DiskAllocationStrategy#findDiskPool()
      * @see DiskAllocationStrategy#allocateDisk(List) ()
      */
+    @Nonnull
     public Disk allocateDisk() {
         DiskPool diskPool = findDiskPool();
 
@@ -48,10 +50,11 @@ public abstract class DiskAllocationStrategy {
      * @return the disk pool whose id is equal to {@link DiskAllocationStrategy#diskPoolId}
      * @throws RuntimeException if there isn't find any disk pool matching the disk pool id
      */
+    @Nonnull
     private DiskPool findDiskPool() {
         DiskPool diskPool = null;
         for (DiskPool dp : diskPools) {
-            if (dp.getDiskPoolId().equals(diskPoolId)) {
+            if (diskPoolId.equals(dp.getDiskPoolId())) {
                 diskPool = dp;
                 break;
             }
@@ -70,5 +73,6 @@ public abstract class DiskAllocationStrategy {
      * @param disks the disks from which to allocate a disk. The list has at least one element.
      * @return the selected disk
      */
+    @Nonnull
     protected abstract Disk allocateDisk(List<Disk> disks);
 }
