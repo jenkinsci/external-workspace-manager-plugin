@@ -6,7 +6,6 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -14,6 +13,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.util.FormValidation.validateRequired;
 
 /**
  * Describable used to define the disk information within a {@link DiskPool}.
@@ -57,15 +57,15 @@ public class Disk implements Describable<Disk> {
     public static class DiskDescriptor extends Descriptor<Disk> {
 
         public FormValidation doCheckDiskId(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         public FormValidation doCheckName(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         public FormValidation doCheckPhysicalPathOnDisk(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         @Nonnull

@@ -7,16 +7,16 @@ import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
-import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.Util.fixNull;
+import static hudson.util.FormValidation.validateRequired;
 
 /**
  * Describable used in the Jenkins global config.
@@ -35,7 +35,7 @@ public class Template implements Describable<Template> {
     public Template(String diskPoolRefId, String label, List<DiskNode> diskNodes) {
         this.diskPoolRefId = fixEmptyAndTrim(diskPoolRefId);
         this.label = fixEmptyAndTrim(label);
-        this.diskNodes = diskNodes != null ? diskNodes : new ArrayList<DiskNode>();
+        this.diskNodes = fixNull(diskNodes);
     }
 
     @Override
@@ -53,6 +53,7 @@ public class Template implements Describable<Template> {
         return label;
     }
 
+    @Nonnull
     public List<DiskNode> getDiskNodes() {
         return diskNodes;
     }
@@ -61,11 +62,11 @@ public class Template implements Describable<Template> {
     public static class TemplateDescriptor extends Descriptor<Template> {
 
         public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         public FormValidation doCheckLabel(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         @Nonnull

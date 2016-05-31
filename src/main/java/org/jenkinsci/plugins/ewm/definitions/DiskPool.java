@@ -6,16 +6,16 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.Util.fixNull;
+import static hudson.util.FormValidation.validateRequired;
 
 /**
  * Describable for defining a disk pool information in the Jenkins global config.
@@ -35,7 +35,7 @@ public class DiskPool implements Describable<DiskPool> {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
         this.name = fixEmptyAndTrim(name);
         this.description = fixEmptyAndTrim(description);
-        this.disks = disks != null ? disks : new ArrayList<Disk>();
+        this.disks = fixNull(disks);
     }
 
     @Override
@@ -58,6 +58,7 @@ public class DiskPool implements Describable<DiskPool> {
         return description;
     }
 
+    @Nonnull
     public List<Disk> getDisks() {
         return disks;
     }
@@ -66,11 +67,11 @@ public class DiskPool implements Describable<DiskPool> {
     public static class DiskPoolDescriptor extends Descriptor<DiskPool> {
 
         public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         public FormValidation doCheckName(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         @Nonnull

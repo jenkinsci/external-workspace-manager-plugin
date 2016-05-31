@@ -6,7 +6,6 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.util.FormValidationUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -14,6 +13,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.util.FormValidation.validateRequired;
 
 /**
  * Describable used to define disk properties for each {@link hudson.model.Node} configuration.
@@ -50,11 +50,11 @@ public class DiskNode implements Describable<DiskNode> {
     public static class DiskNodeDescriptor extends Descriptor<DiskNode> {
 
         public FormValidation doCheckDiskRefId(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         public FormValidation doCheckLocalRootPath(@QueryParameter String value) {
-            return FormValidationUtil.doCheckValue(value);
+            return validateRequired(value);
         }
 
         @Nonnull
