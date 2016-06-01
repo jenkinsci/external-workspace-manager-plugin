@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.ewm.strategies;
 
+import hudson.AbortException;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 
@@ -26,18 +27,18 @@ public abstract class DiskAllocationStrategy {
      * Allocates a disk from the given disk pool.
      *
      * @return the allocated disk pool
-     * @throws RuntimeException if the disk pool doesn't have defined any {@link Disk} entries
+     * @throws AbortException if the disk pool doesn't have defined any {@link Disk} entries
      * @see DiskAllocationStrategy#findDiskPool()
      * @see DiskAllocationStrategy#allocateDisk(List) ()
      */
     @Nonnull
-    public Disk allocateDisk() {
+    public Disk allocateDisk() throws AbortException {
         DiskPool diskPool = findDiskPool();
 
         List<Disk> disks = diskPool.getDisks();
         if (disks.isEmpty()) {
             String message = String.format("No Disks were defined in the global config for Disk Pool '%s'", diskPoolId);
-            throw new RuntimeException(message);
+            throw new AbortException(message);
         }
 
         return allocateDisk(disks);
@@ -48,10 +49,10 @@ public abstract class DiskAllocationStrategy {
      * the id equal to {@link DiskAllocationStrategy#diskPoolId}.
      *
      * @return the disk pool whose id is equal to {@link DiskAllocationStrategy#diskPoolId}
-     * @throws RuntimeException if there isn't find any disk pool matching the disk pool id
+     * @throws AbortException if there isn't find any disk pool matching the disk pool id
      */
     @Nonnull
-    private DiskPool findDiskPool() {
+    private DiskPool findDiskPool() throws AbortException {
         DiskPool diskPool = null;
         for (DiskPool dp : diskPools) {
             if (diskPoolId.equals(dp.getDiskPoolId())) {
@@ -61,7 +62,7 @@ public abstract class DiskAllocationStrategy {
         }
         if (diskPool == null) {
             String message = String.format("No Disk Pool ID matching '%s' was found in the global config", diskPoolId);
-            throw new RuntimeException(message);
+            throw new AbortException(message);
         }
 
         return diskPool;
