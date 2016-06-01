@@ -12,7 +12,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author Alexandru Somai
  */
-public class ExwsStep extends AbstractStepImpl implements Serializable {
+public class ExwsStep extends AbstractStepImpl {
 
     private final ExternalWorkspace externalWorkspace;
 
@@ -43,7 +43,7 @@ public class ExwsStep extends AbstractStepImpl implements Serializable {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<Template> templates;
+        private List<Template> templates = new ArrayList<>();
 
         public DescriptorImpl() {
             super(ExwsExecution.class);
@@ -52,17 +52,14 @@ public class ExwsStep extends AbstractStepImpl implements Serializable {
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            req.bindJSON(this, formData);
+            templates = req.bindJSONToList(Template.class, formData.get("templates"));
             save();
             return super.configure(req, formData);
         }
 
+        @Nonnull
         public List<Template> getTemplates() {
             return templates;
-        }
-
-        public void setTemplates(List<Template> templates) {
-            this.templates = templates;
         }
 
         @Override

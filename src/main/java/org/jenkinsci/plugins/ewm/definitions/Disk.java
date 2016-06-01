@@ -12,6 +12,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.Util.isRelativePath;
 import static hudson.util.FormValidation.validateRequired;
 
 /**
@@ -77,6 +78,9 @@ public class Disk implements Describable<Disk> {
         }
 
         public FormValidation doCheckPhysicalPathOnDisk(@QueryParameter String value) {
+            if (!isRelativePath(value)) {
+                return FormValidation.error("Must be a relative path");
+            }
             return validateRequired(value);
         }
 
