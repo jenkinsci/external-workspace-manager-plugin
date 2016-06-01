@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import com.google.inject.Inject;
+import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -39,7 +40,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             String diskPoolId = step.getDiskPoolId();
             if (diskPoolId == null) {
-                throw new Exception("Disk Pool ID was not provided as step parameter");
+                throw new AbortException("Disk Pool ID was not provided as step parameter");
             }
 
             List<DiskPool> diskPools = step.getDescriptor().getDiskPools();
@@ -49,12 +50,12 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
             if (physicalPathOnDisk == null) {
                 String message = format("Physical path on disk was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
-                throw new Exception(message);
+                throw new AbortException(message);
             }
             String diskId = disk.getDiskId();
             if (diskId == null) {
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
-                throw new Exception(message);
+                throw new AbortException(message);
             }
 
             String pathOnDisk = computePathOnDisk(physicalPathOnDisk);

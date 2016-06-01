@@ -38,13 +38,14 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         return diskPoolId;
     }
 
+    @CheckForNull
     public String getUpstream() {
         return upstream;
     }
 
     @DataBoundSetter
     public void setUpstream(String upstream) {
-        this.upstream = upstream;
+        this.upstream = fixEmptyAndTrim(upstream);
     }
 
     @Override
