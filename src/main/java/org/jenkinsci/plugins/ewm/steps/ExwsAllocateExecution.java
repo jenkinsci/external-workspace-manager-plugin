@@ -15,6 +15,8 @@ import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import java.io.File;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * The execution of the {@link ExwsAllocateStep}.
  *
@@ -46,18 +48,20 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
             if (physicalPathOnDisk == null) {
-                throw new Exception("Physical path on disk was not provided in the Jenkins global config");
+                String message = format("Physical path on disk was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
+                throw new Exception(message);
             }
             String diskId = disk.getDiskId();
             if (diskId == null) {
-                throw new Exception("Disk ID was not provided in the Jenkins global config");
+                String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
+                throw new Exception(message);
             }
 
             String pathOnDisk = computePathOnDisk(physicalPathOnDisk);
             ExternalWorkspace externalWorkspace = new ExternalWorkspace(diskId, pathOnDisk);
 
-            listener.getLogger().println(String.format("Selected disk id is: %s", externalWorkspace.getDiskId()));
-            listener.getLogger().println(String.format("The path on disk is: %s", externalWorkspace.getPathOnDisk()));
+            listener.getLogger().println(format("Selected Disk ID is: %s", externalWorkspace.getDiskId()));
+            listener.getLogger().println(format("The path on Disk is: %s", externalWorkspace.getPathOnDisk()));
 
             return externalWorkspace;
         } else {
