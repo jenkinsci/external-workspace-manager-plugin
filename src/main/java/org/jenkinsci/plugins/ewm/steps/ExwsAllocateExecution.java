@@ -16,6 +16,7 @@ import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import java.io.File;
 import java.util.List;
 
+import static hudson.Util.isRelativePath;
 import static java.lang.String.format;
 
 /**
@@ -59,14 +60,18 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
                 throw new AbortException(message);
             }
+            if (!isRelativePath(physicalPathOnDisk)) {
+                String message = format("Physical path on disk defined for Disk ID '%s', within Disk Pool ID '%s' must be a relative path", diskId, diskPoolId);
+                throw new AbortException(message);
+            }
 
             String pathOnDisk = computePathOnDisk(physicalPathOnDisk);
-            ExternalWorkspace externalWorkspace = new ExternalWorkspace(diskId, pathOnDisk);
+            ExternalWorkspace exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
 
-            listener.getLogger().println(format("Selected Disk ID is: %s", externalWorkspace.getDiskId()));
-            listener.getLogger().println(format("The path on Disk is: %s", externalWorkspace.getPathOnDisk()));
+            listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
+            listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
 
-            return externalWorkspace;
+            return exws;
         } else {
             // this is the downstream job
             // TODO implement

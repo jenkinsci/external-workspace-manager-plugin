@@ -12,12 +12,19 @@ public final class ExternalWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private final String diskPoolId;
     private final String diskId;
     private final String pathOnDisk;
 
-    public ExternalWorkspace(@Nonnull String diskId, @Nonnull String pathOnDisk) {
+    public ExternalWorkspace(@Nonnull String diskPoolId, @Nonnull String diskId, @Nonnull String pathOnDisk) {
+        this.diskPoolId = diskPoolId;
         this.diskId = diskId;
         this.pathOnDisk = pathOnDisk;
+    }
+
+    @Nonnull
+    public String getDiskPoolId() {
+        return diskPoolId;
     }
 
     @Nonnull
