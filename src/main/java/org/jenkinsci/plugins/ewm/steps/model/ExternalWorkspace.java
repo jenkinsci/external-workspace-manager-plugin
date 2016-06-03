@@ -36,4 +36,13 @@ public final class ExternalWorkspace implements Serializable {
     public String getPathOnDisk() {
         return pathOnDisk;
     }
+
+    @Override
+    public String toString() {
+        return "ExternalWorkspace{" +
+                "diskPoolId='" + diskPoolId + '\'' +
+                ", diskId='" + diskId + '\'' +
+                ", pathOnDisk='" + pathOnDisk + '\'' +
+                '}';
+    }
 }

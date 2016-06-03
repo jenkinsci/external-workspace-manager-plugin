@@ -5,11 +5,13 @@ import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import org.jenkinsci.plugins.ewm.actions.ExwsAllocateAction;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
@@ -35,10 +37,13 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private transient Run<?, ?> run;
     @StepContextParameter
     private transient TaskListener listener;
+    @StepContextParameter
+    private transient FlowNode flowNode;
 
     @Override
     protected ExternalWorkspace run() throws Exception {
-        if (step.getUpstream() == null) {
+        String upstreamName = step.getUpstream();
+        if (upstreamName == null) {
             // this is the upstream job
 
             String diskPoolId = step.getDiskPoolId();
@@ -67,6 +72,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             String pathOnDisk = computePathOnDisk(physicalPathOnDisk);
             ExternalWorkspace exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
+
+            flowNode.addAction(new ExwsAllocateAction(flowNode, exws));
 
             listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
             listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
