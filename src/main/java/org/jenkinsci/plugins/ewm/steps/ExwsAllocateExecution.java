@@ -3,6 +3,8 @@ package org.jenkinsci.plugins.ewm.steps;
 import com.google.inject.Inject;
 import hudson.AbortException;
 import hudson.FilePath;
+import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateAction;
@@ -12,6 +14,7 @@ import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
@@ -81,8 +84,23 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             return exws;
         } else {
             // this is the downstream job
-            // TODO implement
-            return null;
+
+            Item upstreamJob = findUpstreamJob(upstreamName);
+            if (upstreamJob == null) {
+                throw new AbortException(format("There isn't any upstream job associated with '%s'", upstreamName));
+            }
+            Run lastStableBuild = ((Job) upstreamJob).getLastStableBuild();
+            if (lastStableBuild == null) {
+                throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
+            }
+            if (!(lastStableBuild instanceof WorkflowRun)) {
+                throw new AbortException(format("Build '%s' is not a Pipeline job. Can't read the run actions", lastStableBuild));
+            }
+
+            WorkflowRun lastStablePipeline = (WorkflowRun) lastStableBuild;
+            ExwsAllocateAction exwsAllocateAction = findAction(lastStablePipeline.getExecution().getCurrentHeads());
+
+            return exwsAllocateAction.getExternalWorkspace();
         }
     }
 
@@ -97,5 +115,41 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private String computePathOnDisk(String physicalPathOnDisk) {
         FilePath diskFilePath = new FilePath(new File(physicalPathOnDisk));
         return new FilePath(diskFilePath, run.getParent().getFullName() + "/" + run.getNumber()).getRemote();
+    }
+
+    /**
+     * Find the upstream job that matches the given upstream name.
+     *
+     * @param upstreamJob the upstream job name
+     * @return the upstream job with the given name if any, {@code null} otherwise
+     */
+    private Item findUpstreamJob(String upstreamJob) {
+        for (Object itemObject : run.getParent().getParent().getItems()) {
+            Item item = (Item) itemObject;
+            if (upstreamJob.equals(item.getName())) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Iterates recursively, from bottom to top, through the list of registered flow nodes.
+     * It searches for the action of type {@link ExwsAllocateAction} and returns it.
+     *
+     * @param flowNodes the flow nodes that may contain the needed action type
+     * @return the Action registered at the exwsAllocate step, or {@code null} if not found
+     */
+    private static ExwsAllocateAction findAction(List<FlowNode> flowNodes) {
+        ExwsAllocateAction action = null;
+        for (FlowNode node : flowNodes) {
+            action = node.getAction(ExwsAllocateAction.class);
+            if (action == null) {
+                action = findAction(node.getParents());
+            }
+        }
+
+        return action;
     }
 }
