@@ -25,6 +25,8 @@ import static java.lang.String.format;
  */
 public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExecution<ExternalWorkspace> {
 
+    private static final long serialVersionUID = 1L;
+
     @Inject(optional = true)
     private transient ExwsAllocateStep step;
 

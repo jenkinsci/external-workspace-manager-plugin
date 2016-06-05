@@ -15,7 +15,7 @@ import java.util.List;
  */
 public abstract class DiskAllocationStrategy {
 
-    private final String diskPoolId;
+    protected final String diskPoolId;
     private final List<DiskPool> diskPools;
 
     protected DiskAllocationStrategy(@Nonnull String diskPoolId, @Nonnull List<DiskPool> diskPools) {
@@ -73,7 +73,8 @@ public abstract class DiskAllocationStrategy {
      *
      * @param disks the disks from which to allocate a disk. The list has at least one element.
      * @return the selected disk
+     * @throws AbortException if any mandatory field is missing from the {@link Disk} entry
      */
     @Nonnull
-    protected abstract Disk allocateDisk(List<Disk> disks);
+    protected abstract Disk allocateDisk(List<Disk> disks) throws AbortException;
 }
