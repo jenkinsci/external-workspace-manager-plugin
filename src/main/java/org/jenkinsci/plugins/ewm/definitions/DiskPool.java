@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -39,8 +38,8 @@ public class DiskPool implements Describable<DiskPool> {
     }
 
     @Override
-    public DiskPoolDescriptor getDescriptor() {
-        return (DiskPoolDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
+    public DescriptorImpl getDescriptor() {
+        return DESCRIPTOR;
     }
 
     @CheckForNull
@@ -64,7 +63,9 @@ public class DiskPool implements Describable<DiskPool> {
     }
 
     @Extension
-    public static class DiskPoolDescriptor extends Descriptor<DiskPool> {
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    public static class DescriptorImpl extends Descriptor<DiskPool> {
 
         public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
             return validateRequired(value);
