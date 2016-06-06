@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -42,12 +41,14 @@ public class DiskNode implements Describable<DiskNode> {
     }
 
     @Override
-    public DiskNodeDescriptor getDescriptor() {
-        return (DiskNodeDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
+    public DescriptorImpl getDescriptor() {
+        return DESCRIPTOR;
     }
 
     @Extension
-    public static class DiskNodeDescriptor extends Descriptor<DiskNode> {
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    public static class DescriptorImpl extends Descriptor<DiskNode> {
 
         public FormValidation doCheckDiskRefId(@QueryParameter String value) {
             return validateRequired(value);

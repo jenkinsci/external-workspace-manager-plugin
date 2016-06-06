@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -24,18 +23,20 @@ public class Disk implements Describable<Disk> {
 
     private final String diskId;
     private final String name;
+    private final String masterMountPoint;
     private final String physicalPathOnDisk;
 
     @DataBoundConstructor
-    public Disk(String diskId, String name, String physicalPathOnDisk) {
+    public Disk(String diskId, String name, String masterMountPoint, String physicalPathOnDisk) {
         this.diskId = fixEmptyAndTrim(diskId);
         this.name = fixEmptyAndTrim(name);
+        this.masterMountPoint = fixEmptyAndTrim(masterMountPoint);
         this.physicalPathOnDisk = fixEmptyAndTrim(physicalPathOnDisk);
     }
 
     @Override
     public Descriptor<Disk> getDescriptor() {
-        return (DiskDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
+        return DESCRIPTOR;
     }
 
     @CheckForNull
@@ -49,14 +50,25 @@ public class Disk implements Describable<Disk> {
     }
 
     @CheckForNull
+    public String getMasterMountPoint() {
+        return masterMountPoint;
+    }
+
+    @CheckForNull
     public String getPhysicalPathOnDisk() {
         return physicalPathOnDisk;
     }
 
     @Extension
-    public static class DiskDescriptor extends Descriptor<Disk> {
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    public static class DescriptorImpl extends Descriptor<Disk> {
 
         public FormValidation doCheckDiskId(@QueryParameter String value) {
+            return validateRequired(value);
+        }
+
+        public FormValidation doCheckMasterMountPoint(@QueryParameter String value) {
             return validateRequired(value);
         }
 

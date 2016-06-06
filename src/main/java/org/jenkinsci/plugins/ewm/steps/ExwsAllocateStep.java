@@ -7,22 +7,26 @@ import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
 
 /**
- * TODO - To be added when I'll implement the step
+ * The 'exwsAllocate' step.
+ * Computes an external workspace based on the globally defined disk pools and on the running job properties.
  *
  * @author Alexandru Somai
  */
 public final class ExwsAllocateStep extends AbstractStepImpl {
 
     private final String diskPoolId;
+    private String upstream;
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
@@ -34,6 +38,16 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         return diskPoolId;
     }
 
+    @CheckForNull
+    public String getUpstream() {
+        return upstream;
+    }
+
+    @DataBoundSetter
+    public void setUpstream(String upstream) {
+        this.upstream = fixEmptyAndTrim(upstream);
+    }
+
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
@@ -42,7 +56,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<DiskPool> diskPools;
+        private List<DiskPool> diskPools = new ArrayList<>();
 
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
@@ -51,17 +65,14 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            req.bindJSON(this, formData);
+            diskPools = req.bindJSONToList(DiskPool.class, formData.get("diskPools"));
             save();
             return super.configure(req, formData);
         }
 
+        @Nonnull
         public List<DiskPool> getDiskPools() {
             return diskPools;
-        }
-
-        public void setDiskPools(List<DiskPool> diskPools) {
-            this.diskPools = diskPools;
         }
 
         @Override
