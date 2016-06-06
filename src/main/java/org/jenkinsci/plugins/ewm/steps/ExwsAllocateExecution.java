@@ -45,6 +45,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
     @Override
     protected ExternalWorkspace run() throws Exception {
+        ExternalWorkspace exws;
         String upstreamName = step.getUpstream();
         if (upstreamName == null) {
             // this is the upstream job
@@ -74,14 +75,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             }
 
             String pathOnDisk = computePathOnDisk(physicalPathOnDisk);
-            ExternalWorkspace exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
-
-            flowNode.addAction(new ExwsAllocateAction(flowNode, exws));
-
-            listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
-            listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
-
-            return exws;
+            exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
         } else {
             // this is the downstream job
 
@@ -99,9 +93,15 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             WorkflowRun lastStablePipeline = (WorkflowRun) lastStableBuild;
             ExwsAllocateAction exwsAllocateAction = findAction(lastStablePipeline.getExecution().getCurrentHeads());
-
-            return exwsAllocateAction.getExternalWorkspace();
+            exws = exwsAllocateAction.getExternalWorkspace();
         }
+
+        flowNode.addAction(new ExwsAllocateAction(flowNode, exws));
+
+        listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
+        listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
+
+        return exws;
     }
 
     /**
