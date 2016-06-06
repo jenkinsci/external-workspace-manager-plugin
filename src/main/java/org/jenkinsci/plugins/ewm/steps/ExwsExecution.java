@@ -39,6 +39,9 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         System.out.println(templates);
 
         Node node = computer.getNode();
+        if (node == null) {
+            throw new Exception("Computer does not correspond to a live node");
+        }
 
         DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
         for (NodeProperty<?> nodeProperty : nodeProperties) {
