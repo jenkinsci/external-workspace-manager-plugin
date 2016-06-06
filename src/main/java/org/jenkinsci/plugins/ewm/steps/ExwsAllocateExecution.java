@@ -13,11 +13,13 @@ import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
+import org.jenkinsci.plugins.workflow.flow.FlowExecution;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
+import javax.annotation.CheckForNull;
 import java.io.File;
 import java.util.List;
 
@@ -91,8 +93,16 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
                 throw new AbortException(format("Build '%s' is not a Pipeline job. Can't read the run actions", lastStableBuild));
             }
 
-            WorkflowRun lastStablePipeline = (WorkflowRun) lastStableBuild;
-            ExwsAllocateAction exwsAllocateAction = findAction(lastStablePipeline.getExecution().getCurrentHeads());
+            FlowExecution flowExecution = ((WorkflowRun) lastStableBuild).getExecution();
+            if (flowExecution == null) {
+                throw new Exception("Upstream flow execution is null");
+            }
+            ExwsAllocateAction exwsAllocateAction = findAction(flowExecution.getCurrentHeads());
+            if (exwsAllocateAction == null) {
+                String message = format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action", upstreamName);
+                throw new AbortException(message);
+            }
+
             exws = exwsAllocateAction.getExternalWorkspace();
         }
 
@@ -123,6 +133,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
      * @param upstreamJob the upstream job name
      * @return the upstream job with the given name if any, {@code null} otherwise
      */
+    @CheckForNull
     private Item findUpstreamJob(String upstreamJob) {
         for (Object itemObject : run.getParent().getParent().getItems()) {
             Item item = (Item) itemObject;
@@ -141,6 +152,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
      * @param flowNodes the flow nodes that may contain the needed action type
      * @return the Action registered at the exwsAllocate step, or {@code null} if not found
      */
+    @CheckForNull
     private static ExwsAllocateAction findAction(List<FlowNode> flowNodes) {
         ExwsAllocateAction action = null;
         for (FlowNode node : flowNodes) {
