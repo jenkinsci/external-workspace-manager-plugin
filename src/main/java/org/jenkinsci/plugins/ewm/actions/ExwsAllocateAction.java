@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.actions;
 
 import hudson.model.Action;
+import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 
@@ -30,12 +31,12 @@ public class ExwsAllocateAction implements Action {
 
     @Override
     public String getIconFileName() {
-        return "none.png";
+        return "folder.png";
     }
 
     @Override
     public String getDisplayName() {
-        return "External Workspace Allocate";
+        return Messages.actions_ExwsAllocateAction_DisplayName();
     }
 
     @Override
