@@ -5,6 +5,7 @@ import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public abstract class DiskAllocationStrategy {
 
-    protected final String diskPoolId;
+    private final String diskPoolId;
     private final List<DiskPool> diskPools;
 
     protected DiskAllocationStrategy(@Nonnull String diskPoolId, @Nonnull List<DiskPool> diskPools) {
@@ -27,12 +28,12 @@ public abstract class DiskAllocationStrategy {
      * Allocates a disk from the given disk pool.
      *
      * @return the allocated disk pool
-     * @throws AbortException if the disk pool doesn't have defined any {@link Disk} entries
+     * @throws IOException if the disk pool doesn't have defined any {@link Disk} entries
      * @see DiskAllocationStrategy#findDiskPool()
      * @see DiskAllocationStrategy#allocateDisk(List) ()
      */
     @Nonnull
-    public Disk allocateDisk() throws AbortException {
+    public Disk allocateDisk() throws IOException {
         DiskPool diskPool = findDiskPool();
 
         List<Disk> disks = diskPool.getDisks();
@@ -49,10 +50,10 @@ public abstract class DiskAllocationStrategy {
      * the id equal to {@link DiskAllocationStrategy#diskPoolId}.
      *
      * @return the disk pool whose id is equal to {@link DiskAllocationStrategy#diskPoolId}
-     * @throws AbortException if there isn't find any disk pool matching the disk pool id
+     * @throws IOException if there isn't find any disk pool matching the disk pool id
      */
     @Nonnull
-    private DiskPool findDiskPool() throws AbortException {
+    private DiskPool findDiskPool() throws IOException {
         DiskPool diskPool = null;
         for (DiskPool dp : diskPools) {
             if (diskPoolId.equals(dp.getDiskPoolId())) {
@@ -73,8 +74,12 @@ public abstract class DiskAllocationStrategy {
      *
      * @param disks the disks from which to allocate a disk. The list has at least one element.
      * @return the selected disk
-     * @throws AbortException if any mandatory field is missing from the {@link Disk} entry
+     * @throws IOException if any mandatory field is missing from the {@link Disk} entry
      */
     @Nonnull
-    protected abstract Disk allocateDisk(List<Disk> disks) throws AbortException;
+    protected abstract Disk allocateDisk(List<Disk> disks) throws IOException;
+
+    protected String getDiskPoolId() {
+        return diskPoolId;
+    }
 }

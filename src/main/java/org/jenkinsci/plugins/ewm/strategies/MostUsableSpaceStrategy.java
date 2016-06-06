@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
 
     @Nonnull
     @Override
-    public Disk allocateDisk(List<Disk> disks) throws AbortException {
+    public Disk allocateDisk(List<Disk> disks) throws IOException {
         Iterator<Disk> iterator = disks.iterator();
         Disk selectedDisk = iterator.next();
         long selectedDiskUsableSpace = retrieveUsableSpace(selectedDisk);
@@ -45,12 +46,12 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
      *
      * @param disk the disk entry
      * @return the usable space for the disk
-     * @throws AbortException if mounting point from Master to Disk is {@code null}
+     * @throws IOException if mounting point from Master to Disk is {@code null}
      */
-    private long retrieveUsableSpace(Disk disk) throws AbortException {
+    private long retrieveUsableSpace(Disk disk) throws IOException {
         String masterMountPoint = disk.getMasterMountPoint();
         if (masterMountPoint == null) {
-            String message = String.format("Mounting point from Master to the disk is not defined for Disk ID '%s', from Disk Pool ID '%s'", disk.getDiskId(), diskPoolId);
+            String message = String.format("Mounting point from Master to the disk is not defined for Disk ID '%s', from Disk Pool ID '%s'", disk.getDiskId(), getDiskPoolId());
             throw new AbortException(message);
         }
 
