@@ -99,7 +99,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             }
             ExwsAllocateAction exwsAllocateAction = findAction(flowExecution.getCurrentHeads());
             if (exwsAllocateAction == null) {
-                String message = format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action", upstreamName);
+                String message = format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action. Did you run exwsAllocate step in the upstream job?", upstreamName);
                 throw new AbortException(message);
             }
 
