@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * The execution of {@link ExwsStep}.
  *
@@ -48,20 +50,22 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         Node node = computer.getNode();
         if (node == null) {
-            throw new Exception("Computer does not correspond to a live node");
+            throw new Exception("The node is not live due to some unexpected conditions: the node might have been taken offline, or may have been removed");
         }
 
+        listener.getLogger().println("Searching for disk definitions in the External Workspace Templates from Jenkins global config.");
         Template template = findTemplate(exws.getDiskPoolId(), node.getLabelString(), step.getDescriptor().getTemplates());
         List<DiskNode> diskNodes;
         if (template != null) {
             diskNodes = template.getDiskNodes();
         } else {
             // fallback to finding the disk definitions into the node config
-            ExternalWorkspaceProperty exwsNodeProperty = findNodeProperty(exws.getDiskPoolId(), node.getNodeProperties());
+            listener.getLogger().println("Searching for disk definitions in the Node config");
+            ExternalWorkspaceProperty exwsNodeProperty = findNodeProperty(exws.getDiskPoolId(), node);
             diskNodes = exwsNodeProperty.getDiskNodes();
         }
 
-        DiskNode diskNode = findDiskNode(exws.getDiskId(), diskNodes);
+        DiskNode diskNode = findDiskNode(exws.getDiskId(), diskNodes, node.getDisplayName());
 
         FilePath diskFilePath = new FilePath(node.getChannel(), diskNode.getLocalRootPath());
         FilePath baseWorkspace = diskFilePath.child(exws.getPathOnDisk());
@@ -104,14 +108,19 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
                 break;
             }
         }
-        if (selectedTemplate != null) {
-            String templateDiskPoolRefId = selectedTemplate.getDiskPoolRefId();
-            if (templateDiskPoolRefId == null) {
-                throw new AbortException("The Disk Pool Ref ID was not provided in Jenkins global config");
-            }
-            if (!templateDiskPoolRefId.equals(diskPoolRefId)) {
-                throw new AbortException("The Disk Pool Ref ID defined in Jenkins global config does not match the one allocated by the exwsAllocate step");
-            }
+        if (selectedTemplate == null) {
+            return null;
+        }
+
+        String templateDiskPoolRefId = selectedTemplate.getDiskPoolRefId();
+        if (templateDiskPoolRefId == null) {
+            String message = format("In Jenkins global config, the Template labeled '%s' does not have defined a Disk Pool Ref ID", selectedTemplate.getLabel());
+            throw new AbortException(message);
+        }
+        if (!templateDiskPoolRefId.equals(diskPoolRefId)) {
+            String message = format("In Jenkins global config, the Template labeled '%s' has defined a wrong Disk Pool Ref ID '%s'. " +
+                    "The correct Disk Pool Ref ID should be '%s', as the one used by the exwsAllocate step", selectedTemplate.getLabel(), selectedTemplate.getDiskPoolRefId(), diskPoolRefId);
+            throw new AbortException(message);
         }
 
         return selectedTemplate;
@@ -120,16 +129,17 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     /**
      * Finds the {@link NodeProperty} for the external workspace definition.
      *
-     * @param diskPoolRefId  the disk pool ref id that the node property should have
-     * @param nodeProperties all the the available node properties
+     * @param diskPoolRefId the disk pool ref id that the node property should have
+     * @param node          the current node
      * @return the node property for the external workspace manager
      * @throws IOException if no node property was found
      *                     if the node property doesn't have defined any disk pool ref id
      *                     if the disk pool ref id doesn't match the given disk pool ref id
      */
     @Nonnull
-    private static ExternalWorkspaceProperty findNodeProperty(String diskPoolRefId,
-                                                              DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties) throws IOException {
+    private static ExternalWorkspaceProperty findNodeProperty(String diskPoolRefId, Node node) throws IOException {
+        DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
+
         ExternalWorkspaceProperty exwsNodeProperty = null;
         for (NodeProperty<?> nodeProperty : nodeProperties) {
             if (nodeProperty instanceof ExternalWorkspaceProperty) {
@@ -137,15 +147,20 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
                 break;
             }
         }
+
+        String nodeName = node.getDisplayName();
         if (exwsNodeProperty == null) {
-            throw new AbortException("There is no External Workspace config defined in Node config");
+            String message = format("There is no External Workspace config defined in Node '%s' config", nodeName);
+            throw new AbortException(message);
         }
         String nodeDiskPoolRefId = exwsNodeProperty.getDiskPoolRefId();
         if (nodeDiskPoolRefId == null) {
-            throw new AbortException("The Disk Pool Ref ID was not provided in the node config");
+            String message = format("The Disk Pool Ref ID was not provided in Node '%s' config", nodeName);
+            throw new AbortException(message);
         }
         if (!nodeDiskPoolRefId.equals(diskPoolRefId)) {
-            throw new AbortException("The Disk Pool Ref ID defined in the node config does not match the one allocate by the exwsAllocate step");
+            String message = format("In Node '%s' config, the defined Disk Pool Ref ID '%s' does not match the one allocated by the exwsAllocate step '%s'", nodeName, nodeDiskPoolRefId, diskPoolRefId);
+            throw new AbortException(message);
         }
 
         return exwsNodeProperty;
@@ -156,12 +171,13 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
      *
      * @param diskId    the disk id that the node definition should have
      * @param diskNodes the list of available disk definitions
+     * @param nodeName  the name of the current node
      * @return the disk definition that matches the given disk id
      * @throws IOException if no disk definition was found
      *                     if the disk definition has its local root path null
      */
     @Nonnull
-    private static DiskNode findDiskNode(String diskId, List<DiskNode> diskNodes) throws IOException {
+    private static DiskNode findDiskNode(String diskId, List<DiskNode> diskNodes, String nodeName) throws IOException {
         DiskNode selectedDiskNode = null;
         for (DiskNode diskNode : diskNodes) {
             if (diskId.equals(diskNode.getDiskRefId())) {
@@ -170,10 +186,12 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
             }
         }
         if (selectedDiskNode == null) {
-            throw new AbortException(String.format("Couldn't find any node configuration matching '%s'", diskId));
+            String message = format("The Node '%s' config does not have defined any Disk Ref ID '%s'", nodeName, diskId);
+            throw new AbortException(message);
         }
         if (selectedDiskNode.getLocalRootPath() == null) {
-            throw new AbortException(String.format("The local root path should not be null for disk '%s'", diskId));
+            String message = format("The Node '%s' config does not have defined any local root path for Disk Ref ID '%s'", nodeName, diskId);
+            throw new AbortException(message);
         }
 
         return selectedDiskNode;
