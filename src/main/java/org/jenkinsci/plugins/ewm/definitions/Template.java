@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -39,8 +38,8 @@ public class Template implements Describable<Template> {
     }
 
     @Override
-    public TemplateDescriptor getDescriptor() {
-        return (TemplateDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
+    public DescriptorImpl getDescriptor() {
+        return DESCRIPTOR;
     }
 
     @CheckForNull
@@ -59,7 +58,9 @@ public class Template implements Describable<Template> {
     }
 
     @Extension
-    public static class TemplateDescriptor extends Descriptor<Template> {
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    public static class DescriptorImpl extends Descriptor<Template> {
 
         public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
             return validateRequired(value);
