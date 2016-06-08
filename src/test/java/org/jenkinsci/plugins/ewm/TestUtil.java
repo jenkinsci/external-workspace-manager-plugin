@@ -41,7 +41,7 @@ public final class TestUtil {
         return runFuture.get();
     }
 
-    public static void setupDiskPool(Jenkins jenkins, String diskPoolId, Disk... disks) {
+    public static void setUpDiskPool(Jenkins jenkins, String diskPoolId, Disk... disks) {
         ExwsAllocateStep.DescriptorImpl descriptor = (ExwsAllocateStep.DescriptorImpl) jenkins.getDescriptor(ExwsAllocateStep.class);
 
         List<DiskPool> diskPools = new ArrayList<>();
