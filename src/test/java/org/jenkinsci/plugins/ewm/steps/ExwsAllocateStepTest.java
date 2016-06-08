@@ -55,7 +55,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void wrongDiskPoolId() throws Exception {
-        setupDiskPool();
+        setUpDiskPool();
         createUpstreamJobAndRun(DISK_POOL_ID + "random");
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -64,7 +64,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void emptyDisks() throws Exception {
-        setupDiskPool();
+        setUpDiskPool();
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -73,7 +73,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void missingDiskId() throws Exception {
-        setupDiskPool(new Disk("", "name", "mount", "path"));
+        setUpDiskPool(new Disk("", "name", "mount", "path"));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -82,7 +82,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void missingMasterMountPoint() throws Exception {
-        setupDiskPool(new Disk(DISK_ID_ONE, "name", "", "path"));
+        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "", "path"));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -91,7 +91,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void missingPhysicalPathOnDisk() throws Exception {
-        setupDiskPool(new Disk(DISK_ID_ONE, "name", "mount", ""));
+        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", ""));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -100,7 +100,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void physicalPathOnDiskNotRelative() throws Exception {
-        setupDiskPool(new Disk(DISK_ID_ONE, "name", "mount", "/path"));
+        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", "/path"));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -111,7 +111,7 @@ public class ExwsAllocateStepTest {
     public void successfullyAllocateWorkspace() throws Exception {
         Disk disk1 = new Disk(DISK_ID_ONE, "name", pathToDisk1.getPath(), "path");
         Disk disk2 = new Disk(DISK_ID_TWO, "name", pathToDisk2.getPath(), "path");
-        setupDiskPool(disk1, disk2);
+        setUpDiskPool(disk1, disk2);
         createUpstreamJobAndRun();
 
         Disk allocatedDisk = findAllocatedDisk(disk1, disk2);
@@ -166,7 +166,7 @@ public class ExwsAllocateStepTest {
     @Test
     public void successfullyAllocateWorkspaceInDownstreamJob() throws Exception {
         Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
-        setupDiskPool(disk);
+        setUpDiskPool(disk);
         createUpstreamJobAndRun();
         String upstreamName = upstreamRun.getParent().getName();
         createDownstreamJobAndRun(upstreamName);
@@ -177,8 +177,8 @@ public class ExwsAllocateStepTest {
         j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
     }
 
-    private void setupDiskPool(Disk... disks) {
-        TestUtil.setupDiskPool(j.jenkins, DISK_POOL_ID, disks);
+    private void setUpDiskPool(Disk... disks) {
+        TestUtil.setUpDiskPool(j.jenkins, DISK_POOL_ID, disks);
     }
 
     private void createUpstreamJobAndRun() throws Exception {

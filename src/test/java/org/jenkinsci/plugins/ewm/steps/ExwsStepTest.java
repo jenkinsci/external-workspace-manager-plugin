@@ -60,7 +60,7 @@ public class ExwsStepTest {
 
         disk1 = new Disk(DISK_ID_ONE, "name", pathToDisk1.getPath(), "jenkins-project/disk-one");
         disk2 = new Disk(DISK_ID_TWO, "name", pathToDisk2.getPath(), "jenkins-project/disk-two");
-        setupDiskPool(j.jenkins, DISK_POOL_ID, disk1, disk2);
+        setUpDiskPool(j.jenkins, DISK_POOL_ID, disk1, disk2);
 
         diskNode1 = new DiskNode(DISK_ID_ONE, pathToDisk1.getPath());
         diskNode2 = new DiskNode(DISK_ID_TWO, pathToDisk2.getPath());
