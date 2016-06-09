@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.FreeStyleBuild;
+import hudson.model.queue.QueueTaskFuture;
 import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,7 +18,9 @@ import java.io.IOException;
 
 import static hudson.model.Result.FAILURE;
 import static java.lang.String.format;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {@link ExwsAllocateStep}.
@@ -146,7 +151,7 @@ public class ExwsAllocateStepTest {
     @Test
     public void upstreamJobHasNoActionRegistered() throws Exception {
         String jobName = "test";
-        createWorkflowJobAndRun(j.jenkins, jobName, "echo 'hello world'");
+        createWorkflowJobAndRun(jobName, "echo 'hello world'");
         createDownstreamJobAndRun(jobName);
 
         j.assertBuildStatus(FAILURE, downstreamRun);
@@ -186,10 +191,19 @@ public class ExwsAllocateStepTest {
     }
 
     private void createUpstreamJobAndRun(String diskPoolId) throws Exception {
-        upstreamRun = createWorkflowJobAndRun(j.jenkins, "upstream-job", format("exwsAllocate diskPoolId: '%s'", diskPoolId));
+        upstreamRun = createWorkflowJobAndRun("upstream-job", format("exwsAllocate diskPoolId: '%s'", diskPoolId));
     }
 
     private void createDownstreamJobAndRun(String upstreamName) throws Exception {
-        downstreamRun = createWorkflowJobAndRun(j.jenkins, "downstream-job", format("exwsAllocate upstream: '%s'", upstreamName));
+        downstreamRun = createWorkflowJobAndRun("downstream-job", format("exwsAllocate upstream: '%s'", upstreamName));
+    }
+
+    private WorkflowRun createWorkflowJobAndRun(String name, String script) throws Exception {
+        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, name);
+        job.setDefinition(new CpsFlowDefinition(script, true));
+        QueueTaskFuture<WorkflowRun> runFuture = job.scheduleBuild2(0);
+        assertThat(runFuture, notNullValue());
+
+        return runFuture.get();
     }
 }
