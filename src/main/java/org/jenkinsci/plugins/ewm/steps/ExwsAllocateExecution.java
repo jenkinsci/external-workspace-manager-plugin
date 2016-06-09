@@ -7,6 +7,7 @@ import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateAction;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -81,9 +82,14 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         } else {
             // this is the downstream job
 
-            Item upstreamJob = findUpstreamJob(upstreamName);
+            if (step.getDiskPoolId() != null) {
+                listener.getLogger().println("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
+                        "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.");
+            }
+
+            Item upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName);
             if (upstreamJob == null) {
-                throw new AbortException(format("There isn't any upstream job associated with '%s'", upstreamName));
+                throw new AbortException(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName));
             }
             Run lastStableBuild = ((Job) upstreamJob).getLastStableBuild();
             if (lastStableBuild == null) {
@@ -125,24 +131,6 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private String computePathOnDisk(String physicalPathOnDisk) {
         FilePath diskFilePath = new FilePath(new File(physicalPathOnDisk));
         return new FilePath(diskFilePath, run.getParent().getFullName() + "/" + run.getNumber()).getRemote();
-    }
-
-    /**
-     * Find the upstream job that matches the given upstream name.
-     *
-     * @param upstreamJob the upstream job name
-     * @return the upstream job with the given name if any, {@code null} otherwise
-     */
-    @CheckForNull
-    private Item findUpstreamJob(String upstreamJob) {
-        for (Object itemObject : run.getParent().getParent().getItems()) {
-            Item item = (Item) itemObject;
-            if (upstreamJob.equals(item.getName())) {
-                return item;
-            }
-        }
-
-        return null;
     }
 
     /**
