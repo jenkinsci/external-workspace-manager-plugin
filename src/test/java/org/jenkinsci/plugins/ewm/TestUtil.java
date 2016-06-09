@@ -1,21 +1,17 @@
 package org.jenkinsci.plugins.ewm;
 
-import hudson.model.queue.QueueTaskFuture;
 import hudson.util.ReflectionUtils;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep;
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.*;
-
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Utility class for tests.
@@ -32,21 +28,8 @@ public final class TestUtil {
         // do not instantiate
     }
 
-    public static WorkflowRun createWorkflowJobAndRun(Jenkins jenkins, String name, String script) throws Exception {
-        WorkflowJob job = jenkins.createProject(WorkflowJob.class, name);
-        job.setDefinition(new CpsFlowDefinition(script, true));
-        QueueTaskFuture<WorkflowRun> runFuture = job.scheduleBuild2(0);
-        assertThat(runFuture, notNullValue());
-
-        return runFuture.get();
-    }
-
-    public static void setUpDiskPool(Jenkins jenkins, String diskPoolId, Disk... disks) {
+    public static void setUpDiskPools(Jenkins jenkins, List<DiskPool> diskPools) {
         ExwsAllocateStep.DescriptorImpl descriptor = (ExwsAllocateStep.DescriptorImpl) jenkins.getDescriptor(ExwsAllocateStep.class);
-
-        List<DiskPool> diskPools = new ArrayList<>();
-        DiskPool diskPool = new DiskPool(diskPoolId, "name", "description", Arrays.asList(disks));
-        diskPools.add(diskPool);
 
         Field diskPoolsField = ReflectionUtils.findField(ExwsAllocateStep.DescriptorImpl.class, "diskPools");
         diskPoolsField.setAccessible(true);

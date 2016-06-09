@@ -1,21 +1,30 @@
 package org.jenkinsci.plugins.ewm.steps;
 
-import hudson.model.FreeStyleBuild;
+import hudson.model.queue.QueueTaskFuture;
 import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static hudson.model.Result.FAILURE;
 import static java.lang.String.format;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {@link ExwsAllocateStep}.
@@ -24,24 +33,29 @@ import static org.jenkinsci.plugins.ewm.TestUtil.*;
  */
 public class ExwsAllocateStepTest {
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-    @Rule
-    public TemporaryFolder tmp1 = new TemporaryFolder();
-    @Rule
-    public TemporaryFolder tmp2 = new TemporaryFolder();
+    @ClassRule
+    public static JenkinsRule j = new JenkinsRule();
+    @ClassRule
+    public static TemporaryFolder tmp1 = new TemporaryFolder();
+    @ClassRule
+    public static TemporaryFolder tmp2 = new TemporaryFolder();
 
-    private File pathToDisk1;
-    private File pathToDisk2;
+    private static File pathToDisk1;
+    private static File pathToDisk2;
 
-    @Before
-    public void setUpPathToDisks() throws IOException {
+    private WorkflowRun upstreamRun;
+    private WorkflowRun downstreamRun;
+
+    @BeforeClass
+    public static void setUpPathToDisks() throws IOException {
         pathToDisk1 = tmp1.newFolder("mount-to-disk-one");
         pathToDisk2 = tmp2.newFolder("mount-to-disk-two");
     }
 
-    private WorkflowRun upstreamRun;
-    private WorkflowRun downstreamRun;
+    @After
+    public void tearDown() {
+        setUpDiskPools(j.jenkins, Collections.<DiskPool>emptyList());
+    }
 
     /* ##### Tests for the upstream Job ###### */
 
@@ -129,7 +143,7 @@ public class ExwsAllocateStepTest {
         createDownstreamJobAndRun(upstreamName);
 
         j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("There isn't any upstream job associated with '%s'", upstreamName), downstreamRun);
+        j.assertLogContains(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName), downstreamRun);
     }
 
     @Test
@@ -145,22 +159,12 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void upstreamJobHasNoActionRegistered() throws Exception {
-        String jobName = "test";
-        createWorkflowJobAndRun(j.jenkins, jobName, "echo 'hello world'");
+        String jobName = randomAlphanumeric(10);
+        createWorkflowJobAndRun(jobName, "echo 'hello world'");
         createDownstreamJobAndRun(jobName);
 
         j.assertBuildStatus(FAILURE, downstreamRun);
         j.assertLogContains(format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action. Did you run exwsAllocate step in the upstream job?", jobName), downstreamRun);
-    }
-
-    @Test
-    public void upstreamBuildIsNotPipelineJob() throws Exception {
-        String jobName = "name";
-        FreeStyleBuild build = j.createFreeStyleProject(jobName).scheduleBuild2(0).get();
-        createDownstreamJobAndRun(jobName);
-
-        j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("Build '%s' is not a Pipeline job. Can't read the run actions", build), downstreamRun);
     }
 
     @Test
@@ -178,7 +182,8 @@ public class ExwsAllocateStepTest {
     }
 
     private void setUpDiskPool(Disk... disks) {
-        TestUtil.setUpDiskPool(j.jenkins, DISK_POOL_ID, disks);
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", Arrays.asList(disks));
+        TestUtil.setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }
 
     private void createUpstreamJobAndRun() throws Exception {
@@ -186,10 +191,19 @@ public class ExwsAllocateStepTest {
     }
 
     private void createUpstreamJobAndRun(String diskPoolId) throws Exception {
-        upstreamRun = createWorkflowJobAndRun(j.jenkins, "upstream-job", format("exwsAllocate diskPoolId: '%s'", diskPoolId));
+        upstreamRun = createWorkflowJobAndRun("upstream-" + randomAlphanumeric(10), format("exwsAllocate diskPoolId: '%s'", diskPoolId));
     }
 
     private void createDownstreamJobAndRun(String upstreamName) throws Exception {
-        downstreamRun = createWorkflowJobAndRun(j.jenkins, "downstream-job", format("exwsAllocate upstream: '%s'", upstreamName));
+        downstreamRun = createWorkflowJobAndRun("downstream-" + randomAlphanumeric(10), format("exwsAllocate upstream: '%s'", upstreamName));
+    }
+
+    private WorkflowRun createWorkflowJobAndRun(String name, String script) throws Exception {
+        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, name);
+        job.setDefinition(new CpsFlowDefinition(script, true));
+        QueueTaskFuture<WorkflowRun> runFuture = job.scheduleBuild2(0);
+        assertThat(runFuture, notNullValue());
+
+        return runFuture.get();
     }
 }
