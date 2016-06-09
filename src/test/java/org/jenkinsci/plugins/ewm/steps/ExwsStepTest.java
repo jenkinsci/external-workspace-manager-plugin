@@ -8,6 +8,7 @@ import hudson.util.DescribableList;
 import hudson.util.ReflectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
@@ -76,7 +77,8 @@ public class ExwsStepTest {
 
         disk1 = new Disk(DISK_ID_ONE, "name one", pathToDisk1.getPath(), "jenkins-project/disk-one");
         disk2 = new Disk(DISK_ID_TWO, "name two", pathToDisk2.getPath(), "jenkins-project/disk-two");
-        setUpDiskPool(j.jenkins, DISK_POOL_ID, disk1, disk2);
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", Arrays.asList(disk1, disk2));
+        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
 
         diskNode1 = new DiskNode(DISK_ID_ONE, pathToDisk1.getPath());
         diskNode2 = new DiskNode(DISK_ID_TWO, pathToDisk2.getPath());
