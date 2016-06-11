@@ -1,0 +1,18 @@
+<?jelly escape-by-default='true'?>
+<st:compress xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <l:main-panel>
+        <h2>${%Allocated External Workspace}</h2>
+        <p>
+            ${%Disk Pool ID:}
+            <j:out value="${it.externalWorkspace.diskPoolId}"/>
+        </p>
+        <p>
+            ${%Disk ID:}
+            <j:out value="${it.externalWorkspace.diskId}"/>
+        </p>
+        <p>
+            ${%Complete Path on Disk:}
+            <j:out value="${it.externalWorkspace.pathOnDisk}"/>
+        </p>
+    </l:main-panel>
+</st:compress>

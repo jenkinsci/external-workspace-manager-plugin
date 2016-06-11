@@ -8,19 +8,17 @@ import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.ewm.actions.ExwsAllocateAction;
+import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
+import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionWrapper;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
-import org.jenkinsci.plugins.workflow.flow.FlowExecution;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
-import javax.annotation.CheckForNull;
 import java.io.File;
 import java.util.List;
 
@@ -95,24 +93,29 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             if (lastStableBuild == null) {
                 throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
             }
-            if (!(lastStableBuild instanceof WorkflowRun)) {
-                throw new AbortException(format("Build '%s' is not a Pipeline job. Can't read the run actions", lastStableBuild));
-            }
 
-            FlowExecution flowExecution = ((WorkflowRun) lastStableBuild).getExecution();
-            if (flowExecution == null) {
-                throw new Exception("Upstream flow execution is null");
-            }
-            ExwsAllocateAction exwsAllocateAction = findAction(flowExecution.getCurrentHeads());
-            if (exwsAllocateAction == null) {
+            ExwsAllocateActionWrapper exwsActionWrapper = lastStableBuild.getAction(ExwsAllocateActionWrapper.class);
+            if (exwsActionWrapper == null) {
                 String message = format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action. Did you run exwsAllocate step in the upstream job?", upstreamName);
                 throw new AbortException(message);
             }
 
-            exws = exwsAllocateAction.getExternalWorkspace();
+            List<ExwsAllocateActionImpl> exwsAllocateActions = exwsActionWrapper.getActions(ExwsAllocateActionImpl.class);
+            if (exwsAllocateActions.size() > 1) {
+                listener.getLogger().println(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
+                        "Did you use exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName));
+            }
+
+            // this list always contains at least one element
+            exws = exwsAllocateActions.iterator().next().getExternalWorkspace();
         }
 
-        flowNode.addAction(new ExwsAllocateAction(flowNode, exws));
+        ExwsAllocateActionWrapper exwsActionWrapper = run.getAction(ExwsAllocateActionWrapper.class);
+        if (exwsActionWrapper == null) {
+            exwsActionWrapper = new ExwsAllocateActionWrapper();
+            run.addAction(exwsActionWrapper);
+        }
+        exwsActionWrapper.addAction(new ExwsAllocateActionImpl(exws));
 
         listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
@@ -131,25 +134,5 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private String computePathOnDisk(String physicalPathOnDisk) {
         FilePath diskFilePath = new FilePath(new File(physicalPathOnDisk));
         return new FilePath(diskFilePath, run.getParent().getFullName() + "/" + run.getNumber()).getRemote();
-    }
-
-    /**
-     * Iterates recursively, from bottom to top, through the list of registered flow nodes.
-     * It searches for the action of type {@link ExwsAllocateAction} and returns it.
-     *
-     * @param flowNodes the flow nodes that may contain the needed action type
-     * @return the Action registered at the exwsAllocate step, or {@code null} if not found
-     */
-    @CheckForNull
-    private static ExwsAllocateAction findAction(List<FlowNode> flowNodes) {
-        ExwsAllocateAction action = null;
-        for (FlowNode node : flowNodes) {
-            action = node.getAction(ExwsAllocateAction.class);
-            if (action == null) {
-                action = findAction(node.getParents());
-            }
-        }
-
-        return action;
     }
 }
