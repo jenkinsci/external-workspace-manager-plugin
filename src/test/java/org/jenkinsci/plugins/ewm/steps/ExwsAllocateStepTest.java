@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.queue.QueueTaskFuture;
-import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -181,9 +180,48 @@ public class ExwsAllocateStepTest {
         j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
     }
 
+    @Test
+    public void redundantParametersInTheDownstreamJob() throws Exception {
+        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
+        setUpDiskPool(disk);
+
+        createUpstreamJobAndRun();
+        String upstreamName = upstreamRun.getParent().getName();
+        downstreamRun = createWorkflowJobAndRun(randomAlphanumeric(10), format("" +
+                "exwsAllocate diskPoolId: 'any-pool', upstream: '%s'", upstreamName));
+
+        j.assertBuildStatusSuccess(upstreamRun);
+        j.assertBuildStatusSuccess(downstreamRun);
+        j.assertLogContains("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
+                "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.", downstreamRun);
+        j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), downstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
+    }
+
+    @Test
+    public void upstreamJobRegisteredMultipleActions() throws Exception {
+        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
+        DiskPool diskPool1 = new DiskPool("id1", "name", "desc", Collections.singletonList(disk));
+        DiskPool diskPool2 = new DiskPool("id2", "name", "desc", Collections.singletonList(disk));
+        setUpDiskPools(j.jenkins, Arrays.asList(diskPool1, diskPool2));
+
+        upstreamRun = createWorkflowJobAndRun(randomAlphanumeric(10), format("" +
+                " exwsAllocate diskPoolId: '%s' \n" +
+                " exwsAllocate diskPoolId: '%s' ", diskPool1.getDiskPoolId(), diskPool2.getDiskPoolId()));
+        String upstreamName = upstreamRun.getParent().getName();
+        createDownstreamJobAndRun(upstreamName);
+
+        j.assertBuildStatusSuccess(upstreamRun);
+        j.assertBuildStatusSuccess(downstreamRun);
+        j.assertLogContains(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
+                "Did you use exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName), downstreamRun);
+        j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, diskPool1.getDiskPoolId()), downstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
+    }
+
     private void setUpDiskPool(Disk... disks) {
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", Arrays.asList(disks));
-        TestUtil.setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
+        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }
 
     private void createUpstreamJobAndRun() throws Exception {
