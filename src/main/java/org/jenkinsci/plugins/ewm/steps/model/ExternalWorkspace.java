@@ -13,20 +13,20 @@ public class ExternalWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final UUID id;
+    private final String id;
     private final String diskPoolId;
     private final String diskId;
     private final String pathOnDisk;
 
     public ExternalWorkspace(@Nonnull String diskPoolId, @Nonnull String diskId, @Nonnull String pathOnDisk) {
-        this.id = UUID.randomUUID();
+        this.id = UUID.randomUUID().toString();
         this.diskPoolId = diskPoolId;
         this.diskId = diskId;
         this.pathOnDisk = pathOnDisk;
     }
 
     @Nonnull
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
