@@ -9,13 +9,11 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
-import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionWrapper;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
@@ -41,8 +39,6 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private transient Run<?, ?> run;
     @StepContextParameter
     private transient TaskListener listener;
-    @StepContextParameter
-    private transient FlowNode flowNode;
 
     @Override
     protected ExternalWorkspace run() throws Exception {
@@ -94,28 +90,31 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
                 throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
             }
 
-            ExwsAllocateActionWrapper exwsActionWrapper = lastStableBuild.getAction(ExwsAllocateActionWrapper.class);
-            if (exwsActionWrapper == null) {
-                String message = format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action. Did you run exwsAllocate step in the upstream job?", upstreamName);
+            ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
+            if (allocateAction == null) {
+                String message = format("This downstream job has to allocate the same external workspace used by the upstream job. " +
+                        "To do so, the exwsAllocate step must be called in the upstream job. " +
+                        "Please call the exwsAllocate step in the upstream job, because the build '%s' doesn't have such calls.", lastStableBuild);
                 throw new AbortException(message);
             }
 
-            List<ExwsAllocateActionImpl> exwsAllocateActions = exwsActionWrapper.getActions(ExwsAllocateActionImpl.class);
-            if (exwsAllocateActions.size() > 1) {
+            List<ExternalWorkspace> allocatedWorkspaces = allocateAction.getAllocatedWorkspaces();
+            if (allocatedWorkspaces.size() > 1) {
                 listener.getLogger().println(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
-                        "Did you use exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName));
+                        "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName));
             }
 
             // this list always contains at least one element
-            exws = exwsAllocateActions.iterator().next().getExternalWorkspace();
+            exws = allocatedWorkspaces.iterator().next();
         }
 
-        ExwsAllocateActionWrapper exwsActionWrapper = run.getAction(ExwsAllocateActionWrapper.class);
-        if (exwsActionWrapper == null) {
-            exwsActionWrapper = new ExwsAllocateActionWrapper();
-            run.addAction(exwsActionWrapper);
+        ExwsAllocateActionImpl allocateAction = run.getAction(ExwsAllocateActionImpl.class);
+        if (allocateAction == null) {
+            allocateAction = new ExwsAllocateActionImpl();
+            run.addAction(allocateAction);
         }
-        exwsActionWrapper.addAction(new ExwsAllocateActionImpl(exws));
+        allocateAction.addAllocatedWorkspace(exws);
+        run.save();
 
         listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
