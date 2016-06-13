@@ -8,19 +8,15 @@ import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.ewm.actions.ExwsAllocateAction;
+import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
-import org.jenkinsci.plugins.workflow.flow.FlowExecution;
-import org.jenkinsci.plugins.workflow.graph.FlowNode;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
-import javax.annotation.CheckForNull;
 import java.io.File;
 import java.util.List;
 
@@ -43,8 +39,6 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private transient Run<?, ?> run;
     @StepContextParameter
     private transient TaskListener listener;
-    @StepContextParameter
-    private transient FlowNode flowNode;
 
     @Override
     protected ExternalWorkspace run() throws Exception {
@@ -95,24 +89,31 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             if (lastStableBuild == null) {
                 throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
             }
-            if (!(lastStableBuild instanceof WorkflowRun)) {
-                throw new AbortException(format("Build '%s' is not a Pipeline job. Can't read the run actions", lastStableBuild));
-            }
 
-            FlowExecution flowExecution = ((WorkflowRun) lastStableBuild).getExecution();
-            if (flowExecution == null) {
-                throw new Exception("Upstream flow execution is null");
-            }
-            ExwsAllocateAction exwsAllocateAction = findAction(flowExecution.getCurrentHeads());
-            if (exwsAllocateAction == null) {
-                String message = format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action. Did you run exwsAllocate step in the upstream job?", upstreamName);
+            ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
+            if (allocateAction == null) {
+                String message = format("The upstream job '%s' must have at least one stable build with a call to the " +
+                        "exwsAllocate step in order to have a workspace usable by this job.", upstreamName);
                 throw new AbortException(message);
             }
 
-            exws = exwsAllocateAction.getExternalWorkspace();
+            List<ExternalWorkspace> allocatedWorkspaces = allocateAction.getAllocatedWorkspaces();
+            if (allocatedWorkspaces.size() > 1) {
+                listener.getLogger().println(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
+                        "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName));
+            }
+
+            // this list always contains at least one element
+            exws = allocatedWorkspaces.iterator().next();
         }
 
-        flowNode.addAction(new ExwsAllocateAction(flowNode, exws));
+        ExwsAllocateActionImpl allocateAction = run.getAction(ExwsAllocateActionImpl.class);
+        if (allocateAction == null) {
+            allocateAction = new ExwsAllocateActionImpl();
+            run.addAction(allocateAction);
+        }
+        allocateAction.addAllocatedWorkspace(exws);
+        run.save();
 
         listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
@@ -131,25 +132,5 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private String computePathOnDisk(String physicalPathOnDisk) {
         FilePath diskFilePath = new FilePath(new File(physicalPathOnDisk));
         return new FilePath(diskFilePath, run.getParent().getFullName() + "/" + run.getNumber()).getRemote();
-    }
-
-    /**
-     * Iterates recursively, from bottom to top, through the list of registered flow nodes.
-     * It searches for the action of type {@link ExwsAllocateAction} and returns it.
-     *
-     * @param flowNodes the flow nodes that may contain the needed action type
-     * @return the Action registered at the exwsAllocate step, or {@code null} if not found
-     */
-    @CheckForNull
-    private static ExwsAllocateAction findAction(List<FlowNode> flowNodes) {
-        ExwsAllocateAction action = null;
-        for (FlowNode node : flowNodes) {
-            action = node.getAction(ExwsAllocateAction.class);
-            if (action == null) {
-                action = findAction(node.getParents());
-            }
-        }
-
-        return action;
     }
 }
