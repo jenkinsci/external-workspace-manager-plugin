@@ -215,6 +215,28 @@ public class ExwsStepTest {
         assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(2));
     }
 
+    @Test
+    public void twoDifferentJobsUsingTheSameWorkspace() throws Exception {
+        setExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
+        setExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
+
+        WorkflowJob upstreamJob = createWorkflowJob();
+        WorkflowRun upstreamRun = runWorkflowJob(upstreamJob);
+        Disk allocatedDisk = findAllocatedDisk(disk1, disk2);
+
+        WorkflowJob downstreamJob = createDownstreamWorkflowJob(upstreamJob.getFullName());
+        WorkflowRun downstreamRun = runWorkflowJob(downstreamJob);
+
+        j.assertBuildStatusSuccess(upstreamRun);
+        j.assertBuildStatusSuccess(downstreamRun);
+        j.assertLogContains("Searching for disk definitions in the External Workspace Templates from Jenkins global config", downstreamRun);
+        j.assertLogContains("Searching for disk definitions in the Node config", downstreamRun);
+        j.assertLogContains(format("Running in %s/%s/%s/%d",
+                allocatedDisk.getMasterMountPoint(), allocatedDisk.getPhysicalPathOnDisk(), upstreamJob.getFullDisplayName(), upstreamRun.getNumber()), downstreamRun);
+        // The text written to file in the upstream job should be printed in the downstream job
+        j.assertLogContains("foo", downstreamRun);
+    }
+
     private static void resetTemplates() {
         setUpTemplates(Collections.<Template>emptyList());
     }
@@ -259,6 +281,19 @@ public class ExwsStepTest {
         return createWorkflowJob(script);
     }
 
+    private static WorkflowJob createDownstreamWorkflowJob(String upstreamJobName) throws IOException {
+        String script = String.format("" +
+                        " def externalWorkspace = exwsAllocate upstream: '%s' \n" +
+                        " node('test') { \n" +
+                        "   exws(externalWorkspace) { \n" +
+                        "     sh \"cat bar.txt\"\n" +
+                        "   } \n" +
+                        " } ",
+                upstreamJobName);
+
+        return createWorkflowJob(script);
+    }
+
     private static WorkflowJob createWorkflowJobWithTwoNodes() throws Exception {
         // The node labeled 'linux' writes random text to a file
         // Another node, labeled 'test', reads the file
@@ -286,9 +321,11 @@ public class ExwsStepTest {
         return job;
     }
 
-    private void runWorkflowJob(WorkflowJob job) throws ExecutionException, InterruptedException {
+    private WorkflowRun runWorkflowJob(WorkflowJob job) throws ExecutionException, InterruptedException {
         QueueTaskFuture<WorkflowRun> runFuture = job.scheduleBuild2(0);
         assertThat(runFuture, notNullValue());
         run = runFuture.get();
+
+        return run;
     }
 }
