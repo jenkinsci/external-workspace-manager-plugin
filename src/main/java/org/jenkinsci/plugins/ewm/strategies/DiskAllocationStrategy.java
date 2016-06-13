@@ -38,7 +38,7 @@ public abstract class DiskAllocationStrategy {
 
         List<Disk> disks = diskPool.getDisks();
         if (disks.isEmpty()) {
-            String message = String.format("No Disks were defined in the global config for Disk Pool '%s'", diskPoolId);
+            String message = String.format("No Disks were defined in the global config for Disk Pool ID '%s'", diskPoolId);
             throw new AbortException(message);
         }
 
