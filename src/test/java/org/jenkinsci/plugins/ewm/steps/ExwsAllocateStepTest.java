@@ -159,11 +159,13 @@ public class ExwsAllocateStepTest {
     @Test
     public void upstreamJobHasNoActionRegistered() throws Exception {
         String jobName = randomAlphanumeric(10);
-        createWorkflowJobAndRun(jobName, "echo 'hello world'");
+        upstreamRun = createWorkflowJobAndRun(jobName, "echo 'hello world'");
         createDownstreamJobAndRun(jobName);
 
         j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("The Jenkins job '%s' does not have registered any 'External Workspace Allocate' action. Did you run exwsAllocate step in the upstream job?", jobName), downstreamRun);
+        j.assertLogContains(format("This downstream job has to allocate the same external workspace used by the upstream job. " +
+                "To do so, the exwsAllocate step must be called in the upstream job. " +
+                "Please call the exwsAllocate step in the upstream job, because the build '%s' doesn't have such calls.", upstreamRun), downstreamRun);
     }
 
     @Test
@@ -214,7 +216,7 @@ public class ExwsAllocateStepTest {
         j.assertBuildStatusSuccess(upstreamRun);
         j.assertBuildStatusSuccess(downstreamRun);
         j.assertLogContains(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
-                "Did you use exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName), downstreamRun);
+                "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName), downstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, diskPool1.getDiskPoolId()), downstreamRun);
         j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
     }
