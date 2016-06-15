@@ -92,9 +92,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
             if (allocateAction == null) {
-                String message = format("This downstream job has to allocate the same external workspace used by the upstream job. " +
-                        "To do so, the exwsAllocate step must be called in the upstream job. " +
-                        "Please call the exwsAllocate step in the upstream job, because the build '%s' doesn't have such calls.", lastStableBuild);
+                String message = format("The upstream job '%s' must have at least one stable build with a call to the " +
+                        "exwsAllocate step in order to have a workspace usable by this job.", upstreamName);
                 throw new AbortException(message);
             }
 
