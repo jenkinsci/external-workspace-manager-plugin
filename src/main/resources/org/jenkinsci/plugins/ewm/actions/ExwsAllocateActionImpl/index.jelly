@@ -1,0 +1,32 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <l:layout title="${it.displayName}" norefresh="true">
+        <st:include it="${it.parent}" page="sidepanel.jelly"/>
+        <l:main-panel>
+            <j:forEach var="exws" items="${it.allocatedWorkspaces}">
+                <h2>${%Allocated External Workspace}</h2>
+                <p>
+                    ${%Disk Pool ID:}
+                    <j:out value="${exws.diskPoolId}"/>
+                </p>
+                <p>
+                    ${%Disk ID:}
+                    <j:out value="${exws.diskId}"/>
+                </p>
+                <p>
+                    ${%Complete Path on Disk:}
+                    <j:out value="${exws.pathOnDisk}"/>
+                </p>
+            </j:forEach>
+            <j:if test="${it.allocatedWorkspaces.size() > 1}">
+                <div style="color: rgba(0,0,0,.6); margin-top: 20px;">
+                    <b>NOTE:</b> In this run, the <b><i>exwsAllocate</i></b> step was called multiple times,
+                    therefore multiple External Workspace allocations have been registered.
+                    If this Jenkins job is referenced from another job by calling
+                    <b><i>exwsAllocate upstream: '$THIS_JOB'</i></b>, then the downstream job
+                    will use the first allocated Workspace from this list.
+                </div>
+            </j:if>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

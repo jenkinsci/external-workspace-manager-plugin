@@ -3,8 +3,12 @@ package org.jenkinsci.plugins.ewm.steps;
 import com.google.inject.Inject;
 import hudson.AbortException;
 import hudson.FilePath;
+import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
@@ -38,7 +42,9 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
     @Override
     protected ExternalWorkspace run() throws Exception {
-        if (step.getUpstream() == null) {
+        ExternalWorkspace exws;
+        String upstreamName = step.getUpstream();
+        if (upstreamName == null) {
             // this is the upstream job
 
             String diskPoolId = step.getDiskPoolId();
@@ -66,17 +72,53 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             }
 
             String pathOnDisk = computePathOnDisk(physicalPathOnDisk);
-            ExternalWorkspace exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
-
-            listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
-            listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
-
-            return exws;
+            exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
         } else {
             // this is the downstream job
-            // TODO implement
-            return null;
+
+            if (step.getDiskPoolId() != null) {
+                listener.getLogger().println("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
+                        "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.");
+            }
+
+            Item upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName);
+            if (upstreamJob == null) {
+                throw new AbortException(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName));
+            }
+            Run lastStableBuild = ((Job) upstreamJob).getLastStableBuild();
+            if (lastStableBuild == null) {
+                throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
+            }
+
+            ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
+            if (allocateAction == null) {
+                String message = format("The upstream job '%s' must have at least one stable build with a call to the " +
+                        "exwsAllocate step in order to have a workspace usable by this job.", upstreamName);
+                throw new AbortException(message);
+            }
+
+            List<ExternalWorkspace> allocatedWorkspaces = allocateAction.getAllocatedWorkspaces();
+            if (allocatedWorkspaces.size() > 1) {
+                listener.getLogger().println(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
+                        "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName));
+            }
+
+            // this list always contains at least one element
+            exws = allocatedWorkspaces.iterator().next();
         }
+
+        ExwsAllocateActionImpl allocateAction = run.getAction(ExwsAllocateActionImpl.class);
+        if (allocateAction == null) {
+            allocateAction = new ExwsAllocateActionImpl();
+            run.addAction(allocateAction);
+        }
+        allocateAction.addAllocatedWorkspace(exws);
+        run.save();
+
+        listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
+        listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
+
+        return exws;
     }
 
     /**
