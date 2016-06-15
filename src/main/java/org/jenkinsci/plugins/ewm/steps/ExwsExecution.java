@@ -53,7 +53,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
             throw new Exception("The node is not live due to some unexpected conditions: the node might have been taken offline, or may have been removed");
         }
 
-        listener.getLogger().println("Searching for disk definitions in the External Workspace Templates from Jenkins global config.");
+        listener.getLogger().println("Searching for disk definitions in the External Workspace Templates from Jenkins global config");
         Template template = findTemplate(exws.getDiskPoolId(), node.getLabelString(), step.getDescriptor().getTemplates());
         List<DiskNode> diskNodes;
         if (template != null) {

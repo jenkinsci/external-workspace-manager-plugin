@@ -57,13 +57,13 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             Disk disk = allocationStrategy.allocateDisk();
 
             String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
-            if (physicalPathOnDisk == null) {
-                String message = format("Physical path on disk was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
-                throw new AbortException(message);
-            }
             String diskId = disk.getDiskId();
             if (diskId == null) {
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
+                throw new AbortException(message);
+            }
+            if (physicalPathOnDisk == null) {
+                String message = format("Physical path on disk was not provided in the Jenkins global config for Disk ID: '%s', within Disk Pool ID '%s'", diskId, diskPoolId);
                 throw new AbortException(message);
             }
             if (!isRelativePath(physicalPathOnDisk)) {

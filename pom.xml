@@ -17,6 +17,7 @@
         <jenkins.version>1.642.3</jenkins.version>
         <java.level>7</java.level>
         <jenkins-test-harness.version>2.1</jenkins-test-harness.version>
+        <workflow.version>1.15</workflow.version>
     </properties>
 
     <name>External Workspace Manager Plugin</name>
@@ -61,7 +62,14 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
-            <version>1.15</version>
+            <version>${workflow.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-aggregator</artifactId>
+            <version>${workflow.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
