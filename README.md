@@ -103,6 +103,9 @@ In the node labeled test we have defined the local path to _disk1_ as: _/mount-f
 By applying the `exws` step, our tests will be able to run in the same workspace as the build. 
 Therefore, the path is: _/mount-from-test-node/to/disk-one/jenkins-project/disk1/integration/14_.
 
+**Demo 1. Workspace reuse in same job**
+![Example one demo](doc/gifs/demo1-workspace-reuse-in-same-job.gif)
+
 ##### Example two
 
 Let’s assume that we have two Jenkins jobs, one called _upstream_ and the other one called _downstream_.
@@ -169,3 +172,9 @@ Let’s assume that the last stable build number is _12_, then the resulting pat
 The `exws` step concatenates the node’s local path with the path returned by the `exwsAllocate` step in stage 3.
 In this scenario, the complete path for running tests is: _/mount-from-test-node/to/disk-one/jenkins-project/disk1/upstream/12_.
 It will reuse the workspace defined in the _upstream_ job.
+
+**Demo 2. Upstream job**
+![Example two upstream](doc/gifs/demo2-upstream-job.gif)
+
+**Demo 2. Downstream job**
+![Example two downstream](doc/gifs/demo2-downstream-job.gif)
