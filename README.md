@@ -10,6 +10,9 @@ It eliminates the need to copy, archive or move files.
 1. [Current status](#current-status)
 1. [Design document](#design-document)
 1. [Prerequisites](#prerequisites)
+    2. [External Workspace Definitions](#external-workspace-definitions)
+    2. [Node Properties](#node-properties)
+    2. [External Workspace Templates](#external-workspace-templates)
 1. [Basic usage](#basic-usage)
     2. [Example one](#example-one)
     2. [Example two](#example-two)
@@ -25,21 +28,39 @@ The design document may be accessed [here](https://docs.google.com/document/d/1y
 ### Prerequisites
 A set of prerequisites needs to be set to have this plugin usable.
 
- - One ore many physical disks accessible from Jenkins Master, most commonly via mounting points. 
+ - One ore more physical disks accessible from Jenkins Master, most commonly via mounting points.
 The disks may also be shared directories via NFS or Samba.
  - The same disks must be accessible from Jenkins Nodes.
- - In the Jenkins global configuration, we need to define a Disk Pool (or many) that will contain the physical disks. 
+
+##### External Workspace Definitions
+
+In the Jenkins global configuration, we need to define a Disk Pool (or more) that will contain the physical disks.
 An example of such config is shown in the following image:
 
 ![External Workspace Definitions](doc/images/external-workspace-definitions.png)
 
- - In each Node configuration, we have to define the mounting point from the current node to each disk. 
-Let's assume that we have two nodes, one labeled _linux_, and the other one labeled _test_. 
+##### Node Properties
+
+In each Node configuration, we have to define the mounting point from the current node to each disk.
+Let's assume that we have two nodes, one labeled _linux_, and the other one labeled _test_.
 A common node configuration is shown below:
 
 ![Linux Node Properties](doc/images/linux-node-config.png)
 ___
 ![Test Node Properties](doc/images/test-node-config.png)
+
+##### External Workspace Templates
+
+There may be cases when you have more than one Node with the same label.
+Instead of specifying the same External Workspace Node properties for multiple Nodes that share the same label,
+you can make use of the _External Workspace Templates_ from the Jenkins global config.
+
+Below is an example of such config.
+All the Nodes that are labeled _linux_ will use the properties that are defined in this config.
+When the `exws` step is called, it will firstly try to find a matching in the External Workspace Templates for a given disk.
+If no entries are defined, it will fallback to External Workspace properties from the Node config.
+
+![External Workspace Templates](doc/images/external-workspace-templates.png)
 
 ### Basic usage
 
@@ -47,7 +68,7 @@ This plugin is currently written for Pipeline jobs, so the examples are for Pipe
 
 ##### Example one
 
-Let’s assume that we have one Pipeline job. 
+Let’s assume that we have one Pipeline job.
 In this job, we want to have the same workspace available from multiple Jenkins nodes.
 
 ```groovy
@@ -100,7 +121,7 @@ So, the complete workspace path is: _/mount-from-linux-node/to/disk-one/jenkins-
 Further, we want to run our tests on a different node, but we want to reuse the previously created workspace.
 
 In the node labeled test we have defined the local path to _disk1_ as: _/mount-from-test-node/to/disk-one_.
-By applying the `exws` step, our tests will be able to run in the same workspace as the build. 
+By applying the `exws` step, our tests will be able to run in the same workspace as the build.
 Therefore, the path is: _/mount-from-test-node/to/disk-one/jenkins-project/disk1/integration/14_.
 
 **Demo 1. Workspace reuse in same job**
@@ -110,7 +131,7 @@ Therefore, the path is: _/mount-from-test-node/to/disk-one/jenkins-project/disk1
 
 Let’s assume that we have two Jenkins jobs, one called _upstream_ and the other one called _downstream_.
 In the _upstream_ job, we clone the repository and build the project, and in the _downstream_ job we run the tests.
-In the _downstream_ job we don’t want to clone and re-build the project, we need to use the same workspace created in 
+In the _downstream_ job we don’t want to clone and re-build the project, we need to use the same workspace created in
 the _upstream_ job.
 We have to be able to do so without copying the workspace content from one location to another.
 
@@ -162,7 +183,7 @@ The final workspace path is: _/mount-from-linux-node/to/disk-one/jenkins-project
 
 ###### Stage 3. Allocate workspace in the downstream job
 
-By passing the `upstream` parameter to the `exwsAllocate` step, it selects the most recent stable upstream 
+By passing the `upstream` parameter to the `exwsAllocate` step, it selects the most recent stable upstream
 workspace (default behavior).
 The workspace path pattern is like this: _physicalPathOnDisk/$UPSTREAM_NAME/$MOST_RECENT_STABLE_BUILD_.
 Let’s assume that the last stable build number is _12_, then the resulting path is: _jenkins-project/disk1/upstream/12_.
