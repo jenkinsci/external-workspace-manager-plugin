@@ -11,8 +11,7 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-import static hudson.Util.fixEmptyAndTrim;
-import static hudson.Util.isRelativePath;
+import static hudson.Util.*;
 import static hudson.util.FormValidation.validateRequired;
 
 /**
@@ -32,7 +31,7 @@ public class Disk implements Describable<Disk> {
         this.diskId = fixEmptyAndTrim(diskId);
         this.name = fixEmptyAndTrim(name);
         this.masterMountPoint = fixEmptyAndTrim(masterMountPoint);
-        this.physicalPathOnDisk = fixEmptyAndTrim(physicalPathOnDisk);
+        this.physicalPathOnDisk = fixNull(physicalPathOnDisk).trim();
     }
 
     @Override
@@ -47,7 +46,7 @@ public class Disk implements Describable<Disk> {
 
     @CheckForNull
     public String getName() {
-        return name;
+        return name != null ? name : diskId;
     }
 
     @CheckForNull
@@ -55,7 +54,7 @@ public class Disk implements Describable<Disk> {
         return masterMountPoint;
     }
 
-    @CheckForNull
+    @Nonnull
     public String getPhysicalPathOnDisk() {
         return physicalPathOnDisk;
     }
@@ -73,15 +72,11 @@ public class Disk implements Describable<Disk> {
             return validateRequired(value);
         }
 
-        public FormValidation doCheckName(@QueryParameter String value) {
-            return validateRequired(value);
-        }
-
         public FormValidation doCheckPhysicalPathOnDisk(@QueryParameter String value) {
             if (!isRelativePath(value)) {
                 return FormValidation.error("Must be a relative path");
             }
-            return validateRequired(value);
+            return FormValidation.ok();
         }
 
         @Nonnull

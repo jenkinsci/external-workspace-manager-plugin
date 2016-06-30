@@ -3,7 +3,7 @@
     <f:entry title="${%Disk ID}" field="diskId">
         <f:textbox/>
     </f:entry>
-    <f:entry title="${%Name}" field="name">
+    <f:entry title="${%Display Name}" field="name">
         <f:textbox/>
     </f:entry>
     <f:entry title="${%Master mount point}" field="masterMountPoint">

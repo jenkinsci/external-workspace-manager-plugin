@@ -3,7 +3,7 @@
     <f:entry title="${%Disk Pool Ref ID}" field="diskPoolRefId">
         <f:textbox/>
     </f:entry>
-    <f:entry title="${%Label}" field="label">
+    <f:entry title="${%Node Label}" field="label">
         <f:textbox/>
     </f:entry>
     <f:entry>

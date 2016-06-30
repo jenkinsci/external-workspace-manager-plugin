@@ -107,8 +107,9 @@ public class ExwsAllocateStepTest {
         setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", ""));
         createUpstreamJobAndRun();
 
-        j.assertBuildStatus(FAILURE, upstreamRun);
-        j.assertLogContains(format("Physical path on disk was not provided in the Jenkins global config for Disk ID: '%s', within Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), upstreamRun);
+        j.assertBuildStatusSuccess(upstreamRun);
+        j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), upstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s/%d", upstreamRun.getParent().getFullDisplayName(), upstreamRun.getNumber()), upstreamRun);
     }
 
     @Test

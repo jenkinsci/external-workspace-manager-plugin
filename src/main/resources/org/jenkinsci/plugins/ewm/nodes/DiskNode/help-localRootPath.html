@@ -1,3 +1,10 @@
 <div>
-    The mounting point from this node to the actual disk.
+    <p>
+        The mounting point (via NFS, Samba, etc.) from Jenkins Node to the actual disk.
+    </p>
+    <p>
+        This parameter is used to compute the complete workspace path within a Node.
+        When the complete workspace path is computed, it follows the following pattern:
+        <i>/localRootPath/physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>
+    </p>
 </div>

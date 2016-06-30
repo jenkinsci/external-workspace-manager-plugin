@@ -49,7 +49,7 @@ public class DiskPool implements Describable<DiskPool> {
 
     @CheckForNull
     public String getName() {
-        return name;
+        return name != null ? name : diskPoolId;
     }
 
     @CheckForNull
@@ -68,10 +68,6 @@ public class DiskPool implements Describable<DiskPool> {
     public static class DescriptorImpl extends Descriptor<DiskPool> {
 
         public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
-            return validateRequired(value);
-        }
-
-        public FormValidation doCheckName(@QueryParameter String value) {
             return validateRequired(value);
         }
 
