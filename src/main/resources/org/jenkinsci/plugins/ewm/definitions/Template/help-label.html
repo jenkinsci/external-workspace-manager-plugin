@@ -1,17 +1,10 @@
 <div>
     <p>
-        If you have multiple Nodes that share the same label, you can make use of this template to provide a common
-        External Workspace config for all the nodes.
-        Instead of specifying in each Node config the <i>Disk ID</i> and the <i>Local root path</i> parameters,
-        they can be provided globally in the <i>External Workspace Templates</i>.
+        When the actual Node label (in the Node configuration) matches the <i>Node label</i> in this <i>External
+        Workspace Template</i>, then the disks in this template are used by the plugin.
     </p>
     <p>
-        <b>Note:</b> If you specify the <i>Disk ID</i> and the <i>Local root path</i> in the
-        <i>External Workspace Templates</i> for a specific Node label, then these parameters will be taken
-        into consideration by the plugin.
-        If the parameters are also provided in a Node config having the given label, then the parameters from the
-        Node config will be ignored.
-        But, if these two parameters are not provided in the <i>External Workspace Templates</i>,
-        they must be mandatory provided in each Node config.
+        Otherwise you must configure a disk in the Node configuration page under <i>Node Properties</i>, <i>External
+        Workspace</i>.
     </p>
 </div>
