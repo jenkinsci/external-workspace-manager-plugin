@@ -2,11 +2,18 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import com.google.inject.Inject;
 import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.model.Item;
+import hudson.model.AbstractBuild;
 import hudson.model.Job;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.copyartifact.BuildFilter;
+import hudson.plugins.copyartifact.BuildSelector;
+import hudson.plugins.copyartifact.ParametersBuildFilter;
+import hudson.plugins.copyartifact.StatusBuildSelector;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
@@ -18,6 +25,7 @@ import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepEx
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static hudson.Util.isRelativePath;
@@ -31,6 +39,7 @@ import static java.lang.String.format;
 public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExecution<ExternalWorkspace> {
 
     private static final long serialVersionUID = 1L;
+    private static final BuildSelector DEFAULT_BUILD_SELECTOR = new StatusBuildSelector(true);
 
     @Inject(optional = true)
     private transient ExwsAllocateStep step;
@@ -76,21 +85,32 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         } else {
             // this is the downstream job
 
+            BuildSelector selector = step.getSelector();
+            if (selector == null) {
+                listener.getLogger().println(format("No selector provided. Using the default build selector: %s", DEFAULT_BUILD_SELECTOR.getDescriptor().getDisplayName()));
+                selector = DEFAULT_BUILD_SELECTOR;
+            }
+
             if (step.getDiskPoolId() != null) {
                 listener.getLogger().println("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
                         "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.");
             }
 
-            Item upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName);
+            Job<?, ?> upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName, Job.class);
             if (upstreamJob == null) {
                 throw new AbortException(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName));
             }
-            Run lastStableBuild = ((Job) upstreamJob).getLastStableBuild();
-            if (lastStableBuild == null) {
-                throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
+
+            EnvVars envVars = getEnvVars();
+            String parameters = step.getParameters();
+            BuildFilter buildFilter = parameters != null ? new ParametersBuildFilter(envVars.expand(parameters)) : new BuildFilter();
+
+            Run<?, ?> upstreamBuild = selector.getBuild(upstreamJob, envVars, buildFilter, run);
+            if (upstreamBuild == null) {
+                throw new AbortException(format("Unable to find a build within upstream job '%s'", upstreamName));
             }
 
-            ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
+            ExwsAllocateActionImpl allocateAction = upstreamBuild.getAction(ExwsAllocateActionImpl.class);
             if (allocateAction == null) {
                 String message = format("The upstream job '%s' must have at least one stable build with a call to the " +
                         "exwsAllocate step in order to have a workspace usable by this job.", upstreamName);
@@ -119,6 +139,28 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
 
         return exws;
+    }
+
+    /**
+     * Gets the environment variables based on the current run.
+     *
+     * @return the {@link EnvVars} for the current run
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private EnvVars getEnvVars() throws IOException, InterruptedException {
+        EnvVars envVars = run.getEnvironment(listener);
+        if (run instanceof AbstractBuild) {
+            envVars.overrideAll(((AbstractBuild<?, ?>) run).getBuildVariables());
+        } else {
+            for (ParametersAction pa : run.getActions(ParametersAction.class)) {
+                for (ParameterValue pv : pa.getParameters()) {
+                    pv.buildEnvironment(run, envVars);
+                }
+            }
+        }
+
+        return envVars;
     }
 
     /**

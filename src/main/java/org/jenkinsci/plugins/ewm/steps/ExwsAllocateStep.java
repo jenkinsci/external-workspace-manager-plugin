@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
+import hudson.plugins.copyartifact.BuildSelector;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -27,6 +28,8 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
     private final String diskPoolId;
     private String upstream;
+    private BuildSelector selector;
+    private String parameters;
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
@@ -46,6 +49,26 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @DataBoundSetter
     public void setUpstream(String upstream) {
         this.upstream = fixEmptyAndTrim(upstream);
+    }
+
+    @CheckForNull
+    public BuildSelector getSelector() {
+        return selector;
+    }
+
+    @DataBoundSetter
+    public void setSelector(BuildSelector selector) {
+        this.selector = selector;
+    }
+
+    @CheckForNull
+    public String getParameters() {
+        return parameters;
+    }
+
+    @DataBoundSetter
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     @Override
