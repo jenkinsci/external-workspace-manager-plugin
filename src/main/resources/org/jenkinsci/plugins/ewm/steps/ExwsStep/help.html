@@ -1,0 +1,20 @@
+<div>
+    Based on the input parameter, it defines the local path to the workspace, and switches to it.
+    The complete workspace path follows the pattern:
+    <p>
+        <i>/localRootPath/physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>
+    </p>
+    where
+    <ul>
+        <li>
+            <i>localRootPath</i> is defined either in the Node configuration, External Workspace section, or in the
+            Jenkins global config, the <i>External Workspace Template</i> section. Firstly it searches for the disk
+            definition in the Jenkins global config (the <i>Template</i> lookup is done based on the <i>Node
+            label</i> parameter), then it fallbacks to searching in the Node configuration.
+        </li>
+        <li>
+            <i>physicalPathOnDisk</i> is defined in the Jenkins global config, the <i>External Workspace Definitions</i>
+            section.
+        </li>
+    </ul>
+</div>

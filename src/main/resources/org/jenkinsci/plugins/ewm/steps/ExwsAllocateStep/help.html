@@ -1,0 +1,14 @@
+<div>
+    <p>
+        Allocates a disk from the given <i>Disk Pool Ref ID</i>. By default, the disk with the most available space
+        is selected. On that disk, it computes the workspace path based on the formula:
+        <i>physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>,
+        where <i>physicalPathOnDisk</i> is defined in the Jenkins global config, <i>External Workspace Definitions</i>
+        section.
+    </p>
+    <p>
+        If you provide the <i>Upstream</i> parameter, then the <i>Disk Pool Ref ID</i> parameter will be ignored. In
+        this case, the step will allocate the same workspace as used by its upstream job. By default, it will select
+        the workspace used by the last stable build from the upstream job.
+    </p>
+</div>
