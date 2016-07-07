@@ -1,10 +1,12 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
-import hudson.plugins.copyartifact.BuildSelector;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.runselector.filters.RunFilter;
+import org.jenkinsci.plugins.runselector.filters.RunFilterDescriptor;
+import org.jenkinsci.plugins.runselector.selectors.RunSelector;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -28,8 +30,9 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
     private final String diskPoolId;
     private String upstream;
-    private BuildSelector selector;
-    private String parameters;
+    private RunSelector selector;
+    private RunFilter runFilter;
+    private boolean verbose;
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
@@ -52,23 +55,32 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     }
 
     @CheckForNull
-    public BuildSelector getSelector() {
+    public RunSelector getSelector() {
         return selector;
     }
 
     @DataBoundSetter
-    public void setSelector(BuildSelector selector) {
+    public void setSelector(RunSelector selector) {
         this.selector = selector;
     }
 
     @CheckForNull
-    public String getParameters() {
-        return parameters;
+    public RunFilter getRunFilter() {
+        return runFilter;
     }
 
     @DataBoundSetter
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
+    public void setRunFilter(RunFilter runFilter) {
+        this.runFilter = runFilter;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    @DataBoundSetter
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override
@@ -91,6 +103,10 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
             diskPools = req.bindJSONToList(DiskPool.class, formData.get("diskPools"));
             save();
             return super.configure(req, formData);
+        }
+
+        public List<RunFilterDescriptor> getRunFilterDescriptorList() {
+            return RunFilter.allWithNoRunFilter();
         }
 
         @Nonnull

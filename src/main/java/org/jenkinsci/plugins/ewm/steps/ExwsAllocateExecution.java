@@ -10,10 +10,6 @@ import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.copyartifact.BuildFilter;
-import hudson.plugins.copyartifact.BuildSelector;
-import hudson.plugins.copyartifact.ParametersBuildFilter;
-import hudson.plugins.copyartifact.StatusBuildSelector;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
@@ -21,6 +17,9 @@ import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
+import org.jenkinsci.plugins.runselector.context.RunSelectorPickContext;
+import org.jenkinsci.plugins.runselector.selectors.RunSelector;
+import org.jenkinsci.plugins.runselector.selectors.StatusRunSelector;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
@@ -39,7 +38,7 @@ import static java.lang.String.format;
 public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExecution<ExternalWorkspace> {
 
     private static final long serialVersionUID = 1L;
-    private static final BuildSelector DEFAULT_BUILD_SELECTOR = new StatusBuildSelector(true);
+    private static final RunSelector DEFAULT_RUN_SELECTOR = new StatusRunSelector(StatusRunSelector.BuildStatus.Stable);
 
     @Inject(optional = true)
     private transient ExwsAllocateStep step;
@@ -85,10 +84,10 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         } else {
             // this is the downstream job
 
-            BuildSelector selector = step.getSelector();
+            RunSelector selector = step.getSelector();
             if (selector == null) {
-                listener.getLogger().println(format("No selector provided. Using the default build selector: %s", DEFAULT_BUILD_SELECTOR.getDescriptor().getDisplayName()));
-                selector = DEFAULT_BUILD_SELECTOR;
+                listener.getLogger().println(format("No selector provided. Using the default build selector: %s", DEFAULT_RUN_SELECTOR.getDescriptor().getDisplayName()));
+                selector = DEFAULT_RUN_SELECTOR;
             }
 
             if (step.getDiskPoolId() != null) {
@@ -102,10 +101,19 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             }
 
             EnvVars envVars = getEnvVars();
-            String parameters = step.getParameters();
-            BuildFilter buildFilter = parameters != null ? new ParametersBuildFilter(envVars.expand(parameters)) : new BuildFilter();
+            RunSelectorPickContext context = new RunSelectorPickContext();
+            context.setJenkins(Jenkins.getInstance());
+            context.setCopierBuild(run);
+            context.setListener(listener);
+            context.setEnvVars(envVars);
+            context.setVerbose(step.isVerbose());
 
-            Run<?, ?> upstreamBuild = selector.getBuild(upstreamJob, envVars, buildFilter, run);
+            String jobName = envVars.expand(upstreamName);
+            context.setProjectName(jobName);
+            context.setRunFilter(step.getRunFilter());
+
+            Run<?, ?> upstreamBuild = selector.pickBuildToCopyFrom(upstreamJob, context);
+
             if (upstreamBuild == null) {
                 throw new AbortException(format("Unable to find a build within upstream job '%s'", upstreamName));
             }
