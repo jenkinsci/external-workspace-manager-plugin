@@ -153,7 +153,7 @@ public class ExwsAllocateStepTest {
 
         j.assertBuildStatus(FAILURE, upstreamRun);
         j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("'%s' doesn't have any stable build", upstreamName), downstreamRun);
+        j.assertLogContains(format("Unable to find a build within upstream job '%s'", upstreamName), downstreamRun);
     }
 
     @Test

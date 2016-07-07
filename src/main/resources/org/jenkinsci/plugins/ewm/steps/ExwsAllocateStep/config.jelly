@@ -4,6 +4,12 @@
         <f:textbox/>
     </f:entry>
     <f:entry title="Upstream" field="upstream">
-        <f:textbox />
+        <f:textbox/>
     </f:entry>
+    <f:entry field="verbose">
+        <f:checkbox title="${%Debug output}" />
+    </f:entry>
+    <f:dropdownDescriptorSelector title="${%Which build}" field="selector"/>
+    <f:dropdownDescriptorSelector title="${%Run filter}" field="runFilter"
+                                  descriptors="${descriptor.runFilterDescriptorList}"/>
 </j:jelly>
