@@ -18,6 +18,8 @@ import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
 import org.jenkinsci.plugins.runselector.context.RunSelectorPickContext;
+import org.jenkinsci.plugins.runselector.filters.NoRunFilter;
+import org.jenkinsci.plugins.runselector.filters.RunFilter;
 import org.jenkinsci.plugins.runselector.selectors.RunSelector;
 import org.jenkinsci.plugins.runselector.selectors.StatusRunSelector;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
@@ -110,7 +112,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             String jobName = envVars.expand(upstreamName);
             context.setProjectName(jobName);
-            context.setRunFilter(step.getRunFilter());
+            RunFilter runFilter = step.getRunFilter() != null ? step.getRunFilter() : new NoRunFilter();
+            context.setRunFilter(runFilter);
 
             Run<?, ?> upstreamBuild = selector.pickBuildToCopyFrom(upstreamJob, context);
 
