@@ -37,7 +37,7 @@ The disks may also be shared directories via NFS or Samba.
 In the Jenkins global configuration, we need to define a Disk Pool (or more) that will contain the physical disks.
 An example of such config is shown in the following image:
 
-![External Workspace Definitions](doc/images/external-workspace-definitions.png)
+![External Workspace Definitions](doc/img/external-workspace-definitions.png)
 
 ##### Node Properties
 
@@ -45,9 +45,9 @@ In each Node configuration, we have to define the mounting point from the curren
 Let's assume that we have two nodes, one labeled _linux_, and the other one labeled _test_.
 A common node configuration is shown below:
 
-![Linux Node Properties](doc/images/linux-node-config.png)
+![Linux Node Properties](doc/img/linux-node-config.png)
 ___
-![Test Node Properties](doc/images/test-node-config.png)
+![Test Node Properties](doc/img/test-node-config.png)
 
 ##### External Workspace Templates
 
@@ -60,7 +60,7 @@ All the Nodes that are labeled _linux_ will use the properties that are defined 
 When the `exws` step is called, it will firstly try to find a matching in the External Workspace Templates for a given disk.
 If no entries are defined, it will fallback to External Workspace properties from the Node config.
 
-![External Workspace Templates](doc/images/external-workspace-templates.png)
+![External Workspace Templates](doc/img/external-workspace-templates.png)
 
 ### Basic usage
 
@@ -125,7 +125,7 @@ By applying the `exws` step, our tests will be able to run in the same workspace
 Therefore, the path is: _/mount-from-test-node/to/disk-one/jenkins-project/disk1/integration/14_.
 
 **Demo 1. Workspace reuse in same job**
-![Example one demo](doc/gifs/demo1-workspace-reuse-in-same-job.gif)
+![Example one demo](doc/gif/demo1-workspace-reuse-in-same-job.gif)
 
 ##### Example two
 
@@ -195,7 +195,7 @@ In this scenario, the complete path for running tests is: _/mount-from-test-node
 It will reuse the workspace defined in the _upstream_ job.
 
 **Demo 2. Upstream job**
-![Example two upstream](doc/gifs/demo2-upstream-job.gif)
+![Example two upstream](doc/gif/demo2-upstream-job.gif)
 
 **Demo 2. Downstream job**
-![Example two downstream](doc/gifs/demo2-downstream-job.gif)
+![Example two downstream](doc/gif/demo2-downstream-job.gif)
