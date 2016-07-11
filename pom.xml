@@ -64,6 +64,12 @@
             <artifactId>workflow-step-api</artifactId>
             <version>${workflow.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>ws-cleanup</artifactId>
+            <version>0.29</version>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
