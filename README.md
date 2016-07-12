@@ -16,6 +16,7 @@ It eliminates the need to copy, archive or move files.
 1. [Basic usage](#basic-usage)
     2. [Example one](#example-one)
     2. [Example two](#example-two)
+1. [Workspace cleanup](doc/WORKSPACE_CLEANUP.md)
 
 ### Current status
 
