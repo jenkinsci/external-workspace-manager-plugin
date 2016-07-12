@@ -3,11 +3,8 @@ package org.jenkinsci.plugins.ewm.steps;
 import com.google.inject.Inject;
 import hudson.AbortException;
 import hudson.FilePath;
-import hudson.model.Item;
-import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -44,7 +41,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     protected ExternalWorkspace run() throws Exception {
         ExternalWorkspace exws;
         String upstreamName = step.getUpstream();
-        if (upstreamName == null) {
+        if (step.getSelectedRun() == null) {
             // this is the upstream job
 
             String diskPoolId = step.getDiskPoolId();
@@ -77,21 +74,27 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             // this is the downstream job
 
             if (step.getDiskPoolId() != null) {
+                // TODO change error message
                 listener.getLogger().println("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
                         "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.");
             }
 
-            Item upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName);
-            if (upstreamJob == null) {
-                throw new AbortException(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName));
-            }
-            Run lastStableBuild = ((Job) upstreamJob).getLastStableBuild();
+            // TODO remove this
+//            Item upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName);
+//            if (upstreamJob == null) {
+//                throw new AbortException(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName));
+//            }
+
+            // TODO - rename variables
+            Run lastStableBuild = step.getSelectedRun().getRawBuild(); //((Job) upstreamJob).getLastStableBuild();
             if (lastStableBuild == null) {
+                // TODO rename err message
                 throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
             }
 
             ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
             if (allocateAction == null) {
+                // TODO change err message
                 String message = format("The upstream job '%s' must have at least one stable build with a call to the " +
                         "exwsAllocate step in order to have a workspace usable by this job.", upstreamName);
                 throw new AbortException(message);

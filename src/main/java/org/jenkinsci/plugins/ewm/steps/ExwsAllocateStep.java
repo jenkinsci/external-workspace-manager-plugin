@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
+import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -27,6 +28,16 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
     private final String diskPoolId;
     private String upstream;
+    private RunWrapper selectedRun;
+
+    public RunWrapper getSelectedRun() {
+        return selectedRun;
+    }
+
+    @DataBoundSetter
+    public void setSelectedRun(RunWrapper selectedRun) {
+        this.selectedRun = selectedRun;
+    }
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
