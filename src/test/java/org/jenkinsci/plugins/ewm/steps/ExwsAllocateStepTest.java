@@ -1,10 +1,8 @@
 package org.jenkinsci.plugins.ewm.steps;
 
-import hudson.model.queue.QueueTaskFuture;
+import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -20,10 +18,7 @@ import java.util.Collections;
 
 import static hudson.model.Result.FAILURE;
 import static java.lang.String.format;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.*;
-import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {@link ExwsAllocateStep}.
@@ -158,8 +153,8 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void upstreamJobHasNoActionRegistered() throws Exception {
-        String jobName = randomAlphanumeric(10);
-        upstreamRun = createWorkflowJobAndRun(jobName, "echo 'hello world'");
+        upstreamRun = createWorkflowJobAndRun("echo 'hello world'");
+        String jobName = upstreamRun.getParent().getFullName();
         createDownstreamJobAndRun(jobName);
 
         j.assertBuildStatus(FAILURE, downstreamRun);
@@ -188,7 +183,7 @@ public class ExwsAllocateStepTest {
 
         createUpstreamJobAndRun();
         String upstreamName = upstreamRun.getParent().getName();
-        downstreamRun = createWorkflowJobAndRun(randomAlphanumeric(10), format("" +
+        downstreamRun = createWorkflowJobAndRun(format("" +
                 "exwsAllocate diskPoolId: 'any-pool', upstream: '%s'", upstreamName));
 
         j.assertBuildStatusSuccess(upstreamRun);
@@ -206,7 +201,7 @@ public class ExwsAllocateStepTest {
         DiskPool diskPool2 = new DiskPool("id2", "name", "desc", Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Arrays.asList(diskPool1, diskPool2));
 
-        upstreamRun = createWorkflowJobAndRun(randomAlphanumeric(10), format("" +
+        upstreamRun = createWorkflowJobAndRun(format("" +
                 " exwsAllocate diskPoolId: '%s' \n" +
                 " exwsAllocate diskPoolId: '%s' ", diskPool1.getDiskPoolId(), diskPool2.getDiskPoolId()));
         String upstreamName = upstreamRun.getParent().getName();
@@ -230,19 +225,14 @@ public class ExwsAllocateStepTest {
     }
 
     private void createUpstreamJobAndRun(String diskPoolId) throws Exception {
-        upstreamRun = createWorkflowJobAndRun("upstream-" + randomAlphanumeric(10), format("exwsAllocate diskPoolId: '%s'", diskPoolId));
+        upstreamRun = createWorkflowJobAndRun(format("exwsAllocate diskPoolId: '%s'", diskPoolId));
     }
 
     private void createDownstreamJobAndRun(String upstreamName) throws Exception {
-        downstreamRun = createWorkflowJobAndRun("downstream-" + randomAlphanumeric(10), format("exwsAllocate upstream: '%s'", upstreamName));
+        downstreamRun = createWorkflowJobAndRun(format("exwsAllocate upstream: '%s'", upstreamName));
     }
 
-    private WorkflowRun createWorkflowJobAndRun(String name, String script) throws Exception {
-        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, name);
-        job.setDefinition(new CpsFlowDefinition(script, true));
-        QueueTaskFuture<WorkflowRun> runFuture = job.scheduleBuild2(0);
-        assertThat(runFuture, notNullValue());
-
-        return runFuture.get();
+    private static WorkflowRun createWorkflowJobAndRun(String script) throws Exception {
+        return TestUtil.createWorkflowJobAndRun(j.jenkins, script);
     }
 }
