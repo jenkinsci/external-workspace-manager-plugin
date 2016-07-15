@@ -1,8 +1,9 @@
-package org.jenkinsci.plugins.ewm;
+package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.Label;
 import hudson.model.Node;
 import hudson.model.Result;
+import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
