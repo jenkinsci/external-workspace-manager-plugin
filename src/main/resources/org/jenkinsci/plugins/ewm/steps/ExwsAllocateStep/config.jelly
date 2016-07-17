@@ -3,7 +3,5 @@
     <f:entry title="${%Disk Pool Ref ID}" field="diskPoolId">
         <f:textbox/>
     </f:entry>
-    <f:entry title="Upstream" field="upstream">
-        <f:textbox />
-    </f:entry>
+    <f:entry title="Selected Run" field="selectedRun"/>
 </j:jelly>

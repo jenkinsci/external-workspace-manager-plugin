@@ -64,6 +64,12 @@
             <artifactId>workflow-step-api</artifactId>
             <version>${workflow.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-support</artifactId>
+            <version>${workflow.version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
@@ -75,6 +81,12 @@
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-aggregator</artifactId>
             <version>${workflow.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>run-selector</artifactId>
+            <version>1.0-alpha-2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

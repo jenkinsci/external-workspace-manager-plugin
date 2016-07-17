@@ -263,7 +263,8 @@ public class ExwsStepTest {
 
     private static WorkflowJob createDownstreamWorkflowJob(String upstreamJobName) throws IOException {
         String script = String.format("" +
-                        " def externalWorkspace = exwsAllocate upstream: '%s' \n" +
+                        " def run = runSelector projectName: '%s' \n" +
+                        " def externalWorkspace = exwsAllocate selectedRun: run \n" +
                         " node('test') { \n" +
                         "   exws(externalWorkspace) { \n" +
                         "     sh \"cat bar.txt\"\n" +
