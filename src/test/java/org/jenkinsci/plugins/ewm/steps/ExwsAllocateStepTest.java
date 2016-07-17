@@ -97,7 +97,7 @@ public class ExwsAllocateStepTest {
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
-        j.assertLogContains(format("Mounting point from Master to the disk is not defined for Disk ID '%s', from Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), upstreamRun);
+        j.assertLogContains(format("Mounting point from Master to the disk is not defined for Disk ID '%s'", DISK_ID_ONE), upstreamRun);
     }
 
     @Test

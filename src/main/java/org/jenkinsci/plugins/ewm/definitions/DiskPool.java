@@ -6,6 +6,7 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
 import static hudson.Util.fixNull;
+import static hudson.Util.isRelativePath;
 import static hudson.util.FormValidation.validateRequired;
 
 /**
@@ -28,6 +30,7 @@ public class DiskPool implements Describable<DiskPool> {
     private final String displayName;
     private final String description;
     private final List<Disk> disks;
+    private String workspaceTemplate;
 
     @DataBoundConstructor
     public DiskPool(String diskPoolId, String displayName, String description, List<Disk> disks) {
@@ -57,6 +60,16 @@ public class DiskPool implements Describable<DiskPool> {
         return description;
     }
 
+    @CheckForNull
+    public String getWorkspaceTemplate() {
+        return workspaceTemplate;
+    }
+
+    @DataBoundSetter
+    public void setWorkspaceTemplate(String workspaceTemplate) {
+        this.workspaceTemplate = fixEmptyAndTrim(workspaceTemplate);
+    }
+
     @Nonnull
     public List<Disk> getDisks() {
         return disks;
@@ -68,6 +81,13 @@ public class DiskPool implements Describable<DiskPool> {
     public static class DescriptorImpl extends Descriptor<DiskPool> {
 
         public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
+            return validateRequired(value);
+        }
+
+        public FormValidation doCheckWorkspaceTemplate(@QueryParameter String value) {
+            if (!isRelativePath(value)) {
+                return FormValidation.error("Must be a relative path");
+            }
             return validateRequired(value);
         }
 
