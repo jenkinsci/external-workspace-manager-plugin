@@ -1,3 +1,22 @@
 <div>
-    The Object returned by the exwsAllocate step.
+    <p>
+        The object returned by the <i>exwsAllocate</i> step.
+    </p>
+    <p>
+        Basic usage:
+    </p>
+    <pre>
+    def extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+    node ('linux') {
+        exws (extWorkspace) {
+            scm checkout
+            sh 'mvn clean install -DskipTests'
+        }
+    }
+    node ('test') {
+        exws (extWorkspace) {
+            sh 'mvn test'
+        }
+    }
+    </pre>
 </div>
