@@ -8,6 +8,7 @@ import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -56,15 +57,14 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             DiskAllocationStrategy allocationStrategy = new MostUsableSpaceStrategy(diskPoolId, diskPools);
             Disk disk = allocationStrategy.allocateDisk();
 
-            String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
             String diskId = disk.getDiskId();
             if (diskId == null) {
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
                 throw new AbortException(message);
             }
+            String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
             if (physicalPathOnDisk == null) {
-                String message = format("Physical path on disk was not provided in the Jenkins global config for Disk ID: '%s', within Disk Pool ID '%s'", diskId, diskPoolId);
-                throw new AbortException(message);
+                physicalPathOnDisk = StringUtils.EMPTY;
             }
             if (!isRelativePath(physicalPathOnDisk)) {
                 String message = format("Physical path on disk defined for Disk ID '%s', within Disk Pool ID '%s' must be a relative path", diskId, diskPoolId);

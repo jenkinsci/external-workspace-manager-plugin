@@ -1,3 +1,15 @@
 <div>
-    Used as root path to compute the workspace path on this disk.
+    <p>
+        Used as root path to compute the workspace path on this disk. Optional.
+        If provided, it must be a relative path.
+    </p>
+    <p>
+        The workspace path on disk is computed based on the following formula:
+        <i>physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>
+    </p>
+    <p>
+        When the plugin allocates the workspace path to be used within a Node, then the complete workspace path
+        has the next pattern, starting with the mounting point from the Jenkins Node to the actual disk:
+        <i>/mountPointFromNodeToDisk/physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>
+    </p>
 </div>

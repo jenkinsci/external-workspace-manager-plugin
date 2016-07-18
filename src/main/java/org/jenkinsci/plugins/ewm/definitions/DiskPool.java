@@ -25,14 +25,14 @@ import static hudson.util.FormValidation.validateRequired;
 public class DiskPool implements Describable<DiskPool> {
 
     private final String diskPoolId;
-    private final String name;
+    private final String displayName;
     private final String description;
     private final List<Disk> disks;
 
     @DataBoundConstructor
-    public DiskPool(String diskPoolId, String name, String description, List<Disk> disks) {
+    public DiskPool(String diskPoolId, String displayName, String description, List<Disk> disks) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
-        this.name = fixEmptyAndTrim(name);
+        this.displayName = fixEmptyAndTrim(displayName);
         this.description = fixEmptyAndTrim(description);
         this.disks = fixNull(disks);
     }
@@ -48,8 +48,8 @@ public class DiskPool implements Describable<DiskPool> {
     }
 
     @CheckForNull
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName != null ? displayName : diskPoolId;
     }
 
     @CheckForNull
@@ -68,10 +68,6 @@ public class DiskPool implements Describable<DiskPool> {
     public static class DescriptorImpl extends Descriptor<DiskPool> {
 
         public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
-            return validateRequired(value);
-        }
-
-        public FormValidation doCheckName(@QueryParameter String value) {
             return validateRequired(value);
         }
 
