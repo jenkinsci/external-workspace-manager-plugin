@@ -29,15 +29,15 @@ void mvn(def args) {
 
   /* Set JAVA_HOME, and special PATH variables */
   List javaEnv = [
-    'PATH+JDK=${jdktool}/bin', 'JAVA_HOME=${jdktool}'
+    "PATH+JDK=${jdktool}/bin", "JAVA_HOME=${jdktool}"
   ]
 
   /* Call maven tool with java envVars */
   withEnv(javaEnv) {
     if (isUnix()) {
-      sh '${mvnHome}/bin/mvn ${args}'
+      sh "${mvnHome}/bin/mvn ${args}"
     } else {
-      bat '${mvnHome}\\bin\\mvn ${args}'
+      bat "${mvnHome}\\bin\\mvn ${args}"
     }
   }
 }
