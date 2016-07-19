@@ -103,8 +103,9 @@ public class WorkspaceCleanupTest {
                 "		try { \n" +
                 "		    writeFile file: 'foo.txt', text: 'bar' \n" +
                 "			throw new Exception() \n" +
-                "		} catch (err) { \n" +
+                "		} catch (e) { \n" +
                 "			currentBuild.result = 'FAILURE' \n" +
+                "           throw e \n" +
                 "		} finally { \n" +
                 "			step ([$class: 'WsCleanup', cleanWhenFailure: false]) \n" +
                 "		} \n" +

@@ -39,8 +39,9 @@ node ('linux') {
         try {
             checkout scm
             sh 'mvn clean install'
-        } catch (err) {
+        } catch (e) {
             currentBuild.result = 'FAILURE'
+            throw e
         } finally {
             step ([$class: 'WsCleanup', cleanWhenFailure: false])
         }
