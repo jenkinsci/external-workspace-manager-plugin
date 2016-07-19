@@ -88,7 +88,7 @@ public class DiskPool implements Describable<DiskPool> {
             if (!isRelativePath(value)) {
                 return FormValidation.error("Must be a relative path");
             }
-            return validateRequired(value);
+            return FormValidation.ok();
         }
 
         @Nonnull

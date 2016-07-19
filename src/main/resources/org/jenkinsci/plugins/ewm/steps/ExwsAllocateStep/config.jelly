@@ -4,4 +4,7 @@
         <f:textbox/>
     </f:entry>
     <f:entry title="Selected Run" field="selectedRun"/>
+    <f:entry title="Custom workspace path" field="path">
+        <f:textbox/>
+    </f:entry>
 </j:jelly>

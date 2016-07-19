@@ -17,6 +17,7 @@ import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepEx
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
@@ -70,20 +71,18 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             }
 
             String pathOnDisk;
-            String workspaceTemplate = diskPool.getWorkspaceTemplate();
-            if (workspaceTemplate != null) {
-                pathOnDisk = computePathBasedOnTemplate(workspaceTemplate);
+            String customPath = step.getPath();
+            if (customPath != null) {
+                pathOnDisk = computeCustomPath(customPath);
 
             } else {
-                String physicalPathOnDisk = disk.getPhysicalPathOnDisk();
-                if (physicalPathOnDisk == null) {
-                    physicalPathOnDisk = StringUtils.EMPTY;
+                String workspaceTemplate = diskPool.getWorkspaceTemplate();
+                if (workspaceTemplate != null) {
+                    pathOnDisk = computePathBasedOnTemplate(workspaceTemplate);
+
+                } else {
+                    pathOnDisk = computeDefaultPathOnDisk(diskId, disk.getPhysicalPathOnDisk());
                 }
-                if (!isRelativePath(physicalPathOnDisk)) {
-                    String message = format("Physical path on disk defined for Disk ID '%s', within Disk Pool ID '%s' must be a relative path", diskId, diskPoolId);
-                    throw new AbortException(message);
-                }
-                pathOnDisk = computeDefaultPathOnDisk(physicalPathOnDisk);
             }
 
             exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
@@ -164,15 +163,47 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     }
 
     /**
+     * Normalizes the given custom path and returns it.
+     *
+     * @param customPath the workspace path to be used on the disk
+     * @return the normalized custom path
+     * @throws IOException if the {@code customPath} is not a relative path, or if it contains any '$' characters,
+     *                     meaning that the path was not resolved correctly in the Pipeline script
+     */
+    @Nonnull
+    private String computeCustomPath(@Nonnull String customPath) throws IOException {
+        if (!isRelativePath(customPath)) {
+            String message = format("The custom path: %s must be a relative path", customPath);
+            throw new AbortException(message);
+        }
+        if (customPath.contains("$")) {
+            String message = format("The custom path: %s contains '$' characters. Did you resolve correctly the parameters with Build DSL?", customPath);
+            throw new AbortException(message);
+        }
+
+        return new FilePath(new File(customPath)).getRemote();
+    }
+
+    /**
      * Computes the path to be used on the physical disk.
      * The computed path has the following pattern: physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER.
      * Where $JOB_NAME also includes all the folders, if Folders plugin is in use.
      *
+     * @param diskId             the Disk ID where the physical path on the disk is defined
      * @param physicalPathOnDisk the physical path on the disk
      * @return the computed file path on the physical disk
+     * @throws IOException if the {@code physicalPathOnDisk} argument is not a relative path
      */
     @Nonnull
-    private String computeDefaultPathOnDisk(String physicalPathOnDisk) {
+    private String computeDefaultPathOnDisk(@Nonnull String diskId, @CheckForNull String physicalPathOnDisk) throws IOException {
+        if (physicalPathOnDisk == null) {
+            physicalPathOnDisk = StringUtils.EMPTY;
+        }
+        if (!isRelativePath(physicalPathOnDisk)) {
+            String message = format("Physical path on disk defined for Disk ID '%s', within Disk Pool ID '%s' must be a relative path", diskId, step.getDiskPoolId());
+            throw new AbortException(message);
+        }
+
         FilePath diskFilePath = new FilePath(new File(physicalPathOnDisk));
         return new FilePath(diskFilePath, run.getParent().getFullName() + '/' + run.getNumber()).getRemote();
     }
@@ -181,21 +212,30 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
      * Computes the workspace path based on the given template.
      * It replaces the occurrences of $PARAM with their corresponding values from the environment variables.
      *
-     * @param workspaceTemplate the template to compute the workspace path based on
+     * @param template the template to compute the workspace path based on
      * @return the computed workspace path
-     * @throws IOException if the workspaceTemplate parameter is not a relative path
+     * @throws IOException if the {@code template} argument is not a relative path or if it can't be resolved correctly
      */
     @Nonnull
-    private String computePathBasedOnTemplate(@Nonnull String workspaceTemplate) throws IOException {
-        if (!isRelativePath(workspaceTemplate)) {
+    private String computePathBasedOnTemplate(@Nonnull String template) throws IOException {
+        if (!isRelativePath(template)) {
             throw new AbortException(format("Workspace template defined for Disk Pool '%s' must be a relative path", step.getDiskPoolId()));
         }
-        String path = replaceMacro(workspaceTemplate, envVars);
+
+        String path = replaceMacro(template, envVars);
         if (path == null) {
             // The resulting String from Util#replaceMacro is null only if the input String is null.
             // In this case the input String is not null, so this exception may never occur.
-            throw new AbortException(format("Path is null after resolving environment variables for the defined workspace template: %s", workspaceTemplate));
+            String message = format("Path is null after resolving environment variables for the defined workspace template: %s", template);
+            throw new AbortException(message);
         }
+        if (path.contains("$")) {
+            // If the workspace template is resolved correctly, the resulting path shouldn't contain any '$' characters.
+            String message = format("Can't resolve the following workspace template: %s. The resulting path is: %s. " +
+                    "Did you provide all the needed environment variables?", template, path);
+            throw new AbortException(message);
+        }
+
         return new FilePath(new File(path)).getRemote();
     }
 }

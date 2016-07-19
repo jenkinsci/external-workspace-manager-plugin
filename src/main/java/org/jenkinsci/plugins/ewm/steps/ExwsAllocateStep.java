@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
+import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -9,6 +10,7 @@ import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.Util.isRelativePath;
 
 /**
  * The 'exwsAllocate' step.
@@ -31,6 +34,9 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
     @CheckForNull
     private RunWrapper selectedRun;
+
+    @CheckForNull
+    private String path;
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
@@ -50,6 +56,16 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @DataBoundSetter
     public void setSelectedRun(RunWrapper selectedRun) {
         this.selectedRun = selectedRun;
+    }
+
+    @CheckForNull
+    public String getPath() {
+        return path;
+    }
+
+    @DataBoundSetter
+    public void setPath(String path) {
+        this.path = fixEmptyAndTrim(path);
     }
 
     @Override
@@ -77,6 +93,13 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         @Nonnull
         public List<DiskPool> getDiskPools() {
             return diskPools;
+        }
+
+        public FormValidation doCheckPath(@QueryParameter String value) {
+            if (!isRelativePath(value)) {
+                return FormValidation.error("Must be a relative path");
+            }
+            return FormValidation.ok();
         }
 
         @Override
