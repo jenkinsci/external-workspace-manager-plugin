@@ -168,7 +168,7 @@ public class ExwsAllocateStepTest {
         createUpstreamJobAndRun();
         String upstreamName = upstreamRun.getParent().getName();
         downstreamRun = createWorkflowJobAndRun(format("" +
-                "def run = runSelector projectName: '%s' \n" +
+                "def run = runSelector job: '%s' \n" +
                 "exwsAllocate diskPoolId: 'any-pool', selectedRun: run", upstreamName));
 
         j.assertBuildStatusSuccess(upstreamRun);
@@ -215,7 +215,7 @@ public class ExwsAllocateStepTest {
 
     private void createDownstreamJobAndRun(String upstreamName) throws Exception {
         downstreamRun = createWorkflowJobAndRun(format("" +
-                "def run = runSelector projectName: '%s' \n" +
+                "def run = runSelector job: '%s' \n" +
                 "exwsAllocate selectedRun: run", upstreamName));
     }
 
