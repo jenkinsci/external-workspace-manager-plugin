@@ -91,6 +91,16 @@ public class CustomWorkspaceTest {
     }
 
     @Test
+    public void customWorkspacePathParameterIsAbsolute() throws Exception {
+        WorkflowRun run = createWorkflowJobAndRun(format("" +
+                "def customPath = \"/${env.JOB_NAME}/${env.BUILD_NUMBER}\" \n" +
+                "def extWorkspace = exwsAllocate diskPoolId: '%s', path: customPath", DISK_POOL_ID));
+
+        j.assertBuildStatus(Result.FAILURE, run);
+        j.assertLogContains(format("ERROR: The custom path: /%s/%s must be a relative path", run.getParent().getFullName(), run.getNumber()), run);
+    }
+
+    @Test
     public void customWorkspaceUsingPathParameterWithConstantFolder() throws Exception {
         String folder = "constant";
         WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, RandomStringUtils.randomAlphanumeric(7));
@@ -120,10 +130,7 @@ public class CustomWorkspaceTest {
 
     @Test
     public void globalWorkspaceTemplate() throws Exception {
-        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, Collections.singletonList(disk));
-        diskPool.setWorkspaceTemplate("${JOB_NAME}/${PR_BUILD_NUMBER}/${BUILD_NUMBER}");
-        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
+        setGlobalWorkspaceTemplate("${JOB_NAME}/${PR_BUILD_NUMBER}/${BUILD_NUMBER}");
 
         String prBuildNumberValue = "30";
         WorkflowRun run = createWorkflowJobAndRun(format("" +
@@ -144,10 +151,7 @@ public class CustomWorkspaceTest {
     @Test
     public void globalWorkspaceTemplateWithConstantFolder() throws Exception {
         String folder = "constant";
-        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, Collections.singletonList(disk));
-        diskPool.setWorkspaceTemplate(format("%s/${JOB_NAME}/${BUILD_NUMBER}", folder));
-        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
+        setGlobalWorkspaceTemplate(format("%s/${JOB_NAME}/${BUILD_NUMBER}", folder));
 
         WorkflowRun run = createWorkflowJobAndRun(format("" +
                 "def extWorkspace = exwsAllocate diskPoolId: '%s' \n" +
@@ -162,17 +166,31 @@ public class CustomWorkspaceTest {
     }
 
     @Test
-    public void globalWorkspaceWithTypo() throws Exception {
-        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, Collections.singletonList(disk));
-        diskPool.setWorkspaceTemplate("${JOB_NAME_WITH_TYPO}/${BUILD_NUMBER}");
-        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
+    public void globalWorkspaceTemplatePathIsAbsolute() throws Exception {
+        setGlobalWorkspaceTemplate("/${JOB_NAME}/${BUILD_NUMBER}");
+
+        WorkflowRun run = createWorkflowJobAndRun(format("def extWorkspace = exwsAllocate diskPoolId: '%s'", DISK_POOL_ID));
+
+        j.assertBuildStatus(Result.FAILURE, run);
+        j.assertLogContains(format("ERROR: Workspace template defined for Disk Pool '%s' must be a relative path", DISK_POOL_ID), run);
+    }
+
+    @Test
+    public void globalWorkspaceTemplateWithTypo() throws Exception {
+        setGlobalWorkspaceTemplate("${JOB_NAME_WITH_TYPO}/${BUILD_NUMBER}");
 
         WorkflowRun run = createWorkflowJobAndRun(format("def extWorkspace = exwsAllocate diskPoolId: '%s'", DISK_POOL_ID));
 
         j.assertBuildStatus(Result.FAILURE, run);
         j.assertLogContains("ERROR: Can't resolve the following workspace template: ${JOB_NAME_WITH_TYPO}/${BUILD_NUMBER}. " +
                 "The resulting path is: ${JOB_NAME_WITH_TYPO}/1. Did you provide all the needed environment variables?", run);
+    }
+
+    private static void setGlobalWorkspaceTemplate(String template) {
+        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null);
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, Collections.singletonList(disk));
+        diskPool.setWorkspaceTemplate(template);
+        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }
 
     private void verifyWorkspacePath(String computedCustomPath, WorkflowRun run) throws Exception {
