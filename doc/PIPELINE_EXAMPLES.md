@@ -115,12 +115,12 @@ _Note: If the `selectedRun` parameter is provided, `exwsAllocate` step will igno
 
 **Stage 1. Allocate workspace in the upstream job**
 
-The functionality is the same as in example one - stage 1.
+The functionality is the same as in the previous example, Stage 1.
 In our case, the allocated directory on the physical disk is: _jenkins-project/disk1/upstream/14_.
 
 **Stage 2. Build in the upstream job**
 
-Same functionality as example one - stage 2.
+Same functionality as the previous example, Stage 2.
 The final workspace path is: _/mount-from-linux-node/to/disk-one/jenkins-project/disk1/upstream/14_.
 
 **Stage 3. Select the upstream run**
@@ -135,12 +135,12 @@ More details and examples of how the `runSelector` step works may be found at
 
 By passing the `selectedRun` parameter to the `exwsAllocate` step, it allocates the first workspace used by the 
 selected run.
-The workspace path pattern is like this: _physicalPathOnDisk/$UPSTREAM_NAME/$SELECTED_BUILD_NUMBER_.
-Let’s assume that the selected build number is _12_, then the resulting path is: _jenkins-project/disk1/upstream/12_.
+If the `runSelector` step selected the build number _14_, then the resulting path 
+is: _jenkins-project/disk1/upstream/14_.
 
 **Stage 5. Run tests in the downstream job**
 
 The `exws` step concatenates the node’s local path with the path returned by the `exwsAllocate` step in stage 3.
 In this scenario, the complete path for running tests is: 
-_/mount-from-test-node/to/disk-one/jenkins-project/disk1/upstream/12_.
+_/mount-from-test-node/to/disk-one/jenkins-project/disk1/upstream/14_.
 It will reuse the workspace defined in the _upstream_ job.
