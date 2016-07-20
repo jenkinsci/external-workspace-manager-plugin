@@ -30,7 +30,7 @@ And the Pipeline script:
 def extWorkspace
 withEnv(['CUSTOM_BUILD_PARAM=100']) {
     stage ('Stage 1. Allocate workspace')
-    extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+    extWorkspace = exwsAllocate 'diskpool1'
 }
 
 node ('linux') {
@@ -69,3 +69,55 @@ The resulting path will be: _/mounting-point-from-node-to-disk/foobar/100/20_.
 
 ## Define a custom workspace path in the Pipeline script
 
+A second alternative for defining a custom workspace path is to configure it within Build DSL.
+For this, the `exwsAllocate` step defines a new parameter: `path`.
+
+**Example**
+
+In this example, we are allocating a specific workspace for each pull request. 
+The Pipeline syntax may look like:
+
+```groovy
+stage ('Stage 0. Configure custom path')
+def customPath = "${env.JOB_NAME}/${PULL_REQUEST_NUMBER}/${env.BUILD_NUMBER}"
+
+stage ('Stage 1. Allocate workspace')
+def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', path: customPath
+
+node ('linux') {
+    exws (extWorkspace) {
+        stage ('Stage 2. Build')
+        checkout scm
+        sh 'mvn clean install -DskipTests'
+    }
+}
+
+node ('test') {
+    exws (extWorkspace) {
+        stage ('Stage 3. Test')
+        sh 'mvn test'
+    }
+}
+```
+**Stage 0. Configure custom path**
+
+:exclamation: You must use double quotes for String interpolation, otherwise the parameters will not be resolved.
+
+We can make use of the Build DSL to configure the workspace path.
+In our example the path is made up of the following:
+ - The _${env.JOB_NAME}_ that will be resolved to the actual name of the project, for example _foobar_.
+ - The _${PULL_REQUEST_NUMBER}_ is a Build parameter, and can be the considered as the pull request number.
+Let's say it's _30_
+ - The _${env.BUILD_NUMBER}_ is the number of the current build: _20_.
+
+Resulting the _customPath_ variable to have to value: _foobar/30/20_.
+
+**Stage 1. Allocate workspace**
+
+By providing the `path` parameter, the `exwsAllocate` will allocate that custom path on the Disk.
+If this parameter is provided, the *Workspace path template* from Jenkins global config will be ignored.
+
+**Stage 2. Build** and **Stage 3. Test**
+
+Similarly as in the previous example, the `exws` step will compute the complete workspace path.
+The resulting path will be: _/mounting-point-from-node-to-disk/foobar/30/20_.
