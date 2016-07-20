@@ -15,7 +15,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
@@ -76,7 +76,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<DiskPool> diskPools = new ArrayList<>();
+        private List<DiskPool> diskPools = Collections.emptyList();
 
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
