@@ -1,3 +1,25 @@
 <div>
-    TODO - add help file for workspace template.
+    <p>
+        The workspace path on each Disk within this Disk Pool will be computed based on a workspace template.
+    </p>
+    <p>
+        If not provided, the workspace path is computed based on a default pattern:
+        <i>$physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>.
+        The <i>physicalPathOnDisk</i> is defined separately for each Disk entry.
+    </p>
+    <p>
+        An example of a custom workspace template: <i>${JOB_NAME}/${CUSTOM_BUILD_PARAM}/${BUILD_NUMBER}</i>.
+        When the <i>exwsAllocate</i> step is called in the Pipeline script, it will resolve the variables from this
+        template.
+    </p>
+    <p>
+        And the associated Pipeline script:
+    </p>
+    <pre>
+    def extWorkspace
+    withEnv (['CUSTOM_BUILD_PARAM=100']) {
+        extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+    }
+    ...
+    </pre>
 </div>

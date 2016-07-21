@@ -1,3 +1,17 @@
 <div>
-    TODO - add help file for custom workspace path.
+    <p>
+        The workspace path on the Disk can be configured within the Build DSL.
+        If the <i>path</i> parameter is provided, the <i>exwsAllocate</i> step will allocate this workspace path on the
+        Disk.
+        If it's not provided, the <i>exwsAllocate</i> step will fallback to using the <i>Workspace path template</i>
+        parameter defined in the Jenkins global config, <i>External Workspace Definitions</i> section, if any.
+    </p>
+    <p>
+        Basic Pipeline example:
+    </p>
+    <pre>
+    def customPath = "${env.JOB_NAME}/${PULL_REQUEST_NUMBER_PARAM}/${env.BUILD_NUMBER}"
+    def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', path: customPath
+    ...
+    </pre>
 </div>
