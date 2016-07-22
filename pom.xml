@@ -64,13 +64,13 @@
             <artifactId>workflow-step-api</artifactId>
             <version>${workflow.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>ws-cleanup</artifactId>
             <version>0.30-SNAPSHOT</version>
-            <optional>true</optional>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-aggregator</artifactId>
