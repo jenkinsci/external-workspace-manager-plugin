@@ -13,4 +13,9 @@ import javax.annotation.Nonnull;
 public abstract class DiskPoolRestriction extends AbstractDescribableImpl<DiskPoolRestriction> implements ExtensionPoint {
 
     public abstract boolean isAllowed(@Nonnull Run<?, ?> run, @Nonnull TaskListener listener);
+
+    @Override
+    public String toString() {
+        return getDescriptor().getDisplayName();
+    }
 }
