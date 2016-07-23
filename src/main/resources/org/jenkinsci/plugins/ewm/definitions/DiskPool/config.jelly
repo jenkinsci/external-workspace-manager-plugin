@@ -17,4 +17,5 @@
             <f:repeatableDeleteButton value="${%Delete Disk Pool}"/>
         </div>
     </f:entry>
+    <f:dropdownDescriptorSelector title="${%Disk Pool Restriction}" field="restriction"/>
 </j:jelly>

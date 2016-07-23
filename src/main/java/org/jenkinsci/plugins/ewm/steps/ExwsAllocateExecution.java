@@ -9,9 +9,11 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.ewm.DiskPoolRestriction;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.ewm.restrictions.NoDiskPoolRestriction;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
@@ -32,6 +34,8 @@ import static java.lang.String.format;
 public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExecution<ExternalWorkspace> {
 
     private static final long serialVersionUID = 1L;
+
+    private static final DiskPoolRestriction NO_DISK_POOL_RESTRICTION = new NoDiskPoolRestriction();
 
     @Inject(optional = true)
     private transient ExwsAllocateStep step;
@@ -56,6 +60,23 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             List<DiskPool> diskPools = step.getDescriptor().getDiskPools();
             DiskAllocationStrategy allocationStrategy = new MostUsableSpaceStrategy(diskPoolId, diskPools);
             Disk disk = allocationStrategy.allocateDisk();
+
+            // TODO - when #24 is merged, the following iteration will not be required! This is temporary
+            DiskPool diskPool = new DiskPool(null, null, null, null);
+            for (DiskPool dp : diskPools) {
+                if (diskPoolId.equals(dp.getDiskPoolId())) {
+                    diskPool = dp;
+                }
+            }
+
+            DiskPoolRestriction restriction = diskPool.getRestriction();
+            if (restriction == null) {
+                restriction = NO_DISK_POOL_RESTRICTION;
+            }
+            if (!restriction.isAllowed(run, listener)) {
+                String message = format("Disk Pool ID: '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction);
+                throw new AbortException(message);
+            }
 
             String diskId = disk.getDiskId();
             if (diskId == null) {

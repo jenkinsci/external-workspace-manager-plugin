@@ -4,8 +4,10 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.ewm.DiskPoolRestriction;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -28,6 +30,9 @@ public class DiskPool implements Describable<DiskPool> {
     private final String displayName;
     private final String description;
     private final List<Disk> disks;
+
+    @CheckForNull
+    private DiskPoolRestriction restriction;
 
     @DataBoundConstructor
     public DiskPool(String diskPoolId, String displayName, String description, List<Disk> disks) {
@@ -60,6 +65,16 @@ public class DiskPool implements Describable<DiskPool> {
     @Nonnull
     public List<Disk> getDisks() {
         return disks;
+    }
+
+    @CheckForNull
+    public DiskPoolRestriction getRestriction() {
+        return restriction;
+    }
+
+    @DataBoundSetter
+    public void setRestriction(DiskPoolRestriction restriction) {
+        this.restriction = restriction;
     }
 
     @Extension
