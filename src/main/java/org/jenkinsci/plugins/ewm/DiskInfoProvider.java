@@ -7,6 +7,8 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.CheckForNull;
 
+import static hudson.Util.fixEmptyAndTrim;
+
 /**
  * @author Alexandru Somai
  */
@@ -15,27 +17,32 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
 
     // TODO - do we need name? see {@link Disk#displayName}
     @CheckForNull
-    private String name;
+    private final String name;
 
     @CheckForNull
-    private String type;
+    private final String type;
 
     @CheckForNull
-    private Long size;
+    private final Long size;
 
     @CheckForNull
-    private Double writeSpeed;
+    private final Double writeSpeed;
 
     @CheckForNull
-    private Double readSpeed;
+    private final Double readSpeed;
+
+    protected DiskInfoProvider(@CheckForNull String name, @CheckForNull String type, @CheckForNull Long size,
+                               @CheckForNull Double writeSpeed, @CheckForNull Double readSpeed) {
+        this.name = fixEmptyAndTrim(name);
+        this.type = fixEmptyAndTrim(type);
+        this.size = size != null && size >= 0 ? size : null;
+        this.writeSpeed = writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null;
+        this.readSpeed = readSpeed != null && readSpeed >= 0 ? readSpeed : null;
+    }
 
     @CheckForNull
     public String getName() {
         return name;
-    }
-
-    protected void setName(String name) {
-        this.name = name;
     }
 
     @CheckForNull
@@ -43,17 +50,9 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
         return type;
     }
 
-    protected void setType(String type) {
-        this.type = type;
-    }
-
     @CheckForNull
     public Long getSize() {
         return size;
-    }
-
-    protected void setSize(Long size) {
-        this.size = size;
     }
 
     @CheckForNull
@@ -61,16 +60,8 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
         return writeSpeed;
     }
 
-    protected void setWriteSpeed(Double writeSpeed) {
-        this.writeSpeed = writeSpeed;
-    }
-
     @CheckForNull
     public Double getReadSpeed() {
         return readSpeed;
-    }
-
-    protected void setReadSpeed(Double readSpeed) {
-        this.readSpeed = readSpeed;
     }
 }

@@ -10,8 +10,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 
-import static hudson.Util.fixEmptyAndTrim;
-
 /**
  * @author Alexandru Somai
  */
@@ -19,24 +17,23 @@ public class UserProvidedDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
     public UserProvidedDiskInfo(String name, String type, Long size, Double writeSpeed, Double readSpeed) {
-        setName(fixEmptyAndTrim(name));
-        setType(fixEmptyAndTrim(type));
-        setSize(size != null && size >= 0 ? size : null);
-        setWriteSpeed(writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null);
-        setReadSpeed(readSpeed != null && readSpeed >= 0 ? readSpeed : null);
+        super(name, type, size, writeSpeed, readSpeed);
     }
 
     @Extension
     public static class DescriptorImpl extends DiskInfoProviderDescriptor {
 
+        @SuppressWarnings("unused")
         public FormValidation doCheckName(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }
 
+        @SuppressWarnings("unused")
         public FormValidation doCheckType(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }
 
+        @SuppressWarnings("unused")
         public FormValidation doCheckSize(@QueryParameter String value) {
             try {
                 long result = Long.parseLong(value);
@@ -50,10 +47,12 @@ public class UserProvidedDiskInfo extends DiskInfoProvider {
             return FormValidation.ok();
         }
 
+        @SuppressWarnings("unused")
         public FormValidation doCheckWriteSpeed(@QueryParameter String value) {
             return validateDoubleValue(value);
         }
 
+        @SuppressWarnings("unused")
         public FormValidation doCheckReadSpeed(@QueryParameter String value) {
             return validateDoubleValue(value);
         }

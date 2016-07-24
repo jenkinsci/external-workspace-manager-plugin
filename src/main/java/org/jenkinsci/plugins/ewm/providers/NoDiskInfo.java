@@ -15,11 +15,7 @@ public class NoDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
     public NoDiskInfo() {
-        setName(null);
-        setType(null);
-        setSize(null);
-        setWriteSpeed(null);
-        setReadSpeed(null);
+        super(null, null, null, null, null);
     }
 
     @Extension
