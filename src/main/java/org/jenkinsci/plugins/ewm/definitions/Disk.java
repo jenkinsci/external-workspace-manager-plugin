@@ -4,10 +4,12 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -28,6 +30,9 @@ public class Disk implements Describable<Disk> {
     private final String displayName;
     private final String masterMountPoint;
     private final String physicalPathOnDisk;
+
+    @CheckForNull
+    private DiskInfoProvider diskInfo;
 
     @DataBoundConstructor
     public Disk(String diskId, String displayName, String masterMountPoint, String physicalPathOnDisk) {
@@ -60,6 +65,16 @@ public class Disk implements Describable<Disk> {
     @CheckForNull
     public String getPhysicalPathOnDisk() {
         return physicalPathOnDisk;
+    }
+
+    @CheckForNull
+    public DiskInfoProvider getDiskInfo() {
+        return diskInfo;
+    }
+
+    @DataBoundSetter
+    public void setDiskInfo(DiskInfoProvider diskInfo) {
+        this.diskInfo = diskInfo;
     }
 
     @Extension
