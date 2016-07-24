@@ -13,6 +13,7 @@ import javax.annotation.CheckForNull;
 @Restricted(NoExternalUse.class)
 public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoProvider> implements ExtensionPoint {
 
+    // TODO - do we need name? see {@link Disk#displayName}
     @CheckForNull
     private String name;
 
