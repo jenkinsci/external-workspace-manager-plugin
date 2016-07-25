@@ -1,7 +1,9 @@
 package org.jenkinsci.plugins.ewm;
 
+import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
+import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -38,6 +40,13 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
         this.size = size != null && size >= 0 ? size : null;
         this.writeSpeed = writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null;
         this.readSpeed = readSpeed != null && readSpeed >= 0 ? readSpeed : null;
+    }
+
+    /**
+     * All registered {@link DiskInfoProvider}s.
+     */
+    public static ExtensionList<DiskInfoProvider> all() {
+        return Jenkins.getActiveInstance().getExtensionList(DiskInfoProvider.class);
     }
 
     @CheckForNull
