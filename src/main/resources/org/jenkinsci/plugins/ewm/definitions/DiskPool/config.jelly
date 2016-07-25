@@ -9,6 +9,7 @@
     <f:entry title="${%Description}" field="description">
         <f:textbox/>
     </f:entry>
+    <f:dropdownDescriptorSelector title="${%Disk Pool Restriction}" field="restriction"/>
     <f:entry>
         <f:repeatableProperty field="disks" add="${%Add Disk}" header="${%Disk}"/>
     </f:entry>
