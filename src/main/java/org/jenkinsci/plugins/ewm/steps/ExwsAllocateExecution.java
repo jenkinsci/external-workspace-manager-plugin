@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import com.google.inject.Inject;
+import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -63,6 +64,15 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             List<DiskPool> diskPools = step.getDescriptor().getDiskPools();
             DiskPool diskPool = findDiskPool(diskPoolId, diskPools);
             Disk disk = DEFAULT_DISK_ALLOCATION_STRATEGY.allocateDisk(diskPool.getDisks());
+
+            JobRestriction restriction = diskPool.getRestriction();
+            if (restriction == null) {
+                restriction = JobRestriction.DEFAULT;
+            }
+            if (!restriction.canTake(run)) {
+                String message = format("Disk Pool ID: '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
+                throw new AbortException(message);
+            }
 
             String diskId = disk.getDiskId();
             if (diskId == null) {

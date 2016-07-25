@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.ewm.definitions;
 
+import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -9,6 +10,7 @@ import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -32,6 +34,9 @@ public class DiskPool implements Describable<DiskPool> {
     private final String description;
     private final String workspaceTemplate;
     private final List<Disk> disks;
+
+    @CheckForNull
+    private JobRestriction restriction;
 
     @DataBoundConstructor
     public DiskPool(String diskPoolId, String displayName, String description, String workspaceTemplate, List<Disk> disks) {
@@ -70,6 +75,16 @@ public class DiskPool implements Describable<DiskPool> {
     @Nonnull
     public List<Disk> getDisks() {
         return disks;
+    }
+
+    @CheckForNull
+    public JobRestriction getRestriction() {
+        return restriction;
+    }
+
+    @DataBoundSetter
+    public void setRestriction(JobRestriction restriction) {
+        this.restriction = restriction;
     }
 
     @Extension
