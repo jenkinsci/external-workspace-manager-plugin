@@ -6,6 +6,8 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -62,10 +64,14 @@ public class Template implements Describable<Template> {
 
     public static class DescriptorImpl extends Descriptor<Template> {
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
             return validateRequired(value);
         }
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckLabel(@QueryParameter String value) {
             return validateRequired(value);
         }

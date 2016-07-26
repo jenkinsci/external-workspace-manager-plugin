@@ -6,6 +6,8 @@ import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -46,6 +48,8 @@ public class ExternalWorkspaceProperty extends NodeProperty<Node> {
     @Extension
     public static class DescriptorImpl extends NodePropertyDescriptor {
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
             return validateRequired(value);
         }

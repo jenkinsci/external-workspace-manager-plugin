@@ -8,6 +8,8 @@ import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -95,6 +97,8 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
             return diskPools;
         }
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckPath(@QueryParameter String value) {
             if (!isRelativePath(value)) {
                 return FormValidation.error("Must be a relative path");

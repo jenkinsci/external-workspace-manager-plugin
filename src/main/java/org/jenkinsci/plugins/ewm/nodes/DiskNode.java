@@ -5,6 +5,8 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -50,10 +52,14 @@ public class DiskNode implements Describable<DiskNode> {
 
     public static class DescriptorImpl extends Descriptor<DiskNode> {
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckDiskRefId(@QueryParameter String value) {
             return validateRequired(value);
         }
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckLocalRootPath(@QueryParameter String value) {
             return validateRequired(value);
         }
