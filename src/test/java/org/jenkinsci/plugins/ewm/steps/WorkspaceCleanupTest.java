@@ -71,7 +71,7 @@ public class WorkspaceCleanupTest {
     }
 
     @After
-    public void resetNodeProperties() {
+    public void resetNodeProperties() throws IOException {
         removeExternalWorkspaceNodeProperty(node1);
         removeExternalWorkspaceNodeProperty(node2);
     }

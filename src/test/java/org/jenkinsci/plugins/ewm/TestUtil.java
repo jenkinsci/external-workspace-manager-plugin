@@ -2,9 +2,6 @@ package org.jenkinsci.plugins.ewm;
 
 import hudson.model.Node;
 import hudson.model.queue.QueueTaskFuture;
-import hudson.slaves.NodeProperty;
-import hudson.slaves.NodePropertyDescriptor;
-import hudson.util.DescribableList;
 import hudson.util.ReflectionUtils;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.RandomStringUtils;
@@ -16,13 +13,15 @@ import org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -33,6 +32,7 @@ import static org.junit.Assert.assertThat;
  *
  * @author Alexandru Somai
  */
+@Restricted(NoExternalUse.class)
 public final class TestUtil {
 
     public static final String DISK_POOL_ID = "disk-pool-1";
@@ -67,15 +67,8 @@ public final class TestUtil {
         node.getNodeProperties().add(new ExternalWorkspaceProperty(diskPoolRefId, Arrays.asList(diskNodes)));
     }
 
-    public static void removeExternalWorkspaceNodeProperty(Node node) {
-        DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
-        Iterator<NodeProperty<?>> nodePropertyIterator = nodeProperties.iterator();
-        while (nodePropertyIterator.hasNext()) {
-            NodeProperty<?> nodeProperty = nodePropertyIterator.next();
-            if (nodeProperty instanceof ExternalWorkspaceProperty) {
-                nodePropertyIterator.remove();
-            }
-        }
+    public static void removeExternalWorkspaceNodeProperty(Node node) throws IOException {
+        node.getNodeProperties().removeAll(ExternalWorkspaceProperty.class);
     }
 
     public static WorkflowRun createWorkflowJobAndRun(Jenkins jenkins, String script) throws Exception {

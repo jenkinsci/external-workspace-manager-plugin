@@ -82,7 +82,7 @@ public class ExwsStepTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         resetTemplates();
         removeExternalWorkspaceNodeProperty(node1);
         removeExternalWorkspaceNodeProperty(node2);
