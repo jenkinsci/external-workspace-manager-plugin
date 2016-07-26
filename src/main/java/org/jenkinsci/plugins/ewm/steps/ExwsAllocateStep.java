@@ -5,6 +5,7 @@ import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
@@ -21,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
-import static hudson.Util.isRelativePath;
 
 /**
  * The 'exwsAllocate' step.
@@ -100,10 +100,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
         public FormValidation doCheckPath(@QueryParameter String value) {
-            if (!isRelativePath(value)) {
-                return FormValidation.error("Must be a relative path");
-            }
-            return FormValidation.ok();
+            return FormValidationUtil.validateWorkspaceTemplate(value);
         }
 
         @Override

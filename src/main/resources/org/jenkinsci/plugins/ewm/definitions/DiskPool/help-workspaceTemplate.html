@@ -4,7 +4,7 @@
     </p>
     <p>
         If not provided, the workspace path is computed based on a default pattern:
-        <i>$physicalPathOnDisk/$JOB_NAME/$BUILD_NUMBER</i>.
+        <i>${physicalPathOnDisk}/${JOB_NAME}/${BUILD_NUMBER}</i>.
         The <i>physicalPathOnDisk</i> is defined separately for each Disk entry.
     </p>
     <p>
@@ -22,4 +22,8 @@
     }
     ...
     </pre>
+    <p>
+        Note: It's recommended to use <i>${ }</i> for variable declaration, instead of standalone <i>$</i> symbol,
+        as shown in the examples.
+    </p>
 </div>

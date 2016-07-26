@@ -5,6 +5,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -16,7 +17,6 @@ import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
 import static hudson.Util.fixNull;
-import static hudson.Util.isRelativePath;
 import static hudson.util.FormValidation.validateRequired;
 
 /**
@@ -86,10 +86,7 @@ public class DiskPool implements Describable<DiskPool> {
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
         public FormValidation doCheckWorkspaceTemplate(@QueryParameter String value) {
-            if (!isRelativePath(value)) {
-                return FormValidation.error("Must be a relative path");
-            }
-            return FormValidation.ok();
+            return FormValidationUtil.validateWorkspaceTemplate(value);
         }
 
         @Nonnull

@@ -2,13 +2,15 @@
 
 By default, the workspace path on disk is computed based on the following pattern: 
 _${physicalPathOnDisk}/${JOB_NAME}/${BUILD_NUMBER}_.
-The _$physicalPathOnDisk_ is defined in the Jenkins global config, _External Workspace Definitions_ section, 
+The _${physicalPathOnDisk}_ is defined in the Jenkins global config, _External Workspace Definitions_ section, 
 for each _Disk_ entry. 
 
 If required, you can change the default workspace computation pattern. 
 The plugin offers two alternatives for this:
  1. [Define a global workspace template for each Disk Pool](#define-a-global-workspace-template-for-each-disk-pool)
  1. [Define a custom workspace path in the Pipeline script](#define-a-custom-workspace-path-in-the-pipeline-script)
+
+:exclamation: It's recommended to use `${ }` for variable declaration, instead of standalone `$` symbol.
 
 ## Define a global workspace template for each Disk Pool
 

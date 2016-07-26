@@ -176,8 +176,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             String message = format("The custom path: %s must be a relative path", customPath);
             throw new AbortException(message);
         }
-        if (customPath.contains("$")) {
-            String message = format("The custom path: %s contains '$' characters. Did you resolve correctly the parameters with Build DSL?", customPath);
+        if (customPath.contains("${")) {
+            String message = format("The custom path: %s contains '${' characters. Did you resolve correctly the parameters with Build DSL?", customPath);
             throw new AbortException(message);
         }
 
@@ -229,7 +229,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             String message = format("Path is null after resolving environment variables for the defined workspace template: %s", template);
             throw new AbortException(message);
         }
-        if (path.contains("$")) {
+        if (path.contains("${")) {
             // If the workspace template is resolved correctly, the resulting path shouldn't contain any '$' characters.
             String message = format("Can't resolve the following workspace template: %s. The resulting path is: %s. " +
                     "Did you provide all the needed environment variables?", template, path);

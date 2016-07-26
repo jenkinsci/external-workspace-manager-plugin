@@ -125,7 +125,7 @@ public class CustomWorkspaceTest {
                 "def extWorkspace = exwsAllocate diskPoolId: '%s', path: customPath", DISK_POOL_ID));
 
         j.assertBuildStatus(Result.FAILURE, run);
-        j.assertLogContains("The custom path: ${env.JOB_NAME}/${env.BUILD_NUMBER} contains '$' characters. Did you resolve correctly the parameters with Build DSL?", run);
+        j.assertLogContains("The custom path: ${env.JOB_NAME}/${env.BUILD_NUMBER} contains '${' characters. Did you resolve correctly the parameters with Build DSL?", run);
     }
 
     @Test
