@@ -65,15 +65,6 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             DiskPool diskPool = findDiskPool(diskPoolId, diskPools);
             Disk disk = DEFAULT_DISK_ALLOCATION_STRATEGY.allocateDisk(diskPool.getDisks());
 
-            JobRestriction restriction = diskPool.getRestriction();
-            if (restriction == null) {
-                restriction = JobRestriction.DEFAULT;
-            }
-            if (!restriction.canTake(run)) {
-                String message = format("Disk Pool ID: '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
-                throw new AbortException(message);
-            }
-
             String diskId = disk.getDiskId();
             if (diskId == null) {
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
@@ -125,6 +116,15 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             exws = allocatedWorkspaces.iterator().next();
         }
 
+        String diskPoolId = exws.getDiskPoolId();
+        DiskPool diskPool = findDiskPool(diskPoolId, step.getDescriptor().getDiskPools());
+
+        JobRestriction restriction = diskPool.getRestriction();
+        if (!diskPool.getRestriction().canTake(run)) {
+            String message = format("Disk Pool ID: '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
+            throw new AbortException(message);
+        }
+
         ExwsAllocateActionImpl allocateAction = run.getAction(ExwsAllocateActionImpl.class);
         if (allocateAction == null) {
             allocateAction = new ExwsAllocateActionImpl();
@@ -133,7 +133,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         allocateAction.addAllocatedWorkspace(exws);
         run.save();
 
-        listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
+        listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), diskPoolId));
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
 
         return exws;

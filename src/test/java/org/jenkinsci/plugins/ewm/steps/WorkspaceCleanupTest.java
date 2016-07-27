@@ -58,7 +58,7 @@ public class WorkspaceCleanupTest {
         node2 = j.createSlave(Label.get("test"));
 
         Disk disk = new Disk(DISK_ID_ONE, null, "mount-from-master", PATH_ON_DISK);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, Collections.singletonList(disk));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }
 

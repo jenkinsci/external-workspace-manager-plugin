@@ -10,7 +10,6 @@ import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -33,17 +32,17 @@ public class DiskPool implements Describable<DiskPool> {
     private final String displayName;
     private final String description;
     private final String workspaceTemplate;
+    private final JobRestriction restriction;
     private final List<Disk> disks;
 
-    @CheckForNull
-    private JobRestriction restriction;
-
     @DataBoundConstructor
-    public DiskPool(String diskPoolId, String displayName, String description, String workspaceTemplate, List<Disk> disks) {
+    public DiskPool(String diskPoolId, String displayName, String description,
+                    String workspaceTemplate, JobRestriction restriction, List<Disk> disks) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
         this.displayName = fixEmptyAndTrim(displayName);
         this.description = fixEmptyAndTrim(description);
         this.workspaceTemplate = fixEmptyAndTrim(workspaceTemplate);
+        this.restriction = restriction == null ? JobRestriction.DEFAULT : restriction;
         this.disks = fixNull(disks);
     }
 
@@ -73,18 +72,13 @@ public class DiskPool implements Describable<DiskPool> {
     }
 
     @Nonnull
-    public List<Disk> getDisks() {
-        return disks;
-    }
-
-    @CheckForNull
     public JobRestriction getRestriction() {
         return restriction;
     }
 
-    @DataBoundSetter
-    public void setRestriction(JobRestriction restriction) {
-        this.restriction = restriction;
+    @Nonnull
+    public List<Disk> getDisks() {
+        return disks;
     }
 
     @Extension
