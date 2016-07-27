@@ -19,11 +19,18 @@ public final class FormValidationUtil {
     }
 
     /**
-     * TODO add javadoc
-     * TODO add tests
+     * Validates the input String to match a specific workspace template.
+     * Shows error messages if the input path is not relative, or if it doesn't enclose brackets correctly.
+     * Shows warning message if the input template uses standalone '$' symbol instead of '${}'.
+     * <p>
+     * Note: It may show multiple error/warning messages for the same input String.
+     * e.g. '/$abc{abc' has 2 error messages and 1 warning:
+     * - error: not relative path
+     * - error: not valid enclosing parentheses
+     * - warning: unsafe standalone '$' usage
      *
-     * @param value
-     * @return
+     * @param value the input String to be checked
+     * @return the FormValidation based on the input String
      */
     @Nonnull
     public static FormValidation validateWorkspaceTemplate(@Nonnull String value) {
@@ -44,7 +51,9 @@ public final class FormValidationUtil {
                 bracketCount++;
             } else if (c == '}') {
                 bracketCount--;
-            } else if (bracketCount < 0) {
+            }
+
+            if (bracketCount < 0) {
                 if (existingMessages.add(invalidParenthesesMsg)) {
                     // hackish solution used to avoid adding same error message twice
                     // {@link FormValidation} doesn't implement hashCode, therefore I can't rely on using {@code Set} for unique elements
