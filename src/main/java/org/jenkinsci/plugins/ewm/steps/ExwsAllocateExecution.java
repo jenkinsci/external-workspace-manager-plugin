@@ -121,7 +121,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
         JobRestriction restriction = diskPool.getRestriction();
         if (!diskPool.getRestriction().canTake(run)) {
-            String message = format("Disk Pool ID: '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
+            String message = format("Disk Pool identified by '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
             throw new AbortException(message);
         }
 
