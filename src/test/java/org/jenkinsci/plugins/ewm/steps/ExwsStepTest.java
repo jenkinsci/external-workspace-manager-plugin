@@ -2,16 +2,12 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.Node;
 import hudson.model.queue.QueueTaskFuture;
-import hudson.slaves.NodeProperty;
-import hudson.slaves.NodePropertyDescriptor;
-import hudson.util.DescribableList;
 import hudson.util.ReflectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
-import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -27,7 +23,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -87,10 +82,10 @@ public class ExwsStepTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         resetTemplates();
-        resetExternalWorkspaceNodeProperty(node1);
-        resetExternalWorkspaceNodeProperty(node2);
+        removeExternalWorkspaceNodeProperty(node1);
+        removeExternalWorkspaceNodeProperty(node2);
     }
 
     @Test
@@ -137,7 +132,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingDiskPoolRefIdFromNodeProperty() throws Exception {
-        setExternalWorkspaceNodeProperty(node1, "", diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, "", diskNode1, diskNode2);
 
         runWorkflowJob(job);
 
@@ -148,7 +143,7 @@ public class ExwsStepTest {
     @Test
     public void wrongDiskPoolRefIdInNodeProperty() throws Exception {
         String wrongDiskPoolId = "random";
-        setExternalWorkspaceNodeProperty(node1, wrongDiskPoolId, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, wrongDiskPoolId, diskNode1, diskNode2);
 
         runWorkflowJob(job);
 
@@ -158,7 +153,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingDiskRefIdFromNodeProperty() throws Exception {
-        setExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new DiskNode("", "local-path"));
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new DiskNode("", "local-path"));
 
         runWorkflowJob(job);
 
@@ -169,7 +164,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingLocalRootPathFromNodeProperty() throws Exception {
-        setExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new DiskNode(DISK_ID_ONE, ""));
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new DiskNode(DISK_ID_ONE, ""));
 
         runWorkflowJob(job);
 
@@ -180,8 +175,8 @@ public class ExwsStepTest {
 
     @Test
     public void sharedWorkspaceBetweenTwoDifferentNodes() throws Exception {
-        setExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
-        setExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
 
         WorkflowJob jobWithTwoNodes = createWorkflowJobWithTwoNodes();
         runWorkflowJob(jobWithTwoNodes);
@@ -217,8 +212,8 @@ public class ExwsStepTest {
 
     @Test
     public void twoDifferentJobsUsingTheSameWorkspace() throws Exception {
-        setExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
-        setExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
 
         WorkflowJob upstreamJob = createWorkflowJob();
         WorkflowRun upstreamRun = runWorkflowJob(upstreamJob);
@@ -251,21 +246,6 @@ public class ExwsStepTest {
         Field templatesField = ReflectionUtils.findField(ExwsStep.DescriptorImpl.class, "templates");
         templatesField.setAccessible(true);
         ReflectionUtils.setField(templatesField, descriptor, templates);
-    }
-
-    private static void setExternalWorkspaceNodeProperty(Node node, String diskPoolRefId, DiskNode... diskNodes) {
-        node.getNodeProperties().add(new ExternalWorkspaceProperty(diskPoolRefId, Arrays.asList(diskNodes)));
-    }
-
-    private static void resetExternalWorkspaceNodeProperty(Node node) {
-        DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
-        Iterator<NodeProperty<?>> nodePropertyIterator = nodeProperties.iterator();
-        while (nodePropertyIterator.hasNext()) {
-            NodeProperty<?> nodeProperty = nodePropertyIterator.next();
-            if (nodeProperty instanceof ExternalWorkspaceProperty) {
-                nodePropertyIterator.remove();
-            }
-        }
     }
 
     private static WorkflowJob createWorkflowJob() throws IOException {
@@ -316,7 +296,7 @@ public class ExwsStepTest {
 
     private static WorkflowJob createWorkflowJob(String script) throws IOException {
         WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, RandomStringUtils.randomAlphanumeric(10));
-        job.setDefinition(new CpsFlowDefinition(script, true));
+        job.setDefinition(new CpsFlowDefinition(script));
 
         return job;
     }
