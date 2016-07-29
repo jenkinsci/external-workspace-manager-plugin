@@ -3,11 +3,8 @@ package org.jenkinsci.plugins.ewm.steps;
 import com.google.inject.Inject;
 import hudson.AbortException;
 import hudson.FilePath;
-import hudson.model.Item;
-import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
@@ -17,6 +14,7 @@ import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
+import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
 
 import java.io.File;
 import java.util.List;
@@ -44,8 +42,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     @Override
     protected ExternalWorkspace run() throws Exception {
         ExternalWorkspace exws;
-        String upstreamName = step.getUpstream();
-        if (upstreamName == null) {
+        RunWrapper selectedRunWrapper = step.getSelectedRun();
+        if (selectedRunWrapper == null) {
             // this is the upstream job
 
             String diskPoolId = step.getDiskPoolId();
@@ -77,30 +75,25 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             // this is the downstream job
 
             if (step.getDiskPoolId() != null) {
-                listener.getLogger().println("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
-                        "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.");
+                listener.getLogger().println("WARNING: Both 'selectedRun' and 'diskPoolId' parameters were provided. " +
+                        "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the selected run.");
             }
 
-            Item upstreamJob = Jenkins.getActiveInstance().getItemByFullName(upstreamName);
-            if (upstreamJob == null) {
-                throw new AbortException(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName));
+            Run<?, ?> selectedRun = selectedRunWrapper.getRawBuild();
+            if (selectedRun == null) {
+                throw new AbortException("The selected RunWrapper object contains a null Run. Possibly this run has been deleted in the meantime?");
             }
-            Run lastStableBuild = ((Job) upstreamJob).getLastStableBuild();
-            if (lastStableBuild == null) {
-                throw new AbortException(format("'%s' doesn't have any stable build", upstreamName));
-            }
-
-            ExwsAllocateActionImpl allocateAction = lastStableBuild.getAction(ExwsAllocateActionImpl.class);
+            ExwsAllocateActionImpl allocateAction = selectedRun.getAction(ExwsAllocateActionImpl.class);
             if (allocateAction == null) {
-                String message = format("The upstream job '%s' must have at least one stable build with a call to the " +
-                        "exwsAllocate step in order to have a workspace usable by this job.", upstreamName);
+                String message = format("The selected run '%s' must have at least one call to the " +
+                        "exwsAllocate step in order to have a workspace usable by this job.", selectedRun);
                 throw new AbortException(message);
             }
 
             List<ExternalWorkspace> allocatedWorkspaces = allocateAction.getAllocatedWorkspaces();
             if (allocatedWorkspaces.size() > 1) {
-                listener.getLogger().println(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
-                        "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName));
+                listener.getLogger().println(format("WARNING: The selected run '%s' have recorded multiple external workspace allocations. " +
+                        "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", selectedRun));
             }
 
             // this list always contains at least one element

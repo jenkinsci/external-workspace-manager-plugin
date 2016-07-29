@@ -159,7 +159,8 @@ public class WorkspaceCleanupTest {
         assertThat(listFiles(tmp.getRoot(), nameFileFilter("foo.txt"), directoryFileFilter()), hasSize(1));
 
         WorkflowRun downstreamRun = createWorkflowJobAndRun(format("" +
-                "def extWorkspace = exwsAllocate upstream: '%s' \n" +
+                "def run = runSelector '%s' \n" +
+                "def extWorkspace = exwsAllocate selectedRun: run \n" +
                 "node ('test') { \n" +
                 "	exws (extWorkspace) { \n" +
                 "		try { \n" +

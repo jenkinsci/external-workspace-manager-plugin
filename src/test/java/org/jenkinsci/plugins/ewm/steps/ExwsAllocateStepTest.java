@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.jvnet.hudson.test.BuildWatcher;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
@@ -29,6 +30,8 @@ public class ExwsAllocateStepTest {
 
     @ClassRule
     public static JenkinsRule j = new JenkinsRule();
+    @ClassRule
+    public static BuildWatcher watcher = new BuildWatcher();
     @ClassRule
     public static TemporaryFolder tmp1 = new TemporaryFolder();
     @ClassRule
@@ -133,34 +136,14 @@ public class ExwsAllocateStepTest {
     /* ##### Tests for the downstream Job ###### */
 
     @Test
-    public void downstreamJobWithInvalidUpstreamName() throws Exception {
-        String upstreamName = "random-upstream-name";
-        createDownstreamJobAndRun(upstreamName);
-
-        j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("Can't find any upstream Jenkins job by the full name '%s'. Are you sure that this is the full project name?", upstreamName), downstreamRun);
-    }
-
-    @Test
-    public void upstreamJobHasNoStableBuild() throws Exception {
-        createUpstreamJobAndRun("random-disk-pool");
-        String upstreamName = upstreamRun.getParent().getName();
-        createDownstreamJobAndRun(upstreamName);
-
-        j.assertBuildStatus(FAILURE, upstreamRun);
-        j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("'%s' doesn't have any stable build", upstreamName), downstreamRun);
-    }
-
-    @Test
     public void upstreamJobHasNoActionRegistered() throws Exception {
         upstreamRun = createWorkflowJobAndRun("echo 'hello world'");
         String jobName = upstreamRun.getParent().getFullName();
         createDownstreamJobAndRun(jobName);
 
         j.assertBuildStatus(FAILURE, downstreamRun);
-        j.assertLogContains(format("The upstream job '%s' must have at least one stable build with a call to the " +
-                "exwsAllocate step in order to have a workspace usable by this job.", jobName), downstreamRun);
+        j.assertLogContains(format("The selected run '%s' must have at least one call to the " +
+                "exwsAllocate step in order to have a workspace usable by this job.", upstreamRun), downstreamRun);
     }
 
     @Test
@@ -185,12 +168,13 @@ public class ExwsAllocateStepTest {
         createUpstreamJobAndRun();
         String upstreamName = upstreamRun.getParent().getName();
         downstreamRun = createWorkflowJobAndRun(format("" +
-                "exwsAllocate diskPoolId: 'any-pool', upstream: '%s'", upstreamName));
+                "def run = runSelector job: '%s' \n" +
+                "exwsAllocate diskPoolId: 'any-pool', selectedRun: run", upstreamName));
 
         j.assertBuildStatusSuccess(upstreamRun);
         j.assertBuildStatusSuccess(downstreamRun);
-        j.assertLogContains("WARNING: Both 'upstream' and 'diskPoolId' parameters were provided. " +
-                "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the upstream job.", downstreamRun);
+        j.assertLogContains("WARNING: Both 'selectedRun' and 'diskPoolId' parameters were provided. " +
+                "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the selected run.", downstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), downstreamRun);
         j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
     }
@@ -210,8 +194,8 @@ public class ExwsAllocateStepTest {
 
         j.assertBuildStatusSuccess(upstreamRun);
         j.assertBuildStatusSuccess(downstreamRun);
-        j.assertLogContains(format("WARNING: The Jenkins job '%s' have recorded multiple external workspace allocations. " +
-                "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamName), downstreamRun);
+        j.assertLogContains(format("WARNING: The selected run '%s' have recorded multiple external workspace allocations. " +
+                "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamRun), downstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, diskPool1.getDiskPoolId()), downstreamRun);
         j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
     }
@@ -230,7 +214,9 @@ public class ExwsAllocateStepTest {
     }
 
     private void createDownstreamJobAndRun(String upstreamName) throws Exception {
-        downstreamRun = createWorkflowJobAndRun(format("exwsAllocate upstream: '%s'", upstreamName));
+        downstreamRun = createWorkflowJobAndRun(format("" +
+                "def run = runSelector job: '%s' \n" +
+                "exwsAllocate selectedRun: run", upstreamName));
     }
 
     private static WorkflowRun createWorkflowJobAndRun(String script) throws Exception {
