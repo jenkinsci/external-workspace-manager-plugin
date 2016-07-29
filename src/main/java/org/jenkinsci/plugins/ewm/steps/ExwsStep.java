@@ -12,7 +12,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +43,7 @@ public class ExwsStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<Template> templates = new ArrayList<>();
+        private List<Template> templates = Collections.emptyList();
 
         public DescriptorImpl() {
             super(ExwsExecution.class);

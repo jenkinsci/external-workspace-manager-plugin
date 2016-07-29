@@ -15,6 +15,7 @@ It eliminates the need to copy, archive or move files.
     2. [Workspace reuse in same job](doc/PIPELINE_EXAMPLES.md#workspace-reuse-in-same-job)
     2. [Workspace reuse in two different jobs](doc/PIPELINE_EXAMPLES.md#workspace-reuse-in-two-different-jobs)
 1. [Workspace cleanup](doc/WORKSPACE_CLEANUP.md)
+1. [Custom workspace path](doc/CUSTOM_WORKSPACE_PATH.md)
 
 ## Current status
 

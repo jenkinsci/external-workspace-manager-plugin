@@ -1,19 +1,24 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
+import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
@@ -31,6 +36,9 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
     @CheckForNull
     private RunWrapper selectedRun;
+
+    @CheckForNull
+    private String path;
 
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
@@ -52,6 +60,16 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         this.selectedRun = selectedRun;
     }
 
+    @CheckForNull
+    public String getPath() {
+        return path;
+    }
+
+    @DataBoundSetter
+    public void setPath(String path) {
+        this.path = fixEmptyAndTrim(path);
+    }
+
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
@@ -60,7 +78,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<DiskPool> diskPools = new ArrayList<>();
+        private List<DiskPool> diskPools = Collections.emptyList();
 
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
@@ -77,6 +95,12 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         @Nonnull
         public List<DiskPool> getDiskPools() {
             return diskPools;
+        }
+
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
+        public FormValidation doCheckPath(@QueryParameter String value) {
+            return FormValidationUtil.validateWorkspaceTemplate(value);
         }
 
         @Override

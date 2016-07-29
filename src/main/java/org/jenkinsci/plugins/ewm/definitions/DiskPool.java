@@ -5,6 +5,9 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -27,13 +30,15 @@ public class DiskPool implements Describable<DiskPool> {
     private final String diskPoolId;
     private final String displayName;
     private final String description;
+    private final String workspaceTemplate;
     private final List<Disk> disks;
 
     @DataBoundConstructor
-    public DiskPool(String diskPoolId, String displayName, String description, List<Disk> disks) {
+    public DiskPool(String diskPoolId, String displayName, String description, String workspaceTemplate, List<Disk> disks) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
         this.displayName = fixEmptyAndTrim(displayName);
         this.description = fixEmptyAndTrim(description);
+        this.workspaceTemplate = fixEmptyAndTrim(workspaceTemplate);
         this.disks = fixNull(disks);
     }
 
@@ -57,6 +62,11 @@ public class DiskPool implements Describable<DiskPool> {
         return description;
     }
 
+    @CheckForNull
+    public String getWorkspaceTemplate() {
+        return workspaceTemplate;
+    }
+
     @Nonnull
     public List<Disk> getDisks() {
         return disks;
@@ -67,8 +77,16 @@ public class DiskPool implements Describable<DiskPool> {
 
     public static class DescriptorImpl extends Descriptor<DiskPool> {
 
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
         public FormValidation doCheckDiskPoolId(@QueryParameter String value) {
             return validateRequired(value);
+        }
+
+        @Restricted(NoExternalUse.class)
+        @SuppressWarnings("unused")
+        public FormValidation doCheckWorkspaceTemplate(@QueryParameter String value) {
+            return FormValidationUtil.validateWorkspaceTemplate(value);
         }
 
         @Nonnull

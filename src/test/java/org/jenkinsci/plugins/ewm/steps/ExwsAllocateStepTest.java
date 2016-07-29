@@ -97,7 +97,7 @@ public class ExwsAllocateStepTest {
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
-        j.assertLogContains(format("Mounting point from Master to the disk is not defined for Disk ID '%s', from Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), upstreamRun);
+        j.assertLogContains(format("Mounting point from Master to the disk is not defined for Disk ID '%s'", DISK_ID_ONE), upstreamRun);
     }
 
     @Test
@@ -182,8 +182,8 @@ public class ExwsAllocateStepTest {
     @Test
     public void upstreamJobRegisteredMultipleActions() throws Exception {
         Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
-        DiskPool diskPool1 = new DiskPool("id1", "name", "desc", Collections.singletonList(disk));
-        DiskPool diskPool2 = new DiskPool("id2", "name", "desc", Collections.singletonList(disk));
+        DiskPool diskPool1 = new DiskPool("id1", "name", "desc", null, Collections.singletonList(disk));
+        DiskPool diskPool2 = new DiskPool("id2", "name", "desc", null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Arrays.asList(diskPool1, diskPool2));
 
         upstreamRun = createWorkflowJobAndRun(format("" +
@@ -201,7 +201,7 @@ public class ExwsAllocateStepTest {
     }
 
     private void setUpDiskPool(Disk... disks) {
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", Arrays.asList(disks));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, Arrays.asList(disks));
         setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }
 
