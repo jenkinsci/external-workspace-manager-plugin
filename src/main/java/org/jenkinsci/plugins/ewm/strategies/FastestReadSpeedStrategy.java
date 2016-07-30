@@ -5,6 +5,7 @@ import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategyDescriptor;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -18,6 +19,10 @@ import java.util.List;
  * @author Alexandru Somai
  */
 public class FastestReadSpeedStrategy extends DiskAllocationStrategy {
+
+    @DataBoundConstructor
+    public FastestReadSpeedStrategy() {
+    }
 
     @Nonnull
     @Override

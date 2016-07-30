@@ -5,7 +5,9 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
 import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -28,21 +30,25 @@ import static hudson.util.FormValidation.validateRequired;
  */
 public class DiskPool implements Describable<DiskPool> {
 
+    private static final DiskAllocationStrategy DEFAULT_DISK_ALLOCATION_STRATEGY = new MostUsableSpaceStrategy();
+
     private final String diskPoolId;
     private final String displayName;
     private final String description;
     private final String workspaceTemplate;
     private final JobRestriction restriction;
+    private final DiskAllocationStrategy strategy;
     private final List<Disk> disks;
 
     @DataBoundConstructor
-    public DiskPool(String diskPoolId, String displayName, String description,
-                    String workspaceTemplate, JobRestriction restriction, List<Disk> disks) {
+    public DiskPool(String diskPoolId, String displayName, String description, String workspaceTemplate,
+                    JobRestriction restriction, DiskAllocationStrategy strategy, List<Disk> disks) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
         this.displayName = fixEmptyAndTrim(displayName);
         this.description = fixEmptyAndTrim(description);
         this.workspaceTemplate = fixEmptyAndTrim(workspaceTemplate);
         this.restriction = restriction == null ? JobRestriction.DEFAULT : restriction;
+        this.strategy = strategy == null ? DEFAULT_DISK_ALLOCATION_STRATEGY : strategy;
         this.disks = fixNull(disks);
     }
 
@@ -74,6 +80,11 @@ public class DiskPool implements Describable<DiskPool> {
     @Nonnull
     public JobRestriction getRestriction() {
         return restriction;
+    }
+
+    @Nonnull
+    public DiskAllocationStrategy getStrategy() {
+        return strategy;
     }
 
     @Nonnull

@@ -182,8 +182,8 @@ public class ExwsAllocateStepTest {
     @Test
     public void upstreamJobRegisteredMultipleActions() throws Exception {
         Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path", null);
-        DiskPool diskPool1 = new DiskPool("id1", "name", "desc", null, null, Collections.singletonList(disk));
-        DiskPool diskPool2 = new DiskPool("id2", "name", "desc", null, null, Collections.singletonList(disk));
+        DiskPool diskPool1 = new DiskPool("id1", "name", "desc", null, null, null, Collections.singletonList(disk));
+        DiskPool diskPool2 = new DiskPool("id2", "name", "desc", null, null, null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Arrays.asList(diskPool1, diskPool2));
 
         upstreamRun = createWorkflowJobAndRun(format("" +
@@ -201,7 +201,7 @@ public class ExwsAllocateStepTest {
     }
 
     private void setUpDiskPool(Disk... disks) {
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, null, Arrays.asList(disks));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, null, null, Arrays.asList(disks));
         setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }
 

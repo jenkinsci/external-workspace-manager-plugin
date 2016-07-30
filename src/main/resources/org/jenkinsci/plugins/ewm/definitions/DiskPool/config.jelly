@@ -12,8 +12,9 @@
     <f:entry title="${%Workspace path template}" field="workspaceTemplate">
         <f:textbox/>
     </f:entry>
-    <f:dropdownDescriptorSelector title="Disk Pool Restriction" field="restriction"
+    <f:dropdownDescriptorSelector title="${%Disk Pool Restriction}" field="restriction"
                                   default="${descriptor.defaultSettingsProvider}"/>
+    <f:dropdownDescriptorSelector title="${%Disk Allocation Strategy}" field="strategy"/>
     <f:entry>
         <f:repeatableProperty field="disks" add="${%Add Disk}" header="${%Disk}"/>
     </f:entry>

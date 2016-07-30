@@ -181,7 +181,7 @@ public class DiskPoolRestrictionTest {
 
     private static void setUpDiskPoolRestriction(JobRestriction restriction) {
         Disk disk = new Disk(DISK_ID_ONE, null, "any", null, null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, restriction, singletonList(disk));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, restriction, null, singletonList(disk));
         setUpDiskPools(j.jenkins, singletonList(diskPool));
     }
 

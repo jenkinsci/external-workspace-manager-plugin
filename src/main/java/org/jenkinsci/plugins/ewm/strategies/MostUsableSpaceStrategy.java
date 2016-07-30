@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategyDescriptor;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -19,6 +20,10 @@ import java.util.List;
  * @author Alexandru Somai
  */
 public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
+
+    @DataBoundConstructor
+    public MostUsableSpaceStrategy() {
+    }
 
     @Nonnull
     @Override
