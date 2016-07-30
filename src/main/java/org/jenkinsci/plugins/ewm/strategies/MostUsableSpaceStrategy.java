@@ -62,7 +62,7 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
         return new File(masterMountPoint).getUsableSpace();
     }
 
-    @Extension
+    @Extension(ordinal = 1000)
     public static class DescriptorImpl extends DiskAllocationStrategyDescriptor {
 
         @Nonnull
