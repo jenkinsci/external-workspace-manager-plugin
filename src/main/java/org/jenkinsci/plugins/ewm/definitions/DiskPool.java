@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.ewm.definitions;
 
+import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -31,14 +32,17 @@ public class DiskPool implements Describable<DiskPool> {
     private final String displayName;
     private final String description;
     private final String workspaceTemplate;
+    private final JobRestriction restriction;
     private final List<Disk> disks;
 
     @DataBoundConstructor
-    public DiskPool(String diskPoolId, String displayName, String description, String workspaceTemplate, List<Disk> disks) {
+    public DiskPool(String diskPoolId, String displayName, String description,
+                    String workspaceTemplate, JobRestriction restriction, List<Disk> disks) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
         this.displayName = fixEmptyAndTrim(displayName);
         this.description = fixEmptyAndTrim(description);
         this.workspaceTemplate = fixEmptyAndTrim(workspaceTemplate);
+        this.restriction = restriction == null ? JobRestriction.DEFAULT : restriction;
         this.disks = fixNull(disks);
     }
 
@@ -65,6 +69,11 @@ public class DiskPool implements Describable<DiskPool> {
     @CheckForNull
     public String getWorkspaceTemplate() {
         return workspaceTemplate;
+    }
+
+    @Nonnull
+    public JobRestriction getRestriction() {
+        return restriction;
     }
 
     @Nonnull

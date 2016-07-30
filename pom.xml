@@ -65,6 +65,11 @@
             <version>${workflow.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.synopsys.arc.jenkinsci.plugins</groupId>
+            <artifactId>job-restrictions</artifactId>
+            <version>0.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-support</artifactId>
             <version>${workflow.version}</version>

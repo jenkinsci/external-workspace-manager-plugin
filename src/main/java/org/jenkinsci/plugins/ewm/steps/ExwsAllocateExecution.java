@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import com.google.inject.Inject;
+import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -115,6 +116,15 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             exws = allocatedWorkspaces.iterator().next();
         }
 
+        String diskPoolId = exws.getDiskPoolId();
+        DiskPool diskPool = findDiskPool(diskPoolId, step.getDescriptor().getDiskPools());
+
+        JobRestriction restriction = diskPool.getRestriction();
+        if (!diskPool.getRestriction().canTake(run)) {
+            String message = format("Disk Pool identified by '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
+            throw new AbortException(message);
+        }
+
         ExwsAllocateActionImpl allocateAction = run.getAction(ExwsAllocateActionImpl.class);
         if (allocateAction == null) {
             allocateAction = new ExwsAllocateActionImpl();
@@ -123,7 +133,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         allocateAction.addAllocatedWorkspace(exws);
         run.save();
 
-        listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), exws.getDiskPoolId()));
+        listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), diskPoolId));
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
 
         return exws;
