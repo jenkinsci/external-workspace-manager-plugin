@@ -3,6 +3,12 @@
     <f:entry title="${%Disk Pool Ref ID}" field="diskPoolId">
         <f:textbox/>
     </f:entry>
+    <!-- TODO temporary, possibly the allocation strategies will be defined only for each Disk Pool -->
+    <f:dropdownDescriptorSelector title="${%Disk Allocation Strategy}" field="strategy"/>
+    <!-- TODO temporary, to be discussed -->
+    <f:entry title="${%Estimated Workspace Size [KB]}" field="estimatedWorkspaceSize">
+        <f:textbox/>
+    </f:entry>
     <f:entry title="Selected Run" field="selectedRun"/>
     <f:entry title="Custom workspace path" field="path">
         <f:textbox/>

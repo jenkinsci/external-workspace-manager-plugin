@@ -4,6 +4,7 @@ import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
@@ -25,4 +26,17 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
      */
     @Nonnull
     public abstract Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException;
+
+    /**
+     * TODO add javadoc if we choose this solution
+     *
+     * @param disks
+     * @param estimatedWorkspaceSize
+     * @return
+     * @throws IOException
+     */
+    @Nonnull
+    public Disk allocateDisk(@Nonnull List<Disk> disks, @CheckForNull Long estimatedWorkspaceSize) throws IOException {
+        return allocateDisk(disks);
+    }
 }

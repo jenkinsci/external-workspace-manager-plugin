@@ -61,6 +61,12 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             DiskPool diskPool = findDiskPool(diskPoolId, diskPools);
             Disk disk = diskPool.getStrategy().allocateDisk(diskPool.getDisks());
 
+            // TODO implementation if strategy is provided as step parameter
+//             Disk disk = step.getStrategy().allocateDisk(diskPool.getDisks());
+
+            // TODO implementation if we go for also using the estimatedWorkspaceSize parameter
+//            Disk disk = diskPool.getStrategy().allocateDisk(diskPool.getDisks(), step.getEstimatedWorkspaceSize());
+
             String diskId = disk.getDiskId();
             if (diskId == null) {
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);

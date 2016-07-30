@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.steps;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
@@ -40,6 +41,14 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @CheckForNull
     private String path;
 
+    // TODO to be discussed, do we want strategy as step parameter or define in Jenkins config, for each Disk Pool?
+    @CheckForNull
+    private DiskAllocationStrategy strategy;
+
+    // TODO temporary, to be discussed. Maybe makes sense to be as input parameter for fastest R/W allocation strategy?
+    @CheckForNull
+    private Long estimatedWorkspaceSize;
+
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
@@ -68,6 +77,26 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @DataBoundSetter
     public void setPath(String path) {
         this.path = fixEmptyAndTrim(path);
+    }
+
+    @CheckForNull
+    public DiskAllocationStrategy getStrategy() {
+        return strategy;
+    }
+
+    @DataBoundSetter
+    public void setStrategy(DiskAllocationStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    @CheckForNull
+    public Long getEstimatedWorkspaceSize() {
+        return estimatedWorkspaceSize;
+    }
+
+    @DataBoundSetter
+    public void setEstimatedWorkspaceSize(Long estimatedWorkspaceSize) {
+        this.estimatedWorkspaceSize = estimatedWorkspaceSize;
     }
 
     @Override
