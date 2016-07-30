@@ -1,5 +1,7 @@
-package org.jenkinsci.plugins.ewm.strategies;
+package org.jenkinsci.plugins.ewm;
 
+import hudson.ExtensionPoint;
+import hudson.model.AbstractDescribableImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 
 import javax.annotation.Nonnull;
@@ -12,7 +14,7 @@ import java.util.List;
  *
  * @author Alexandru Somai
  */
-public abstract class DiskAllocationStrategy {
+public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<DiskAllocationStrategy> implements ExtensionPoint {
 
     /**
      * Allocates a disk from the given list. The list contains at least one {@link Disk} entry.

@@ -1,6 +1,10 @@
 package org.jenkinsci.plugins.ewm.strategies;
 
 import hudson.AbortException;
+import hudson.Extension;
+import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
+import org.jenkinsci.plugins.ewm.DiskAllocationStrategyDescriptor;
+import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 
 import javax.annotation.Nonnull;
@@ -51,5 +55,15 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
         }
 
         return new File(masterMountPoint).getUsableSpace();
+    }
+
+    @Extension
+    public static class DescriptorImpl extends DiskAllocationStrategyDescriptor {
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return Messages.strategies_MostUsableSpace_DisplayName();
+        }
     }
 }
