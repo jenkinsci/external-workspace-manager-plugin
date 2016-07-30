@@ -2,10 +2,14 @@ package org.jenkinsci.plugins.ewm.utils;
 
 import hudson.Util;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.ewm.Messages;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
+
+import static hudson.util.FormValidation.error;
+import static hudson.util.FormValidation.ok;
 
 /**
  * {@link FormValidation} utility class.
@@ -38,10 +42,10 @@ public final class FormValidationUtil {
         Set<String> existingMessages = new HashSet<>();
 
         if (!Util.isRelativePath(value)) {
-            formValidations.add(FormValidation.error("Must be a relative path"));
+            formValidations.add(error(Messages.formValidation_NotRelativePath()));
         }
 
-        String invalidParenthesesMsg = "The workspace template parentheses are not valid";
+        String invalidParenthesesMsg = Messages.formValidation_NotValidParentheses();
         int bracketCount = 0;
         char[] chars = value.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -57,13 +61,12 @@ public final class FormValidationUtil {
                 if (existingMessages.add(invalidParenthesesMsg)) {
                     // hackish solution used to avoid adding same error message twice
                     // {@link FormValidation} doesn't implement hashCode, therefore I can't rely on using {@code Set} for unique elements
-                    formValidations.add(FormValidation.error(invalidParenthesesMsg));
+                    formValidations.add(error(invalidParenthesesMsg));
                 }
             }
 
             if (c == '$' && i < chars.length - 1 && chars[i + 1] != '{') {
-                String message = "It may be unsafe to use standalone '$' symbol for workspace template. " +
-                        "It's recommended to use '${ }' instead";
+                String message = Messages.formValidation_UnsafeSymbol();
                 if (existingMessages.add(message)) {
                     formValidations.add(FormValidation.warning(message));
                 }
@@ -72,10 +75,28 @@ public final class FormValidationUtil {
 
         if (bracketCount != 0) {
             if (existingMessages.add(invalidParenthesesMsg)) {
-                formValidations.add(FormValidation.error(invalidParenthesesMsg));
+                formValidations.add(error(invalidParenthesesMsg));
             }
         }
 
         return FormValidation.aggregate(formValidations);
+    }
+
+    /**
+     * Validates that the given String is a positive double.
+     *
+     * @param value the input String
+     * @return {@link FormValidation#ok()} if the input String is a positive value,
+     * {@link FormValidation#error(String)} otherwise
+     */
+    public static FormValidation validatePositiveDouble(String value) {
+        try {
+            if (Double.parseDouble(value) <= 0) {
+                return error(Messages.formValidation_NotPositiveDouble());
+            }
+            return ok();
+        } catch (NumberFormatException e) {
+            return error(Messages.formValidation_NotADoubleValue());
+        }
     }
 }

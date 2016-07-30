@@ -55,7 +55,7 @@ public class CustomWorkspaceTest {
 
     @Before
     public void setUp() throws IOException {
-        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null);
+        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null, null);
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
 
@@ -187,7 +187,7 @@ public class CustomWorkspaceTest {
     }
 
     private static void setGlobalWorkspaceTemplate(String template) {
-        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null);
+        Disk disk = new Disk(DISK_ID_ONE, null, "mount", null, null);
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, template, null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
     }

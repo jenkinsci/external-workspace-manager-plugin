@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.ewm.utils;
 
-import hudson.Util;
 import hudson.util.FormValidation;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertThat;
  */
 public class FormValidationUtilTest {
 
-    private static final String UNSAFE_SYMBOL_MSG = Util.escape("It may be unsafe to use standalone '$' symbol for workspace template. It's recommended to use '${ }' instead");
+    private static final String UNSAFE_SYMBOL_MSG = "It may be unsafe to use standalone $ symbol for workspace template. It is recommended to use ${ } instead";
     private static final String NOT_VALID_PARENTHESES = "The workspace template parentheses are not valid";
     private static final String NOT_RELATIVE_PATH = "Must be a relative path";
 
@@ -99,5 +98,27 @@ public class FormValidationUtilTest {
         assertThat(StringUtils.countMatches(formValidation.renderHtml(), NOT_RELATIVE_PATH), is(1));
         assertThat(StringUtils.countMatches(formValidation.renderHtml(), NOT_VALID_PARENTHESES), is(1));
         assertThat(StringUtils.countMatches(formValidation.renderHtml(), UNSAFE_SYMBOL_MSG), is(1));
+    }
+
+    @Test
+    public void validDoubleValue() {
+        FormValidation formValidation = FormValidationUtil.validatePositiveDouble("2.3");
+        assertThat(formValidation, is(FormValidation.ok()));
+    }
+
+    @Test
+    public void negativeDoubleValue() {
+        @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+        FormValidation formValidation = FormValidationUtil.validatePositiveDouble("-2.3");
+        assertThat(formValidation.kind, is(FormValidation.Kind.ERROR));
+        assertThat(formValidation.getMessage(), is("Not a positive double value"));
+    }
+
+    @Test
+    public void notDoubleValue() {
+        @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+        FormValidation formValidation = FormValidationUtil.validatePositiveDouble("foobar");
+        assertThat(formValidation.kind, is(FormValidation.Kind.ERROR));
+        assertThat(formValidation.getMessage(), is("Not a double value"));
     }
 }

@@ -1,15 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
     <!-- TODO - add help files for each field -->
-    <f:entry title="${%Name}" field="name">
-        <f:textbox/>
-    </f:entry>
-    <f:entry title="${%Type}" field="type">
-        <f:textbox/>
-    </f:entry>
-    <f:entry title="${%Size [KB]}" field="size">
-        <f:textbox/>
-    </f:entry>
     <f:entry title="${%Write Speed [MB/s]}" field="writeSpeed">
         <f:textbox/>
     </f:entry>

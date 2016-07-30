@@ -15,7 +15,7 @@ public class NoDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
     public NoDiskInfo() {
-        super(null, null, null, null, null);
+        super(null, null);
     }
 
     @Extension

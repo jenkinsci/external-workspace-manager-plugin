@@ -6,10 +6,10 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.providers.NoDiskInfo;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -30,16 +30,16 @@ public class Disk implements Describable<Disk> {
     private final String displayName;
     private final String masterMountPoint;
     private final String physicalPathOnDisk;
-
-    @CheckForNull
-    private DiskInfoProvider diskInfo;
+    private final DiskInfoProvider diskInfo;
 
     @DataBoundConstructor
-    public Disk(String diskId, String displayName, String masterMountPoint, String physicalPathOnDisk) {
+    public Disk(String diskId, String displayName, String masterMountPoint,
+                String physicalPathOnDisk, DiskInfoProvider diskInfo) {
         this.diskId = fixEmptyAndTrim(diskId);
         this.displayName = fixEmptyAndTrim(displayName);
         this.masterMountPoint = fixEmptyAndTrim(masterMountPoint);
         this.physicalPathOnDisk = fixEmptyAndTrim(physicalPathOnDisk);
+        this.diskInfo = diskInfo == null ? new NoDiskInfo() : diskInfo;
     }
 
     @Override
@@ -67,14 +67,9 @@ public class Disk implements Describable<Disk> {
         return physicalPathOnDisk;
     }
 
-    @CheckForNull
+    @Nonnull
     public DiskInfoProvider getDiskInfo() {
         return diskInfo;
-    }
-
-    @DataBoundSetter
-    public void setDiskInfo(DiskInfoProvider diskInfo) {
-        this.diskInfo = diskInfo;
     }
 
     @Extension
@@ -98,7 +93,7 @@ public class Disk implements Describable<Disk> {
         @SuppressWarnings("unused")
         public FormValidation doCheckPhysicalPathOnDisk(@QueryParameter String value) {
             if (!isRelativePath(value)) {
-                return FormValidation.error("Must be a relative path");
+                return FormValidation.error(Messages.formValidation_NotRelativePath());
             }
             return FormValidation.ok();
         }
