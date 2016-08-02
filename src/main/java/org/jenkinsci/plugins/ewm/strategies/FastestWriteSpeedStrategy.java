@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.strategies;
 
 import hudson.Extension;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategyDescriptor;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.Messages;
@@ -33,6 +34,7 @@ public class FastestWriteSpeedStrategy extends AbstractDiskSpeedStrategy {
         return diskInfo.getWriteSpeed();
     }
 
+    @Symbol("fastestWriteSpeed")
     @Extension
     public static class DescriptorImpl extends DiskAllocationStrategyDescriptor {
 

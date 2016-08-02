@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.ewm.strategies;
 
 import hudson.AbortException;
 import hudson.Extension;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategyDescriptor;
 import org.jenkinsci.plugins.ewm.Messages;
@@ -49,13 +50,14 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
 
         long estimatedWorkspaceSize = getEstimatedWorkspaceSize();
         if (selectedDiskUsableSpace < estimatedWorkspaceSize) {
-            String message = String.format("The selected Disk with the most usable space doesn't have at least %s usable space", estimatedWorkspaceSize);
+            String message = String.format("The selected Disk with the most usable space doesn't have at least %s space", estimatedWorkspaceSize);
             throw new AbortException(message);
         }
 
         return selectedDisk;
     }
 
+    @Symbol("mostUsableSpace")
     @Extension(ordinal = 1000)
     public static class DescriptorImpl extends DiskAllocationStrategyDescriptor {
 

@@ -3,7 +3,6 @@
     <f:entry title="${%Disk Pool Ref ID}" field="diskPoolId">
         <f:textbox/>
     </f:entry>
-    <!-- TODO temporary, possibly the allocation strategies will be defined only for each Disk Pool -->
     <f:dropdownDescriptorSelector title="${%Disk Allocation Strategy}" field="strategy"/>
     <f:entry title="Selected Run" field="selectedRun"/>
     <f:entry title="Custom workspace path" field="path">

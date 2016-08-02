@@ -14,7 +14,11 @@ import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
-import org.jenkinsci.plugins.workflow.steps.*;
+import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
+import org.jenkinsci.plugins.workflow.steps.BodyExecution;
+import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -76,7 +80,6 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         body = getContext().newBodyInvoker()
                 .withContext(workspace)
                 .withCallback(new Callback(getContext(), lease))
-                .withDisplayName(null)
                 .start();
         return false;
     }
