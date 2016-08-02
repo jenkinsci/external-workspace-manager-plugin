@@ -17,6 +17,9 @@ import java.util.List;
  */
 public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<DiskAllocationStrategy> implements ExtensionPoint {
 
+    @CheckForNull
+    private Long estimatedWorkspaceSize;
+
     /**
      * Allocates a disk from the given list. The list contains at least one {@link Disk} entry.
      *
@@ -38,5 +41,14 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
     @Nonnull
     public Disk allocateDisk(@Nonnull List<Disk> disks, @CheckForNull Long estimatedWorkspaceSize) throws IOException {
         return allocateDisk(disks);
+    }
+
+    @CheckForNull
+    public Long getEstimatedWorkspaceSize() {
+        return estimatedWorkspaceSize;
+    }
+
+    protected void setEstimatedWorkspaceSize(Long estimatedWorkspaceSize) {
+        this.estimatedWorkspaceSize = estimatedWorkspaceSize;
     }
 }

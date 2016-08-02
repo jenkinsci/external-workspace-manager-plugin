@@ -102,4 +102,12 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
      */
     @CheckForNull
     protected abstract Double getDiskSpeed(@Nonnull DiskInfoProvider diskInfo);
+
+    @Override
+    protected void setEstimatedWorkspaceSize(@Nonnull Long estimatedWorkspaceSize) {
+        if (estimatedWorkspaceSize == 0) {
+            estimatedWorkspaceSize = null;
+        }
+        super.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
+    }
 }

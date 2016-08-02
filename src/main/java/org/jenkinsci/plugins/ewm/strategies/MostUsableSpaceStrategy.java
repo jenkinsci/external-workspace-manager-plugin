@@ -7,6 +7,7 @@ import org.jenkinsci.plugins.ewm.DiskAllocationStrategyDescriptor;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -23,6 +24,14 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
 
     @DataBoundConstructor
     public MostUsableSpaceStrategy() {
+    }
+
+    @DataBoundSetter
+    public void setEstimatedWorkspaceSize(@Nonnull Long estimatedWorkspaceSize) {
+        if (estimatedWorkspaceSize == 0) {
+            estimatedWorkspaceSize = null;
+        }
+        super.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
     }
 
     @Nonnull

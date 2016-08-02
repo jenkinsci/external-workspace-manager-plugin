@@ -45,10 +45,6 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @CheckForNull
     private DiskAllocationStrategy strategy;
 
-    // TODO temporary, to be discussed. Maybe makes sense to be as input parameter for fastest R/W allocation strategy?
-    @CheckForNull
-    private Long estimatedWorkspaceSize;
-
     @DataBoundConstructor
     public ExwsAllocateStep(String diskPoolId) {
         this.diskPoolId = fixEmptyAndTrim(diskPoolId);
@@ -87,16 +83,6 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @DataBoundSetter
     public void setStrategy(DiskAllocationStrategy strategy) {
         this.strategy = strategy;
-    }
-
-    @CheckForNull
-    public Long getEstimatedWorkspaceSize() {
-        return estimatedWorkspaceSize;
-    }
-
-    @DataBoundSetter
-    public void setEstimatedWorkspaceSize(Long estimatedWorkspaceSize) {
-        this.estimatedWorkspaceSize = estimatedWorkspaceSize;
     }
 
     @Override

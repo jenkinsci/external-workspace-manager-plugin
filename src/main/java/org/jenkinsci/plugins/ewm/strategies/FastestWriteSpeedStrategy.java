@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -19,6 +20,11 @@ public class FastestWriteSpeedStrategy extends AbstractDiskSpeedStrategy {
 
     @DataBoundConstructor
     public FastestWriteSpeedStrategy() {
+    }
+
+    @DataBoundSetter
+    public void setEstimatedWorkspaceSize(@Nonnull Long estimatedWorkspaceSize) {
+        super.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
     }
 
     @CheckForNull
