@@ -8,6 +8,7 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -59,13 +60,15 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             List<DiskPool> diskPools = step.getDescriptor().getDiskPools();
             DiskPool diskPool = findDiskPool(diskPoolId, diskPools);
-            Disk disk = diskPool.getStrategy().allocateDisk(diskPool.getDisks());
 
-            // TODO implementation if strategy is provided as step parameter
-//             Disk disk = step.getStrategy().allocateDisk(diskPool.getDisks());
+            DiskAllocationStrategy strategy = step.getStrategy();
+            if (strategy == null) {
+                // The strategy may noy be provided in the Pipeline step execution.
+                // Fallback to the strategy defined in the Jenkins global config.
+                strategy = diskPool.getStrategy();
+            }
 
-            // TODO implementation if we go for also using the estimatedWorkspaceSize parameter
-//            Disk disk = diskPool.getStrategy().allocateDisk(diskPool.getDisks(), step.getEstimatedWorkspaceSize());
+            Disk disk = strategy.allocateDisk(diskPool.getDisks());
 
             String diskId = disk.getDiskId();
             if (diskId == null) {

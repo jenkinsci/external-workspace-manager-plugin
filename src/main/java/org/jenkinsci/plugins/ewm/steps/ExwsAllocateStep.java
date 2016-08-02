@@ -41,7 +41,6 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @CheckForNull
     private String path;
 
-    // TODO to be discussed, do we want strategy as step parameter or define in Jenkins config, for each Disk Pool?
     @CheckForNull
     private DiskAllocationStrategy strategy;
 
