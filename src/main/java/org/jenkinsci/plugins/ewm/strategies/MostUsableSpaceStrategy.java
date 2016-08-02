@@ -26,10 +26,7 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
     }
 
     @DataBoundSetter
-    public void setEstimatedWorkspaceSize(@Nonnull Long estimatedWorkspaceSize) {
-        if (estimatedWorkspaceSize == 0) {
-            estimatedWorkspaceSize = null;
-        }
+    public void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
         super.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
     }
 
@@ -50,8 +47,9 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
             }
         }
 
-        if (selectedDiskUsableSpace < getEstimatedWorkspaceSize()) {
-            String message = String.format("The selected Disk with the most usable space doesn't have at least %s usable space", getEstimatedWorkspaceSize());
+        long estimatedWorkspaceSize = getEstimatedWorkspaceSize();
+        if (selectedDiskUsableSpace < estimatedWorkspaceSize) {
+            String message = String.format("The selected Disk with the most usable space doesn't have at least %s usable space", estimatedWorkspaceSize);
             throw new AbortException(message);
         }
 

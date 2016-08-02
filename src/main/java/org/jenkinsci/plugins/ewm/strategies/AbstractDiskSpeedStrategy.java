@@ -27,12 +27,12 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
         Iterator<Disk> iterator = disks.iterator();
         Disk candidate = null;
 
-        // try to find at least one Disk candidate that has usable space > estimated workspace size
+        // try to find at least one Disk candidate that has usable space >= estimated workspace size
         while (iterator.hasNext()) {
             Disk next = iterator.next();
             long usableSpace = retrieveUsableSpace(next);
-            if (usableSpace > estimatedWorkspaceSize) {
-                // found a possible candidate that has the usable space > estimate workspace size
+            if (usableSpace >= estimatedWorkspaceSize) {
+                // found a possible candidate that has the usable space >= estimate workspace size
                 candidate = next;
                 break;
             }
@@ -69,12 +69,4 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
      */
     @CheckForNull
     protected abstract Double getDiskSpeed(@Nonnull DiskInfoProvider diskInfo);
-
-    @Override
-    protected void setEstimatedWorkspaceSize(@Nonnull Long estimatedWorkspaceSize) {
-        if (estimatedWorkspaceSize == 0) {
-            estimatedWorkspaceSize = null;
-        }
-        super.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
-    }
 }

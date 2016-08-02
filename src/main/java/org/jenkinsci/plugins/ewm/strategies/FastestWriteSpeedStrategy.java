@@ -23,7 +23,7 @@ public class FastestWriteSpeedStrategy extends AbstractDiskSpeedStrategy {
     }
 
     @DataBoundSetter
-    public void setEstimatedWorkspaceSize(@Nonnull Long estimatedWorkspaceSize) {
+    public void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
         super.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
     }
 

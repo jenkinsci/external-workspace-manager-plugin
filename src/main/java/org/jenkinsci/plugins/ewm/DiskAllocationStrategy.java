@@ -5,7 +5,6 @@ import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +18,7 @@ import java.util.List;
  */
 public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<DiskAllocationStrategy> implements ExtensionPoint {
 
-    @CheckForNull
-    private Long estimatedWorkspaceSize;
+    private long estimatedWorkspaceSize;
 
     /**
      * Allocates a disk from the given list. The list contains at least one {@link Disk} entry.
@@ -50,12 +48,11 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
         return new File(masterMountPoint).getUsableSpace();
     }
 
-    @CheckForNull
-    public Long getEstimatedWorkspaceSize() {
+    public long getEstimatedWorkspaceSize() {
         return estimatedWorkspaceSize;
     }
 
-    protected void setEstimatedWorkspaceSize(Long estimatedWorkspaceSize) {
+    protected void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
         this.estimatedWorkspaceSize = estimatedWorkspaceSize;
     }
 }
