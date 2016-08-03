@@ -4,6 +4,8 @@ import hudson.AbortException;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -38,7 +40,8 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
      * @return the usable space for the disk
      * @throws IOException if mounting point from Jenkins Master to Disk is {@code null}
      */
-    protected long retrieveUsableSpace(Disk disk) throws IOException {
+    @Restricted(NoExternalUse.class)
+    public long retrieveUsableSpace(Disk disk) throws IOException {
         String masterMountPoint = disk.getMasterMountPoint();
         if (masterMountPoint == null) {
             String message = String.format("Mounting point from Master to the disk is not defined for Disk ID '%s'", disk.getDiskId());

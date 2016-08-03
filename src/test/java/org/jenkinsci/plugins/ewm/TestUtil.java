@@ -79,4 +79,8 @@ public final class TestUtil {
 
         return runFuture.get();
     }
+
+    public static Disk createDisk() {
+        return new Disk(RandomStringUtils.randomAlphanumeric(7), null, "mounting-point", null, null);
+    }
 }
