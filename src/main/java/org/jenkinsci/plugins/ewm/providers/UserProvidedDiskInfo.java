@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 public class UserProvidedDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
-    public UserProvidedDiskInfo(Double readSpeed, Double writeSpeed) {
+    public UserProvidedDiskInfo(double readSpeed, double writeSpeed) {
         super(readSpeed, writeSpeed);
     }
 

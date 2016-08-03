@@ -7,23 +7,18 @@ import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.CheckForNull;
-
 /**
  * @author Alexandru Somai
  */
 @Restricted(NoExternalUse.class)
 public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoProvider> implements ExtensionPoint {
 
-    @CheckForNull
-    private final Double readSpeed;
+    private final double readSpeed;
+    private final double writeSpeed;
 
-    @CheckForNull
-    private final Double writeSpeed;
-
-    protected DiskInfoProvider(@CheckForNull Double readSpeed, @CheckForNull Double writeSpeed) {
-        this.readSpeed = readSpeed != null && readSpeed >= 0 ? readSpeed : null;
-        this.writeSpeed = writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null;
+    protected DiskInfoProvider(double readSpeed, double writeSpeed) {
+        this.readSpeed = readSpeed > 0 ? readSpeed : 0;
+        this.writeSpeed = writeSpeed > 0 ? writeSpeed : 0;
     }
 
     /**
@@ -33,13 +28,11 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
         return Jenkins.getActiveInstance().getExtensionList(DiskInfoProvider.class);
     }
 
-    @CheckForNull
-    public Double getReadSpeed() {
+    public double getReadSpeed() {
         return readSpeed;
     }
 
-    @CheckForNull
-    public Double getWriteSpeed() {
+    public double getWriteSpeed() {
         return writeSpeed;
     }
 }

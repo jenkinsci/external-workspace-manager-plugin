@@ -5,7 +5,6 @@ import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Iterator;
@@ -45,12 +44,12 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
         }
 
         // found a possible candidate, continue searching for another disk with speed >= candidate's speed
-        Double candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
+        double candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
         while (iterator.hasNext()) {
             Disk next = iterator.next();
-            Double nextSpeed = getDiskSpeed(next.getDiskInfo());
+            double nextSpeed = getDiskSpeed(next.getDiskInfo());
             long usableSpace = retrieveUsableSpace(next);
-            if (candidateSpeed != null && nextSpeed != null && nextSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSize) {
+            if (nextSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSize) {
                 // found another Disk that has higher speed than the candidate's speed
                 // and the usable space >= estimated workspace size
                 candidate = next;
@@ -67,6 +66,5 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
      * @param diskInfo the {@link DiskInfoProvider} that contains R/W {@link Disk} speed
      * @return the value represented by the R/W speed
      */
-    @CheckForNull
-    protected abstract Double getDiskSpeed(@Nonnull DiskInfoProvider diskInfo);
+    protected abstract double getDiskSpeed(@Nonnull DiskInfoProvider diskInfo);
 }
