@@ -43,7 +43,7 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
             throw new AbortException(message);
         }
 
-        // found a possible candidate, continue searching for another disk with speed >= candidate's speed
+        // found a possible candidate, continue searching for another disk with speed > candidate's speed
         double candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
         while (iterator.hasNext()) {
             Disk next = iterator.next();
