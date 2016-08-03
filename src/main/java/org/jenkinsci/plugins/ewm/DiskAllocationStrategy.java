@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.ewm;
 
 import hudson.AbortException;
+import hudson.DescriptorExtensionList;
+import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -21,6 +24,22 @@ import java.util.List;
 public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<DiskAllocationStrategy> implements ExtensionPoint {
 
     private long estimatedWorkspaceSize;
+
+    /**
+     * @return all registered {@link DiskAllocationStrategy}s.
+     */
+    @Nonnull
+    public static ExtensionList<DiskAllocationStrategy> all() {
+        return Jenkins.getActiveInstance().getExtensionList(DiskAllocationStrategy.class);
+    }
+
+    /**
+     * @return the registered {@link DiskAllocationStrategyDescriptor}s for the {@link DiskAllocationStrategy}.
+     */
+    @Nonnull
+    public static DescriptorExtensionList<DiskAllocationStrategy, DiskAllocationStrategyDescriptor> allDescriptors() {
+        return Jenkins.getActiveInstance().getDescriptorList(DiskAllocationStrategy.class);
+    }
 
     /**
      * Allocates a disk from the given list. The list contains at least one {@link Disk} entry.

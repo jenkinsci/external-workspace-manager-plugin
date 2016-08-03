@@ -1,11 +1,14 @@
 package org.jenkinsci.plugins.ewm;
 
+import hudson.DescriptorExtensionList;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+
+import javax.annotation.Nonnull;
 
 /**
  * Contains additional information about a {@link org.jenkinsci.plugins.ewm.definitions.Disk} entry.
@@ -26,8 +29,17 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
     /**
      * @return all registered {@link DiskInfoProvider}s.
      */
+    @Nonnull
     public static ExtensionList<DiskInfoProvider> all() {
         return Jenkins.getActiveInstance().getExtensionList(DiskInfoProvider.class);
+    }
+
+    /**
+     * @return the registered {@link DiskInfoProviderDescriptor}s for the {@link DiskInfoProvider}.
+     */
+    @Nonnull
+    public static DescriptorExtensionList<DiskInfoProvider, DiskInfoProviderDescriptor> allDescriptors() {
+        return Jenkins.getActiveInstance().getDescriptorList(DiskInfoProvider.class);
     }
 
     public double getReadSpeed() {
