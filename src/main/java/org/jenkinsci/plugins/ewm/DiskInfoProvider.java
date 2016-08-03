@@ -8,6 +8,8 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
+ * Contains additional information about a {@link org.jenkinsci.plugins.ewm.definitions.Disk} entry.
+ *
  * @author Alexandru Somai
  */
 @Restricted(NoExternalUse.class)

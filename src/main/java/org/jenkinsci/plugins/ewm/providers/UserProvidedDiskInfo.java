@@ -14,6 +14,8 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.annotation.Nonnull;
 
 /**
+ * {@link DiskInfoProvider} implementation that has values provided by the user.
+ *
  * @author Alexandru Somai
  */
 public class UserProvidedDiskInfo extends DiskInfoProvider {
