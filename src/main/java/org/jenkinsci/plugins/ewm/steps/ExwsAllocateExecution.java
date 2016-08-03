@@ -63,11 +63,12 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             DiskAllocationStrategy strategy = step.getStrategy();
             if (strategy == null) {
-                // The strategy may noy be provided in the Pipeline step execution.
-                // Fallback to the strategy defined in the Jenkins global config.
+                listener.getLogger().println("Disk allocation strategy was not provided as step parameter. " +
+                        "Fallback to the strategy defined in the Jenkins global config");
                 strategy = diskPool.getStrategy();
             }
 
+            listener.getLogger().println(format("Using Disk allocation strategy: '%s'", strategy.getDescriptor().getDisplayName()));
             Disk disk = strategy.allocateDisk(diskPool.getDisks());
 
             String diskId = disk.getDiskId();
