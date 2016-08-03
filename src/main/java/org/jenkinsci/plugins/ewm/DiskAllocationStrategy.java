@@ -55,7 +55,7 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
         return estimatedWorkspaceSize;
     }
 
-    protected void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
+    public void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
         this.estimatedWorkspaceSize = estimatedWorkspaceSize;
     }
 }

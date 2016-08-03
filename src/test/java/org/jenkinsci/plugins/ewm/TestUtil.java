@@ -81,6 +81,10 @@ public final class TestUtil {
     }
 
     public static Disk createDisk() {
-        return new Disk(RandomStringUtils.randomAlphanumeric(7), null, "mounting-point", null, null);
+        return createDisk(null);
+    }
+
+    public static Disk createDisk(DiskInfoProvider infoProvider) {
+        return new Disk(RandomStringUtils.randomAlphanumeric(7), null, "mounting-point", null, infoProvider);
     }
 }

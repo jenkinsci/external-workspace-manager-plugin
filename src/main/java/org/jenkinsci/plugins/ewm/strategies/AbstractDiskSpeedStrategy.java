@@ -39,20 +39,20 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
         }
 
         if (candidate == null) {
-            // there is no Disk that has usable space > estimated workspace size
+            // there is no Disk that has usable space >= estimated workspace size
             String message = String.format("Couldn't find any Disk with at least %s KB usable space", estimatedWorkspaceSize);
             throw new AbortException(message);
         }
 
-        // found a possible candidate, continue searching for another disk with speed > candidate's speed
+        // found a possible candidate, continue searching for another disk with speed >= candidate's speed
         Double candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
         while (iterator.hasNext()) {
             Disk next = iterator.next();
             Double nextSpeed = getDiskSpeed(next.getDiskInfo());
             long usableSpace = retrieveUsableSpace(next);
-            if (candidateSpeed != null && nextSpeed != null && nextSpeed > candidateSpeed && usableSpace > estimatedWorkspaceSize) {
+            if (candidateSpeed != null && nextSpeed != null && nextSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSize) {
                 // found another Disk that has higher speed than the candidate's speed
-                // and the usable space > estimated workspace size
+                // and the usable space >= estimated workspace size
                 candidate = next;
                 candidateSpeed = nextSpeed;
             }
