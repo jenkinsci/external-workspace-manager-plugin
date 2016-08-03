@@ -16,14 +16,14 @@ import javax.annotation.CheckForNull;
 public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoProvider> implements ExtensionPoint {
 
     @CheckForNull
-    private final Double writeSpeed;
-
-    @CheckForNull
     private final Double readSpeed;
 
-    protected DiskInfoProvider(@CheckForNull Double writeSpeed, @CheckForNull Double readSpeed) {
-        this.writeSpeed = writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null;
+    @CheckForNull
+    private final Double writeSpeed;
+
+    protected DiskInfoProvider(@CheckForNull Double readSpeed, @CheckForNull Double writeSpeed) {
         this.readSpeed = readSpeed != null && readSpeed >= 0 ? readSpeed : null;
+        this.writeSpeed = writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null;
     }
 
     /**
@@ -34,12 +34,12 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
     }
 
     @CheckForNull
-    public Double getWriteSpeed() {
-        return writeSpeed;
+    public Double getReadSpeed() {
+        return readSpeed;
     }
 
     @CheckForNull
-    public Double getReadSpeed() {
-        return readSpeed;
+    public Double getWriteSpeed() {
+        return writeSpeed;
     }
 }

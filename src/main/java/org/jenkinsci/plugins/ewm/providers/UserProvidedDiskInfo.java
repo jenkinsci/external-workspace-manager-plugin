@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 public class UserProvidedDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
-    public UserProvidedDiskInfo(Double writeSpeed, Double readSpeed) {
-        super(writeSpeed, readSpeed);
+    public UserProvidedDiskInfo(Double readSpeed, Double writeSpeed) {
+        super(readSpeed, writeSpeed);
     }
 
     @Extension
@@ -28,13 +28,13 @@ public class UserProvidedDiskInfo extends DiskInfoProvider {
 
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
-        public FormValidation doCheckWriteSpeed(@QueryParameter String value) {
+        public FormValidation doCheckReadSpeed(@QueryParameter String value) {
             return FormValidationUtil.validatePositiveDouble(value);
         }
 
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
-        public FormValidation doCheckReadSpeed(@QueryParameter String value) {
+        public FormValidation doCheckWriteSpeed(@QueryParameter String value) {
             return FormValidationUtil.validatePositiveDouble(value);
         }
 
