@@ -96,7 +96,7 @@ And the _downstream_'s Pipeline code is:
 
 ```groovy
 stage ('Stage 3. Select the upstream run')
-def run = runSelector 'upstream'
+def run = selectRun 'upstream'
 
 stage ('Stage 4. Allocate workspace in the downstream job')
 def extWorkspace = exwsAllocate selectedRun: run
@@ -125,17 +125,17 @@ The final workspace path is: _/mount-from-linux-node/to/disk-one/jenkins-project
 
 **Stage 3. Select the upstream run**
 
-We can use the `runSelector` step from the *Run Selector plugin* to select the upstream run.
+We can use the `selectRun` step from the *Run Selector plugin* to select the upstream run.
 By default, if no selectors are provided, the step will select the last stable build from the given Jenkins job.
 By providing the `selector` parameter, we can specify different build selection strategies.
-More details and examples of how the `runSelector` step works may be found at 
+More details and examples of how the `selectRun` step works may be found at 
 [Run Selector plugin](https://github.com/jenkinsci/run-selector-plugin), Pipeline examples section.
 
 **Stage 4. Allocate workspace in the downstream job**
 
 By passing the `selectedRun` parameter to the `exwsAllocate` step, it allocates the first workspace used by the 
 selected run.
-If the `runSelector` step selected the build number _14_, then the resulting path 
+If the `selectRun` step selected the build number _14_, then the resulting path 
 is: _jenkins-project/disk1/upstream/14_.
 
 **Stage 5. Run tests in the downstream job**

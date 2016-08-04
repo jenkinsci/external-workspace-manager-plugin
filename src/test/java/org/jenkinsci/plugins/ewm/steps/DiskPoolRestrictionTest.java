@@ -111,7 +111,7 @@ public class DiskPoolRestrictionTest {
 
         WorkflowJob downstreamJob = j.jenkins.createProject(WorkflowJob.class, randomAlphanumeric(7));
         downstreamJob.setDefinition(new CpsFlowDefinition(format("" +
-                "def run = runSelector '%s' \n" +
+                "def run = selectRun '%s' \n" +
                 "exwsAllocate selectedRun: run", upstreamRun.getParent().getFullName())));
         WorkflowRun downstreamRun = downstreamJob.scheduleBuild2(0, new CauseAction(new Cause.UserIdCause())).get();
 
