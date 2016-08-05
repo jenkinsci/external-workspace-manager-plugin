@@ -14,7 +14,8 @@
     </f:entry>
     <f:dropdownDescriptorSelector title="${%Disk Pool Restriction}" field="restriction"
                                   default="${descriptor.defaultSettingsProvider}"/>
-    <f:dropdownDescriptorSelector title="${%Disk Allocation Strategy}" field="strategy"/>
+    <d:dropdownGlobalConfigDescriptorSelector title="${%Disk Allocation Strategy}" field="strategy"
+                                              xmlns:d="/lib/ewm"/>
     <f:entry>
         <f:repeatableProperty field="disks" add="${%Add Disk}" header="${%Disk}"/>
     </f:entry>
