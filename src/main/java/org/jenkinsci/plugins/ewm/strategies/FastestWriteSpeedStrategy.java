@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
  *
  * @author Alexandru Somai
  */
+@Extension
 public class FastestWriteSpeedStrategy extends AbstractDiskSpeedStrategy {
 
     @DataBoundConstructor

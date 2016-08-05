@@ -20,6 +20,7 @@ import java.util.List;
  *
  * @author Alexandru Somai
  */
+@Extension
 public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
 
     @DataBoundConstructor

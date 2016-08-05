@@ -1,11 +1,9 @@
 package org.jenkinsci.plugins.ewm;
 
 import hudson.AbortException;
-import hudson.DescriptorExtensionList;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -30,15 +28,15 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
      */
     @Nonnull
     public static ExtensionList<DiskAllocationStrategy> all() {
-        return Jenkins.getActiveInstance().getExtensionList(DiskAllocationStrategy.class);
+        return ExtensionList.lookup(DiskAllocationStrategy.class);
     }
 
     /**
      * @return the registered {@link DiskAllocationStrategyDescriptor}s for the {@link DiskAllocationStrategy}.
      */
     @Nonnull
-    public static DescriptorExtensionList<DiskAllocationStrategy, DiskAllocationStrategyDescriptor> allDescriptors() {
-        return Jenkins.getActiveInstance().getDescriptorList(DiskAllocationStrategy.class);
+    public static ExtensionList<DiskAllocationStrategyDescriptor> allDescriptors() {
+        return ExtensionList.lookup(DiskAllocationStrategyDescriptor.class);
     }
 
     /**
@@ -46,7 +44,8 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
      *
      * @param disks the entries from which to allocate a disk. The list has at least one element
      * @return the selected disk
-     * @throws IOException if any mandatory field is missing from the {@link Disk} entry
+     * @throws IOException if any mandatory field is missing from the {@link Disk} entry,
+     *                     or if the disk allocation fails for any reason
      */
     @Nonnull
     public abstract Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException;
@@ -57,7 +56,9 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
      *
      * @param disk the disk entry
      * @return the usable space for the disk
-     * @throws IOException if mounting point from Jenkins Master to Disk is {@code null}
+     * @throws IOException       if mounting point from Jenkins Master to Disk is {@code null}
+     * @throws SecurityException if the method can't retrieve the usable space for security reasons
+     * @see File#getUsableSpace
      */
     @Restricted(NoExternalUse.class)
     public long retrieveUsableSpace(Disk disk) throws IOException {

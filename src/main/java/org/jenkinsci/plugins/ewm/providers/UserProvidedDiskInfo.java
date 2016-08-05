@@ -18,7 +18,12 @@ import javax.annotation.Nonnull;
  *
  * @author Alexandru Somai
  */
+@Extension
 public class UserProvidedDiskInfo extends DiskInfoProvider {
+
+    public UserProvidedDiskInfo() {
+        super();
+    }
 
     @DataBoundConstructor
     public UserProvidedDiskInfo(double readSpeed, double writeSpeed) {

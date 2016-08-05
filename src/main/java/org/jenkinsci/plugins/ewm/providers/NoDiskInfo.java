@@ -13,11 +13,12 @@ import javax.annotation.Nonnull;
  *
  * @author Alexandru Somai
  */
+@Extension
 public class NoDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
     public NoDiskInfo() {
-        super(0, 0);
+        super();
     }
 
     @Extension
