@@ -16,14 +16,14 @@ import javax.annotation.Nonnull;
 @Restricted(NoExternalUse.class)
 public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoProvider> implements ExtensionPoint {
 
-    private final double readSpeed;
-    private final double writeSpeed;
+    private final int readSpeed;
+    private final int writeSpeed;
 
     protected DiskInfoProvider() {
         this(0, 0);
     }
 
-    protected DiskInfoProvider(double readSpeed, double writeSpeed) {
+    protected DiskInfoProvider(int readSpeed, int writeSpeed) {
         this.readSpeed = readSpeed > 0 ? readSpeed : 0;
         this.writeSpeed = writeSpeed > 0 ? writeSpeed : 0;
     }
@@ -44,11 +44,11 @@ public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoP
         return ExtensionList.lookup(DiskInfoProviderDescriptor.class);
     }
 
-    public double getReadSpeed() {
+    public int getReadSpeed() {
         return readSpeed;
     }
 
-    public double getWriteSpeed() {
+    public int getWriteSpeed() {
         return writeSpeed;
     }
 }

@@ -29,7 +29,7 @@ public class FastestReadSpeedStrategy extends AbstractDiskSpeedStrategy {
     }
 
     @Override
-    protected double getDiskSpeed(@Nonnull DiskInfoProvider diskInfo) {
+    protected int getDiskSpeed(@Nonnull DiskInfoProvider diskInfo) {
         return diskInfo.getReadSpeed();
     }
 

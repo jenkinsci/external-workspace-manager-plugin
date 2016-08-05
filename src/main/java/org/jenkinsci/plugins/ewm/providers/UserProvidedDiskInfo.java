@@ -5,7 +5,6 @@ import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.DiskInfoProviderDescriptor;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -26,7 +25,7 @@ public class UserProvidedDiskInfo extends DiskInfoProvider {
     }
 
     @DataBoundConstructor
-    public UserProvidedDiskInfo(double readSpeed, double writeSpeed) {
+    public UserProvidedDiskInfo(int readSpeed, int writeSpeed) {
         super(readSpeed, writeSpeed);
     }
 
@@ -36,13 +35,13 @@ public class UserProvidedDiskInfo extends DiskInfoProvider {
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
         public FormValidation doCheckReadSpeed(@QueryParameter String value) {
-            return FormValidationUtil.validatePositiveDouble(value);
+            return FormValidation.validatePositiveInteger(value);
         }
 
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
         public FormValidation doCheckWriteSpeed(@QueryParameter String value) {
-            return FormValidationUtil.validatePositiveDouble(value);
+            return FormValidation.validatePositiveInteger(value);
         }
 
         @Nonnull

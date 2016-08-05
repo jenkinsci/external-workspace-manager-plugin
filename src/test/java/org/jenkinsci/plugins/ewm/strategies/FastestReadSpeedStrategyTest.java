@@ -17,7 +17,7 @@ import static org.mockito.Mockito.spy;
  *
  * @author Alexandru Somai
  */
-public class FastestWriteReadStrategyTest extends AbstractDiskSpeedStrategyTest<FastestReadSpeedStrategy> {
+public class FastestReadSpeedStrategyTest extends AbstractDiskSpeedStrategyTest<FastestReadSpeedStrategy> {
 
     @Before
     public void setUp() {
@@ -26,9 +26,9 @@ public class FastestWriteReadStrategyTest extends AbstractDiskSpeedStrategyTest<
 
     @Test
     public void allocateHighestReadSpeed() throws Exception {
-        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(2D, 10D));
-        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(7D, 20D));
-        Disk disk3 = TestUtil.createDisk(new UserProvidedDiskInfo(3D, 30D));
+        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(2, 10));
+        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(7, 20));
+        Disk disk3 = TestUtil.createDisk(new UserProvidedDiskInfo(3, 30));
 
         Disk allocateDisk = strategy.allocateDisk(Arrays.asList(disk1, disk2, disk3));
         assertThat(allocateDisk, is(disk2));

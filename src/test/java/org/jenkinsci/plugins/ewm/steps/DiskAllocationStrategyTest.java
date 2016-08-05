@@ -36,8 +36,8 @@ public class DiskAllocationStrategyTest {
 
     @Test
     public void useAllocationStrategyInPipeline() throws Exception {
-        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(0D, 1D));
-        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(0D, 3D));
+        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(0, 1));
+        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(0, 3));
         DiskPool diskPool = TestUtil.createDiskPool(disk1, disk2);
         TestUtil.setUpDiskPools(j.jenkins, diskPool);
 
@@ -70,8 +70,8 @@ public class DiskAllocationStrategyTest {
 
     @Test
     public void fallbackToGlobalAllocationStrategy() throws Exception {
-        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(1D, 0D));
-        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(3D, 0D));
+        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(1, 0));
+        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(3, 0));
         FastestReadSpeedStrategy strategy = new FastestReadSpeedStrategy();
         DiskPool diskPool = TestUtil.createDiskPool(strategy, disk1, disk2);
         TestUtil.setUpDiskPools(j.jenkins, diskPool);

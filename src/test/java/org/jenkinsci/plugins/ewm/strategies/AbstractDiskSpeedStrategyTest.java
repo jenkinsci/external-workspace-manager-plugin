@@ -54,7 +54,7 @@ public abstract class AbstractDiskSpeedStrategyTest<T extends AbstractDiskSpeedS
     @Test
     public void allocateDiskThatHasInfo() throws Exception {
         Disk disk1 = TestUtil.createDisk(new NoDiskInfo());
-        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(5D, 5D));
+        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(5, 5));
 
         Disk allocatedDisk = strategy.allocateDisk(Arrays.asList(disk1, disk2));
         assertThat(allocatedDisk, is(disk2));

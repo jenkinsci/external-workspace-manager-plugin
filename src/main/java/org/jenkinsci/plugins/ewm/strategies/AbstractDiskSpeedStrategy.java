@@ -66,5 +66,5 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
      * @param diskInfo the {@link DiskInfoProvider} that contains R/W {@link Disk} speed
      * @return the value represented by the R/W speed
      */
-    protected abstract double getDiskSpeed(@Nonnull DiskInfoProvider diskInfo);
+    protected abstract int getDiskSpeed(@Nonnull DiskInfoProvider diskInfo);
 }

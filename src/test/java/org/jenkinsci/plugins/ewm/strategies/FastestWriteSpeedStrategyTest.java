@@ -26,9 +26,9 @@ public class FastestWriteSpeedStrategyTest extends AbstractDiskSpeedStrategyTest
 
     @Test
     public void allocateHighestWriteSpeed() throws Exception {
-        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(10D, 2D));
-        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(20D, 7D));
-        Disk disk3 = TestUtil.createDisk(new UserProvidedDiskInfo(30D, 3D));
+        Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(10, 2));
+        Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(20, 7));
+        Disk disk3 = TestUtil.createDisk(new UserProvidedDiskInfo(30, 3));
 
         Disk allocateDisk = strategy.allocateDisk(Arrays.asList(disk1, disk2, disk3));
         assertThat(allocateDisk, is(disk2));
