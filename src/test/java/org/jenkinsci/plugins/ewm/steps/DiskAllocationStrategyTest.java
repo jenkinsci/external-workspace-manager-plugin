@@ -65,7 +65,7 @@ public class DiskAllocationStrategyTest {
 
         j.assertBuildStatus(Result.FAILURE, run);
         j.assertLogContains(format("Using Disk allocation strategy: '%s'", new FastestWriteSpeedStrategy().getDescriptor().getDisplayName()), run);
-        j.assertLogContains(format("Couldn't find any Disk with at least %s KB usable space", estimatedWorkspaceSize), run);
+        j.assertLogContains(format("Couldn't find any Disk with at least %s MB usable space", estimatedWorkspaceSize), run);
     }
 
     @Test

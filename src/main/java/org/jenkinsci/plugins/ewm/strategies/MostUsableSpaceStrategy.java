@@ -49,9 +49,8 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
             }
         }
 
-        long estimatedWorkspaceSize = getEstimatedWorkspaceSize();
-        if (selectedDiskUsableSpace < estimatedWorkspaceSize) {
-            String message = String.format("The selected Disk with the most usable space doesn't have at least %s KB space", estimatedWorkspaceSize);
+        if (selectedDiskUsableSpace < getEstimatedWorkspaceSizeInKilobytes()) {
+            String message = String.format("The selected Disk with the most usable space doesn't have at least %s MB space", getEstimatedWorkspaceSize());
             throw new AbortException(message);
         }
 

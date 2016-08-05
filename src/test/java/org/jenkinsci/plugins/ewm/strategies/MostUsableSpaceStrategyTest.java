@@ -63,10 +63,10 @@ public class MostUsableSpaceStrategyTest {
         strategy.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
         Disk disk = TestUtil.createDisk();
 
-        when(strategy.retrieveUsableSpace(disk)).thenReturn(100L);
+        when(strategy.retrieveUsableSpace(disk)).thenReturn(100000L);
 
         thrown.expect(AbortException.class);
-        thrown.expectMessage(format("The selected Disk with the most usable space doesn't have at least %s KB space", estimatedWorkspaceSize));
+        thrown.expectMessage(format("The selected Disk with the most usable space doesn't have at least %s MB space", estimatedWorkspaceSize));
         strategy.allocateDisk(Collections.singletonList(disk));
     }
 }

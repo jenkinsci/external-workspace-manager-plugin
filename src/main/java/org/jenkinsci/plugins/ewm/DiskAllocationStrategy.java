@@ -78,4 +78,14 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
     public void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
         this.estimatedWorkspaceSize = estimatedWorkspaceSize;
     }
+
+    /**
+     * Assuming that the {@link #estimatedWorkspaceSize} is provided by the user in MB,
+     * this method returns the size in KB (multiplied by 1024).
+     *
+     * @return the estimated workspace size in KB (multiplied by 1024)
+     */
+    public long getEstimatedWorkspaceSizeInKilobytes() {
+        return estimatedWorkspaceSize * 1024;
+    }
 }

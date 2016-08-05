@@ -30,13 +30,13 @@ This parameter ensures that the allocated Disk has the usable space greater that
 
 ```groovy
 def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', 
- strategy: mostUsableSpace(estimatedWorkspaceSize: 100000) 
+ strategy: mostUsableSpace(estimatedWorkspaceSize: 100) 
 // ...
 ```
 
-In our case, we have provided an estimated workspace size of _100000 KB_. The value has to be in KB.
+In our case, we have provided an estimated workspace size of _100 MB_. The value has to be in MB.
 Let's assume that the allocation strategy has selected the disk with the most usable space, that has a value of 
-_80000 KB_. 
+_80 MB_. 
 The disk's usable space is smaller than the estimated workspace size. 
 The job will fail, because it could not find any disk that has the usable space > estimated workspace size.
 
@@ -61,13 +61,13 @@ Similar as in the previous example, we can specify the `estimatedWorkspaceSize` 
 
 ```groovy
 def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', 
- strategy: fastestRead(estimatedWorkspaceSize: 100000) 
+ strategy: fastestRead(estimatedWorkspaceSize: 100) 
 ```
 
 If this parameter is provided, the strategy will alocate the disk with the fastest read speed, but that has its usable space at least equal to the estimated workspace size.
 
-For example, let's assume that we have _disk1_ with read speed of _25 MB/s_ and usable space of _120000 KB_, and _disk2_ with its reading speed of _30 MB/s_ but with a smaller usable space, _80000_ KB.
-If the `estimatedWorkspaceSize` parameter is given, with a value of _100000 KB_, the allocation strategy will select _disk1_, because it has the minimum required usable space, even though its read speed is smaller than _disk2_.
+For example, let's assume that we have _disk1_ with read speed of _25 MB/s_ and usable space of _120 MB_, and _disk2_ with its reading speed of _30 MB/s_ but with a smaller usable space, _80_ MB.
+If the `estimatedWorkspaceSize` parameter is given, with a value of _100 MB_, the allocation strategy will select _disk1_, because it has the minimum required usable space, even though its read speed is smaller than _disk2_.
 If we do not pass the `estimatedWorkspaceSize` param, the strategy will ignore the disks' usable space and will allocate _disk2_, because it has the highest read speed.
 
 ## Select the Disk with the highest write speed
@@ -85,7 +85,7 @@ Or, with the `estimatedWorkspaceSize` parameter:
 
 ```groovy
 def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', 
- strategy: fastestWrite(estimatedWorkspaceSize: 100000)
+ strategy: fastestWrite(estimatedWorkspaceSize: 100)
 ```
 
 Same principles apply as the previous selection strategy.
