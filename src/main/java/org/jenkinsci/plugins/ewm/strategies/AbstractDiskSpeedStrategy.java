@@ -7,7 +7,6 @@ import org.jenkinsci.plugins.ewm.definitions.Disk;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,39 +21,32 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
     @Override
     public Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException {
         long estimatedWorkspaceSize = getEstimatedWorkspaceSize();
-
-        Iterator<Disk> iterator = disks.iterator();
         Disk candidate = null;
 
-        // try to find at least one Disk candidate that has usable space >= estimated workspace size
-        while (iterator.hasNext()) {
-            Disk next = iterator.next();
-            long usableSpace = retrieveUsableSpace(next);
-            if (usableSpace >= estimatedWorkspaceSize) {
-                // found a possible candidate that has the usable space >= estimate workspace size
-                candidate = next;
-                break;
+        for (Disk disk : disks) {
+            long usableSpace = retrieveUsableSpace(disk);
+
+            if (candidate == null && usableSpace >= estimatedWorkspaceSize) {
+                // found a possible candidate that has the usable space >= estimated workspace size
+                candidate = disk;
+            }
+
+            if (candidate != null) {
+                // possible candidate, continue searching for another disk with speed > candidate's speed
+                int candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
+                int diskSpeed = getDiskSpeed(disk.getDiskInfo());
+
+                if (diskSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSize) {
+                    // found another disk that has higher speed than the candidate's speed and the usable space >= estimated workspace size
+                    candidate = disk;
+                }
             }
         }
 
         if (candidate == null) {
-            // there is no Disk that has usable space >= estimated workspace size
+            // there is no disk that has usable space >= estimated workspace size
             String message = String.format("Couldn't find any Disk with at least %s KB usable space", estimatedWorkspaceSize);
             throw new AbortException(message);
-        }
-
-        // found a possible candidate, continue searching for another disk with speed > candidate's speed
-        double candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
-        while (iterator.hasNext()) {
-            Disk next = iterator.next();
-            double nextSpeed = getDiskSpeed(next.getDiskInfo());
-            long usableSpace = retrieveUsableSpace(next);
-            if (nextSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSize) {
-                // found another Disk that has higher speed than the candidate's speed
-                // and the usable space >= estimated workspace size
-                candidate = next;
-                candidateSpeed = nextSpeed;
-            }
         }
 
         return candidate;
