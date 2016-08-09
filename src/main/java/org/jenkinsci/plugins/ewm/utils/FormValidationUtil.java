@@ -3,19 +3,21 @@ package org.jenkinsci.plugins.ewm.utils;
 import hudson.Util;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
 import static hudson.util.FormValidation.error;
-import static hudson.util.FormValidation.ok;
 
 /**
  * {@link FormValidation} utility class.
  *
  * @author Alexandru Somai
  */
+@Restricted(NoExternalUse.class)
 public final class FormValidationUtil {
 
     private FormValidationUtil() {
@@ -80,23 +82,5 @@ public final class FormValidationUtil {
         }
 
         return FormValidation.aggregate(formValidations);
-    }
-
-    /**
-     * Validates that the given String is a positive double.
-     *
-     * @param value the input String
-     * @return {@link FormValidation#ok()} if the input String is a positive value,
-     * {@link FormValidation#error(String)} otherwise
-     */
-    public static FormValidation validatePositiveDouble(String value) {
-        try {
-            if (Double.parseDouble(value) <= 0) {
-                return error(Messages.formValidation_NotPositiveDouble());
-            }
-            return ok();
-        } catch (NumberFormatException e) {
-            return error(Messages.formValidation_NotADoubleValue());
-        }
     }
 }

@@ -43,7 +43,15 @@ public final class TestUtil {
         // do not instantiate
     }
 
-    public static void setUpDiskPools(Jenkins jenkins, List<DiskPool> diskPools) {
+    public static void setUpDiskPools(Jenkins jenkins, DiskPool... diskPools) {
+        setUpDiskPools(jenkins, Arrays.asList(diskPools));
+    }
+
+    public static void removeDiskPools(Jenkins jenkins) {
+        setUpDiskPools(jenkins, Collections.<DiskPool>emptyList());
+    }
+
+    private static void setUpDiskPools(Jenkins jenkins, List<DiskPool> diskPools) {
         ExwsAllocateStep.DescriptorImpl descriptor = (ExwsAllocateStep.DescriptorImpl) jenkins.getDescriptor(ExwsAllocateStep.class);
 
         Field diskPoolsField = ReflectionUtils.findField(ExwsAllocateStep.DescriptorImpl.class, "diskPools");
@@ -78,5 +86,21 @@ public final class TestUtil {
         assertThat(runFuture, notNullValue());
 
         return runFuture.get();
+    }
+
+    public static Disk createDisk() {
+        return createDisk(null);
+    }
+
+    public static Disk createDisk(DiskInfoProvider infoProvider) {
+        return new Disk(RandomStringUtils.randomAlphanumeric(7), null, "mounting-point", null, infoProvider);
+    }
+
+    public static DiskPool createDiskPool(Disk... disks) {
+        return createDiskPool(null, disks);
+    }
+
+    public static DiskPool createDiskPool(DiskAllocationStrategy strategy, Disk... disks) {
+        return new DiskPool(RandomStringUtils.randomAlphanumeric(7), null, null, null, null, strategy, Arrays.asList(disks));
     }
 }

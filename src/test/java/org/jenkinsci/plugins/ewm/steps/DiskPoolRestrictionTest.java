@@ -32,6 +32,7 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.DISK_ID_ONE;
 import static org.jenkinsci.plugins.ewm.TestUtil.DISK_POOL_ID;
+import static org.jenkinsci.plugins.ewm.TestUtil.removeDiskPools;
 import static org.jenkinsci.plugins.ewm.TestUtil.setUpDiskPools;
 import static org.junit.Assert.assertThat;
 
@@ -50,8 +51,8 @@ public class DiskPoolRestrictionTest {
 
     @After
     public void tearDown() {
-        setUpDiskPools(j.jenkins, Collections.<DiskPool>emptyList());
         SecurityContextHolder.getContext().setAuthentication(null);
+        removeDiskPools(j.jenkins);
     }
 
     @Test
@@ -181,8 +182,8 @@ public class DiskPoolRestrictionTest {
 
     private static void setUpDiskPoolRestriction(JobRestriction restriction) {
         Disk disk = new Disk(DISK_ID_ONE, null, "any", null, null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, restriction, singletonList(disk));
-        setUpDiskPools(j.jenkins, singletonList(diskPool));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, restriction, null, singletonList(disk));
+        setUpDiskPools(j.jenkins, diskPool);
     }
 
     private static void authenticate(String principal) {

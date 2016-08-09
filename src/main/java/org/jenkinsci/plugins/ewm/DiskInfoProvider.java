@@ -3,43 +3,52 @@ package org.jenkinsci.plugins.ewm;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
-import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
+ * Contains additional information about a {@link org.jenkinsci.plugins.ewm.definitions.Disk} entry.
+ *
  * @author Alexandru Somai
  */
 @Restricted(NoExternalUse.class)
 public abstract class DiskInfoProvider extends AbstractDescribableImpl<DiskInfoProvider> implements ExtensionPoint {
 
-    @CheckForNull
-    private final Double writeSpeed;
+    private final int readSpeed;
+    private final int writeSpeed;
 
-    @CheckForNull
-    private final Double readSpeed;
+    protected DiskInfoProvider() {
+        this(0, 0);
+    }
 
-    protected DiskInfoProvider(@CheckForNull Double writeSpeed, @CheckForNull Double readSpeed) {
-        this.writeSpeed = writeSpeed != null && writeSpeed >= 0 ? writeSpeed : null;
-        this.readSpeed = readSpeed != null && readSpeed >= 0 ? readSpeed : null;
+    protected DiskInfoProvider(int readSpeed, int writeSpeed) {
+        this.readSpeed = readSpeed > 0 ? readSpeed : 0;
+        this.writeSpeed = writeSpeed > 0 ? writeSpeed : 0;
     }
 
     /**
      * @return all registered {@link DiskInfoProvider}s.
      */
+    @Nonnull
     public static ExtensionList<DiskInfoProvider> all() {
-        return Jenkins.getActiveInstance().getExtensionList(DiskInfoProvider.class);
+        return ExtensionList.lookup(DiskInfoProvider.class);
     }
 
-    @CheckForNull
-    public Double getWriteSpeed() {
-        return writeSpeed;
+    /**
+     * @return the registered {@link DiskInfoProviderDescriptor}s for the {@link DiskInfoProvider}.
+     */
+    @Nonnull
+    public static ExtensionList<DiskInfoProviderDescriptor> allDescriptors() {
+        return ExtensionList.lookup(DiskInfoProviderDescriptor.class);
     }
 
-    @CheckForNull
-    public Double getReadSpeed() {
+    public int getReadSpeed() {
         return readSpeed;
+    }
+
+    public int getWriteSpeed() {
+        return writeSpeed;
     }
 }
