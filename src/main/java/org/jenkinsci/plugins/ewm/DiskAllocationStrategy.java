@@ -56,8 +56,8 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
      *
      * @param disk the disk entry
      * @return the usable space for the disk
-     * @throws IOException       if mounting point from Jenkins Master to Disk is {@code null}
-     * @throws SecurityException if the method can't retrieve the usable space for security reasons
+     * @throws IOException if mounting point from Jenkins master to Disk is {@code null}, or
+     *                     if the usable space can't be retrieved for security reasons
      * @see File#getUsableSpace
      */
     @Restricted(NoExternalUse.class)
@@ -68,7 +68,11 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
             throw new AbortException(message);
         }
 
-        return new File(masterMountPoint).getUsableSpace();
+        try {
+            return new File(masterMountPoint).getUsableSpace();
+        } catch (SecurityException e) {
+            throw new AbortException(String.format("Can't retrieve usable space for Disk ID '%s' because of security reasons", disk.getDiskId()));
+        }
     }
 
     public long getEstimatedWorkspaceSize() {
