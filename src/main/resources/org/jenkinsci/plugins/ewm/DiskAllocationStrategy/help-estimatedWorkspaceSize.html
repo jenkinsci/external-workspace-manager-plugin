@@ -3,30 +3,17 @@
         Optional parameter.
         It indicates the estimated size that the workspace may have.
         It has to be in MB.
-        This can influence the Disk allocation strategy used.
     </p>
     <p>
-        Examples:
-        <!-- TODO - provide easier to understand examples, with shorter text and Pipeline examples -->
+        If provided, the Disk allocation strategy ensures that the selected disk has at least as much usable space
+        left as the estimated workspace size.
     </p>
     <p>
-        1. Let's suppose that you choose the strategy that selects the disk with the most usable space, and you have
-        provided a workspace size estimation of 100 MB.
-        The <i>exwsAllocate</i> step will select the disk with the most usable space.
-        But, what if that disk has only 80 MB usable space left?
-        In this case, the selected disk doesn't have a usable space greater than the estimated workspace size,
-        so the disk allocation will fail.
-        If the estimated workspace size would not have been provided (or 0), the disk allocation would succeed.
+        For example, let's suppose we want to select the disk with the highest read speed, but that has a minimum
+        usable space of 100 MB. The Pipeline code for that is:
     </p>
-    <p>
-        2. Let's assume that you choose the strategy to select the disk with the highest read speed.
-        The estimated workspace size provided is 100 MB.
-        You have also defined in the Jenkins global config the read speed (in the Disk Information) for each disk entry.
-        Firstly, the strategy will try to find the disk that has the minimum usable space at least equal with the
-        estimated workspace size.
-        Only then it will try to find another disk that may have a higher speed, but, of course, with the minimum
-        usable space required.
-        In other words, you may have a disk that has a higher speed than the other one, but if its usable space isn't
-        greater than the estimated workspace size, it may not be allocated.
-    </p>
+    <pre>
+    def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', strategy: fastestReadSpeed(estimatedWorkspaceSize: 100)
+    // ...
+    </pre>
 </div>
