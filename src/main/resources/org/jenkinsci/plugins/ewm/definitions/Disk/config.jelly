@@ -12,6 +12,7 @@
     <f:entry title="${%Physical path on disk}" field="physicalPathOnDisk">
         <f:textbox/>
     </f:entry>
+    <f:dropdownDescriptorSelector title="Disk Information" field="diskInfo"/>
     <f:entry>
         <div align="right">
             <f:repeatableDeleteButton value="${%Delete Disk}"/>

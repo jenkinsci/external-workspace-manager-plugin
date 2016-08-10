@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <!-- TODO - add help files for each field -->
+    <f:entry title="${%Write Speed [MB/s]}" field="writeSpeed">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%Read Speed [MB/s]}" field="readSpeed">
+        <f:textbox/>
+    </f:entry>
+</j:jelly>

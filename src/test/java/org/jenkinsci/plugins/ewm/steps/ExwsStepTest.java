@@ -70,8 +70,8 @@ public class ExwsStepTest {
         File pathToDisk1 = tmp1.newFolder("mount-to-disk-one");
         File pathToDisk2 = tmp2.newFolder("mount-to-disk-two");
 
-        disk1 = new Disk(DISK_ID_ONE, "name one", pathToDisk1.getPath(), "jenkins-project/disk-one");
-        disk2 = new Disk(DISK_ID_TWO, "name two", pathToDisk2.getPath(), "jenkins-project/disk-two");
+        disk1 = new Disk(DISK_ID_ONE, "name one", pathToDisk1.getPath(), "jenkins-project/disk-one", null);
+        disk2 = new Disk(DISK_ID_TWO, "name two", pathToDisk2.getPath(), "jenkins-project/disk-two", null);
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, null, Arrays.asList(disk1, disk2));
         setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
 

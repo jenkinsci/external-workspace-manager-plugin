@@ -84,7 +84,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void missingDiskId() throws Exception {
-        setUpDiskPool(new Disk("", "name", "mount", "path"));
+        setUpDiskPool(new Disk("", "name", "mount", "path", null));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -93,7 +93,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void missingMasterMountPoint() throws Exception {
-        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "", "path"));
+        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "", "path", null));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -102,7 +102,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void missingPhysicalPathOnDisk() throws Exception {
-        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", ""));
+        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", "", null));
         createUpstreamJobAndRun();
 
         j.assertBuildStatusSuccess(upstreamRun);
@@ -112,7 +112,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void physicalPathOnDiskNotRelative() throws Exception {
-        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", "/path"));
+        setUpDiskPool(new Disk(DISK_ID_ONE, "name", "mount", "/path", null));
         createUpstreamJobAndRun();
 
         j.assertBuildStatus(FAILURE, upstreamRun);
@@ -121,8 +121,8 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void successfullyAllocateWorkspace() throws Exception {
-        Disk disk1 = new Disk(DISK_ID_ONE, "name", pathToDisk1.getPath(), "path");
-        Disk disk2 = new Disk(DISK_ID_TWO, "name", pathToDisk2.getPath(), "path");
+        Disk disk1 = new Disk(DISK_ID_ONE, "name", pathToDisk1.getPath(), "path", null);
+        Disk disk2 = new Disk(DISK_ID_TWO, "name", pathToDisk2.getPath(), "path", null);
         setUpDiskPool(disk1, disk2);
         createUpstreamJobAndRun();
 
@@ -148,7 +148,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void successfullyAllocateWorkspaceInDownstreamJob() throws Exception {
-        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
+        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path", null);
         setUpDiskPool(disk);
         createUpstreamJobAndRun();
         String upstreamName = upstreamRun.getParent().getName();
@@ -162,7 +162,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void redundantParametersInTheDownstreamJob() throws Exception {
-        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
+        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path", null);
         setUpDiskPool(disk);
 
         createUpstreamJobAndRun();
@@ -181,7 +181,7 @@ public class ExwsAllocateStepTest {
 
     @Test
     public void upstreamJobRegisteredMultipleActions() throws Exception {
-        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path");
+        Disk disk = new Disk(DISK_ID_ONE, "name", "mount", "path", null);
         DiskPool diskPool1 = new DiskPool("id1", "name", "desc", null, null, Collections.singletonList(disk));
         DiskPool diskPool2 = new DiskPool("id2", "name", "desc", null, null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, Arrays.asList(diskPool1, diskPool2));
