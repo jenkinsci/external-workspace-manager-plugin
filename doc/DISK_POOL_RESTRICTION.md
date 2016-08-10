@@ -19,8 +19,8 @@ restriction.
 ### Disk Pool restriction by job name
 
 You can restrict the Disk Pool to be allocated only in the jobs whose name matches a specific pattern, 
-or if they are located in a certain directory.
-In the following example, the _diskpool1_ will be allocated only for those jobs that are within the _Folder_ named
+or if they are located in a certain job _Folder_.
+In the following example, the _diskpool1_ will be allocated only for those jobs that are within the job _Folder_ named
 _foobar_.
 
 ![Disk Pool Restriction By Job Name](img/restriction-by-job-name.png)
@@ -29,6 +29,6 @@ _foobar_.
 
 Even more, you can specify combined restrictions by using `And`, `Or` and `Not` operands.
 For example, you can restrict the Disk Pool to be allocated only of the job was triggered by the user _alexsomai_ 
-**or** if the job is located in the _foobar_ Folder.
+**or** if the job is located in the _foobar_ job _Folder_.
 
 ![Combined Disk Pool Restriction With OR](img/or-combined-restriction.png)
