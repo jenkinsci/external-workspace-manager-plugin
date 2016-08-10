@@ -8,12 +8,11 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
-import org.jenkinsci.plugins.ewm.strategies.DiskAllocationStrategy;
-import org.jenkinsci.plugins.ewm.strategies.MostUsableSpaceStrategy;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
@@ -36,8 +35,6 @@ import static java.lang.String.format;
 public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExecution<ExternalWorkspace> {
 
     private static final long serialVersionUID = 1L;
-
-    private static final DiskAllocationStrategy DEFAULT_DISK_ALLOCATION_STRATEGY = new MostUsableSpaceStrategy();
 
     @Inject(optional = true)
     private transient ExwsAllocateStep step;
@@ -63,7 +60,16 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             List<DiskPool> diskPools = step.getDescriptor().getDiskPools();
             DiskPool diskPool = findDiskPool(diskPoolId, diskPools);
-            Disk disk = DEFAULT_DISK_ALLOCATION_STRATEGY.allocateDisk(diskPool.getDisks());
+
+            DiskAllocationStrategy strategy = step.getStrategy();
+            if (strategy == null) {
+                listener.getLogger().println("Disk allocation strategy was not provided as step parameter. " +
+                        "Fallback to the strategy defined in the Jenkins global config");
+                strategy = diskPool.getStrategy();
+            }
+
+            listener.getLogger().println(format("Using Disk allocation strategy: '%s'", strategy.getDescriptor().getDisplayName()));
+            Disk disk = strategy.allocateDisk(diskPool.getDisks());
 
             String diskId = disk.getDiskId();
             if (diskId == null) {

@@ -1,0 +1,19 @@
+<div>
+    <p>
+        Optional parameter.
+        It indicates the estimated size that the workspace may have.
+        It has to be in MB.
+    </p>
+    <p>
+        If provided, the Disk allocation strategy ensures that the selected disk has at least as much usable space
+        left as the estimated workspace size.
+    </p>
+    <p>
+        For example, let's suppose we want to select the disk with the highest read speed, but that has a minimum
+        usable space of 100 MB. The Pipeline code for that is:
+    </p>
+    <pre>
+    def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', strategy: fastestReadSpeed(estimatedWorkspaceSize: 100)
+    // ...
+    </pre>
+</div>

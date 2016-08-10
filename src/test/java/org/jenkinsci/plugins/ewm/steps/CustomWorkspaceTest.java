@@ -4,8 +4,8 @@ import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
 import hudson.model.Result;
 import hudson.model.StringParameterValue;
-import hudson.model.queue.QueueTaskFuture;
 import org.apache.commons.lang.RandomStringUtils;
+import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.DISK_ID_ONE;
 import static org.jenkinsci.plugins.ewm.TestUtil.DISK_POOL_ID;
+import static org.jenkinsci.plugins.ewm.TestUtil.removeDiskPools;
 import static org.jenkinsci.plugins.ewm.TestUtil.setUpDiskPools;
 import static org.junit.Assert.assertThat;
 
@@ -56,8 +57,8 @@ public class CustomWorkspaceTest {
     @Before
     public void setUp() throws IOException {
         Disk disk = new Disk(DISK_ID_ONE, null, "mount", null, null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, null, Collections.singletonList(disk));
-        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, null, null, Collections.singletonList(disk));
+        setUpDiskPools(j.jenkins, diskPool);
 
         tmpFolder = tmp.newFolder();
         DiskNode diskNode = new DiskNode(DISK_ID_ONE, tmpFolder.getAbsolutePath());
@@ -67,7 +68,7 @@ public class CustomWorkspaceTest {
     @After
     public void tearDown() throws IOException {
         j.jenkins.getNodeProperties().removeAll(ExternalWorkspaceProperty.class);
-        setUpDiskPools(j.jenkins, Collections.<DiskPool>emptyList());
+        removeDiskPools(j.jenkins);
     }
 
     @Test
@@ -188,8 +189,8 @@ public class CustomWorkspaceTest {
 
     private static void setGlobalWorkspaceTemplate(String template) {
         Disk disk = new Disk(DISK_ID_ONE, null, "mount", null, null);
-        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, template, null, Collections.singletonList(disk));
-        setUpDiskPools(j.jenkins, Collections.singletonList(diskPool));
+        DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, template, null, null, Collections.singletonList(disk));
+        setUpDiskPools(j.jenkins, diskPool);
     }
 
     private void verifyWorkspacePath(String computedCustomPath, WorkflowRun run) throws Exception {
@@ -204,11 +205,6 @@ public class CustomWorkspaceTest {
     }
 
     private WorkflowRun createWorkflowJobAndRun(String script) throws Exception {
-        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, RandomStringUtils.randomAlphanumeric(7));
-        job.setDefinition(new CpsFlowDefinition(script));
-        QueueTaskFuture<WorkflowRun> runFuture = job.scheduleBuild2(0);
-        assertThat(runFuture, notNullValue());
-
-        return runFuture.get();
+        return TestUtil.createWorkflowJobAndRun(j.jenkins, script);
     }
 }

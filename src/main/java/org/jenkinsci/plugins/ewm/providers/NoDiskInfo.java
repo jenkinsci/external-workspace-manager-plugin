@@ -9,13 +9,16 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import javax.annotation.Nonnull;
 
 /**
+ * {@link DiskInfoProvider} implementation that sets values to 0 or {@code null}.
+ *
  * @author Alexandru Somai
  */
+@Extension
 public class NoDiskInfo extends DiskInfoProvider {
 
     @DataBoundConstructor
     public NoDiskInfo() {
-        super(null, null);
+        super();
     }
 
     @Extension
