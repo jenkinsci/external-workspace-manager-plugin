@@ -1,4 +1,4 @@
-# Disk Allocation Strategies
+# Disk allocation strategies
 
 The plugin provides flexible disk selection strategies. 
 Currently, the user may choose to allocate a Disk from the Disk Pool using one of the following strategies:
@@ -54,14 +54,14 @@ The allocation strategies can be set in the Jenkins global config (as we have se
 the Pipeline code:
 
 ```groovy
-def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', strategy: fastestRead() 
+def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', strategy: fastestReadSpeed() 
 ```
 
 Similar as in the previous example, we can specify the `estimatedWorkspaceSize` parameter:
 
 ```groovy
 def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', 
- strategy: fastestRead(estimatedWorkspaceSize: 100) 
+ strategy: fastestReadSpeed(estimatedWorkspaceSize: 100) 
 ```
 
 If this parameter is provided, the strategy will alocate the disk with the fastest read speed, but that has its usable space at least equal to the estimated workspace size.
@@ -78,14 +78,14 @@ For this, the disks' write speed has to be provided in the _Disk Information_ se
 In the Pipeline code, it can be overridden as:
 
 ```groovy
-def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', strategy: fastestWrite() 
+def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', strategy: fastestWriteSpeed() 
 ```
 
 Or, with the `estimatedWorkspaceSize` parameter:
 
 ```groovy
 def extWorkspace = exwsAllocate diskPoolId: 'diskpool1', 
- strategy: fastestWrite(estimatedWorkspaceSize: 100)
+ strategy: fastestWriteSpeed(estimatedWorkspaceSize: 100)
 ```
 
 Same principles apply as the previous selection strategy.
