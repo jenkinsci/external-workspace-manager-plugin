@@ -137,18 +137,7 @@ public class ExwsStepTest {
         runWorkflowJob(job);
 
         j.assertBuildStatus(FAILURE, run);
-        j.assertLogContains("The Disk Pool Ref ID was not provided in Node 'node-one' config", run);
-    }
-
-    @Test
-    public void wrongDiskPoolRefIdInNodeProperty() throws Exception {
-        String wrongDiskPoolId = "random";
-        addExternalWorkspaceNodeProperty(node1, wrongDiskPoolId, diskNode1, diskNode2);
-
-        runWorkflowJob(job);
-
-        j.assertBuildStatus(FAILURE, run);
-        j.assertLogContains(format("In Node 'node-one' config, the defined Disk Pool Ref ID '%s' does not match the one allocated by the exwsAllocate step '%s'", wrongDiskPoolId, DISK_POOL_ID), run);
+        j.assertLogContains(format("No Disk Pool Ref ID matching '%s' was found in Node 'node-one' config", DISK_POOL_ID), run);
     }
 
     @Test

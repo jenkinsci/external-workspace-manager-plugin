@@ -12,6 +12,7 @@ import hudson.slaves.WorkspaceList;
 import hudson.util.DescribableList;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
@@ -65,8 +66,9 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         } else {
             // fallback to finding the disk definitions into the node config
             listener.getLogger().println("Searching for disk definitions in the Node config");
-            ExternalWorkspaceProperty exwsNodeProperty = findNodeProperty(exws.getDiskPoolId(), node);
-            diskNodes = exwsNodeProperty.getDiskNodes();
+            ExternalWorkspaceProperty exwsNodeProperty = findNodeProperty(node);
+            DiskPoolNode diskPoolNode = findDiskPoolNode(exws.getDiskPoolId(), exwsNodeProperty.getDiskPoolNodes(), node.getDisplayName());
+            diskNodes = diskPoolNode.getDiskNodes();
         }
 
         DiskNode diskNode = findDiskNode(exws.getDiskId(), diskNodes, node.getDisplayName());
@@ -132,15 +134,12 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     /**
      * Finds the {@link NodeProperty} for the external workspace definition.
      *
-     * @param diskPoolRefId the disk pool ref id that the node property should have
-     * @param node          the current node
+     * @param node the current node
      * @return the node property for the external workspace manager
-     * @throws IOException if no node property was found
-     *                     if the node property doesn't have defined any disk pool ref id
-     *                     if the disk pool ref id doesn't match the given disk pool ref id
+     * @throws IOException if node property was not found
      */
     @Nonnull
-    private static ExternalWorkspaceProperty findNodeProperty(String diskPoolRefId, Node node) throws IOException {
+    private static ExternalWorkspaceProperty findNodeProperty(Node node) throws IOException {
         DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
 
         ExternalWorkspaceProperty exwsNodeProperty = null;
@@ -151,22 +150,41 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
             }
         }
 
-        String nodeName = node.getDisplayName();
         if (exwsNodeProperty == null) {
-            String message = format("There is no External Workspace config defined in Node '%s' config", nodeName);
-            throw new AbortException(message);
-        }
-        String nodeDiskPoolRefId = exwsNodeProperty.getDiskPoolRefId();
-        if (nodeDiskPoolRefId == null) {
-            String message = format("The Disk Pool Ref ID was not provided in Node '%s' config", nodeName);
-            throw new AbortException(message);
-        }
-        if (!nodeDiskPoolRefId.equals(diskPoolRefId)) {
-            String message = format("In Node '%s' config, the defined Disk Pool Ref ID '%s' does not match the one allocated by the exwsAllocate step '%s'", nodeName, nodeDiskPoolRefId, diskPoolRefId);
+            String message = format("There is no External Workspace config defined in Node '%s' config", node.getDisplayName());
             throw new AbortException(message);
         }
 
         return exwsNodeProperty;
+    }
+
+    /**
+     * Selects the {@link DiskPoolNode} that has the {@link DiskPoolNode#diskPoolRefId} equal to the given
+     * {@code diskPoolRefId} param.
+     *
+     * @param diskPoolRefId the disk pool reference id to be searching for
+     * @param diskPoolNodes the list of disk pools
+     * @param nodeName      the name of the current node
+     * @return the Disk Pool that has the matching reference id.
+     * @throws IOException if no disk pool was found
+     */
+    @Nonnull
+    private static DiskPoolNode findDiskPoolNode(@Nonnull String diskPoolRefId, @Nonnull List<DiskPoolNode> diskPoolNodes,
+                                                 @Nonnull String nodeName) throws IOException {
+        DiskPoolNode selected = null;
+        for (DiskPoolNode diskPoolNode : diskPoolNodes) {
+            if (diskPoolRefId.equals(diskPoolNode.getDiskPoolRefId())) {
+                selected = diskPoolNode;
+                break;
+            }
+        }
+
+        if (selected == null) {
+            String message = format("No Disk Pool Ref ID matching '%s' was found in Node '%s' config", diskPoolRefId, nodeName);
+            throw new AbortException(message);
+        }
+
+        return selected;
     }
 
     /**

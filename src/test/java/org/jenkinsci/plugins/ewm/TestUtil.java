@@ -8,6 +8,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -72,7 +73,8 @@ public final class TestUtil {
     }
 
     public static void addExternalWorkspaceNodeProperty(Node node, String diskPoolRefId, DiskNode... diskNodes) {
-        node.getNodeProperties().add(new ExternalWorkspaceProperty(diskPoolRefId, Arrays.asList(diskNodes)));
+        DiskPoolNode diskPoolNode = new DiskPoolNode(diskPoolRefId, Arrays.asList(diskNodes));
+        node.getNodeProperties().add(new ExternalWorkspaceProperty(Collections.singletonList(diskPoolNode)));
     }
 
     public static void removeExternalWorkspaceNodeProperty(Node node) throws IOException {
