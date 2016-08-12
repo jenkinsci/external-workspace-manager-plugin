@@ -181,8 +181,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
      * @param nodeDisks the list of available disk definitions
      * @param nodeName  the name of the current node
      * @return the disk definition that matches the given disk id
-     * @throws IOException if no disk definition was found
-     *                     if the disk definition has its local root path null
+     * @throws IOException if no disk definition was found,
+     *                     or if the disk definition has its local root path null
      */
     @Nonnull
     private static NodeDisk findNodeDisk(String diskId, List<NodeDisk> nodeDisks, String nodeName) throws IOException {
