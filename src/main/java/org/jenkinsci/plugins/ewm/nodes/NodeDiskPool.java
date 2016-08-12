@@ -12,6 +12,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
@@ -41,7 +42,7 @@ public class NodeDiskPool implements Describable<NodeDiskPool> {
 
     @Nonnull
     public List<NodeDisk> getNodeDisks() {
-        return nodeDisks;
+        return Collections.unmodifiableList(nodeDisks);
     }
 
     @Override

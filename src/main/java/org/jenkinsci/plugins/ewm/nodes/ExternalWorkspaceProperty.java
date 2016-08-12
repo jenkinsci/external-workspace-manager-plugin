@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
 import static hudson.Util.fixNull;
@@ -28,7 +29,7 @@ public class ExternalWorkspaceProperty extends NodeProperty<Node> {
 
     @Nonnull
     public List<NodeDiskPool> getNodeDiskPools() {
-        return nodeDiskPools;
+        return Collections.unmodifiableList(nodeDiskPools);
     }
 
     @Extension

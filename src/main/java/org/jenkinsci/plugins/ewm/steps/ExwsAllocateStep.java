@@ -108,7 +108,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
         @Nonnull
         public List<DiskPool> getDiskPools() {
-            return diskPools;
+            return Collections.unmodifiableList(diskPools);
         }
 
         @Restricted(NoExternalUse.class)

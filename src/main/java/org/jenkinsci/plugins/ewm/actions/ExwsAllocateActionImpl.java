@@ -7,6 +7,8 @@ import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
+import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,8 +32,9 @@ public class ExwsAllocateActionImpl implements RunAction2 {
         allocatedWorkspaces.add(externalWorkspace);
     }
 
+    @Nonnull
     public List<ExternalWorkspace> getAllocatedWorkspaces() {
-        return allocatedWorkspaces;
+        return Collections.unmodifiableList(allocatedWorkspaces);
     }
 
     @Override
