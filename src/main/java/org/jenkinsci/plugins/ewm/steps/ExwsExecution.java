@@ -58,20 +58,31 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
             throw new Exception("The node is not live due to some unexpected conditions: the node might have been taken offline, or may have been removed");
         }
 
+        String diskPoolId = exws.getDiskPoolId();
+        DiskPoolNode diskPoolNode;
+
         listener.getLogger().println("Searching for disk definitions in the External Workspace Templates from Jenkins global config");
-        Template template = findTemplate(exws.getDiskPoolId(), node.getLabelString(), step.getDescriptor().getTemplates());
-        List<DiskNode> diskNodes;
+        Template template = findTemplate(node.getLabelString(), step.getDescriptor().getTemplates());
+
         if (template != null) {
-            diskNodes = template.getDiskNodes();
+            diskPoolNode = findDiskPoolNode(diskPoolId, template.getDiskPoolNodes());
+            if (diskPoolNode == null) {
+                String message = format("No Disk Pool Ref ID matching '%s' was found in the External Workspace Template config labeled '%s'", diskPoolId, template.getLabel());
+                throw new AbortException(message);
+            }
         } else {
             // fallback to finding the disk definitions into the node config
             listener.getLogger().println("Searching for disk definitions in the Node config");
             ExternalWorkspaceProperty exwsNodeProperty = findNodeProperty(node);
-            DiskPoolNode diskPoolNode = findDiskPoolNode(exws.getDiskPoolId(), exwsNodeProperty.getDiskPoolNodes(), node.getDisplayName());
-            diskNodes = diskPoolNode.getDiskNodes();
+
+            diskPoolNode = findDiskPoolNode(diskPoolId, exwsNodeProperty.getDiskPoolNodes());
+            if (diskPoolNode == null) {
+                String message = format("No Disk Pool Ref ID matching '%s' was found in Node '%s' config", diskPoolId, node.getDisplayName());
+                throw new AbortException(message);
+            }
         }
 
-        DiskNode diskNode = findDiskNode(exws.getDiskId(), diskNodes, node.getDisplayName());
+        DiskNode diskNode = findDiskNode(exws.getDiskId(), diskPoolNode.getDiskNodes(), node.getDisplayName());
 
         FilePath diskFilePath = new FilePath(node.getChannel(), diskNode.getLocalRootPath());
         FilePath baseWorkspace = diskFilePath.child(exws.getPathOnDisk());
@@ -96,15 +107,12 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     /**
      * Finds a template from the given templates list that matches the given label String.
      *
-     * @param diskPoolRefId   the disk pool ref id that the found template should have
      * @param nodeLabelString the label that the template has
      * @param templates       a list of templates
-     * @return the template matching the given label, <code>null</code> otherwise
-     * @throws IOException if the found template doesn't have defined a disk pool ref id
-     *                     if the defined disk pool ref id doesn't match the one given as parameter
+     * @return the template matching the given label, {@code null} otherwise
      */
     @CheckForNull
-    private static Template findTemplate(String diskPoolRefId, String nodeLabelString, List<Template> templates) throws IOException {
+    private static Template findTemplate(String nodeLabelString, List<Template> templates) {
         Template selectedTemplate = null;
         for (Template template : templates) {
             String templateLabel = template.getLabel();
@@ -112,20 +120,6 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
                 selectedTemplate = template;
                 break;
             }
-        }
-        if (selectedTemplate == null) {
-            return null;
-        }
-
-        String templateDiskPoolRefId = selectedTemplate.getDiskPoolRefId();
-        if (templateDiskPoolRefId == null) {
-            String message = format("In Jenkins global config, the Template labeled '%s' does not have defined a Disk Pool Ref ID", selectedTemplate.getLabel());
-            throw new AbortException(message);
-        }
-        if (!templateDiskPoolRefId.equals(diskPoolRefId)) {
-            String message = format("In Jenkins global config, the Template labeled '%s' has defined a wrong Disk Pool Ref ID '%s'. " +
-                    "The correct Disk Pool Ref ID should be '%s', as the one used by the exwsAllocate step", selectedTemplate.getLabel(), selectedTemplate.getDiskPoolRefId(), diskPoolRefId);
-            throw new AbortException(message);
         }
 
         return selectedTemplate;
@@ -164,24 +158,17 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
      *
      * @param diskPoolRefId the disk pool reference id to be searching for
      * @param diskPoolNodes the list of disk pools
-     * @param nodeName      the name of the current node
-     * @return the Disk Pool that has the matching reference id.
-     * @throws IOException if no disk pool was found
+     * @return the Disk Pool that has the matching reference id, {@code null} otherwise
      */
-    @Nonnull
-    private static DiskPoolNode findDiskPoolNode(@Nonnull String diskPoolRefId, @Nonnull List<DiskPoolNode> diskPoolNodes,
-                                                 @Nonnull String nodeName) throws IOException {
+    @CheckForNull
+    private static DiskPoolNode findDiskPoolNode(@Nonnull String diskPoolRefId,
+                                                 @Nonnull List<DiskPoolNode> diskPoolNodes) {
         DiskPoolNode selected = null;
         for (DiskPoolNode diskPoolNode : diskPoolNodes) {
             if (diskPoolRefId.equals(diskPoolNode.getDiskPoolRefId())) {
                 selected = diskPoolNode;
                 break;
             }
-        }
-
-        if (selected == null) {
-            String message = format("No Disk Pool Ref ID matching '%s' was found in Node '%s' config", diskPoolRefId, nodeName);
-            throw new AbortException(message);
         }
 
         return selected;

@@ -5,7 +5,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,32 +21,20 @@ import static hudson.util.FormValidation.validateRequired;
 
 /**
  * Describable used in the Jenkins global config.
- * Based on a template, the user may define similar {@link DiskNode} properties to be used
+ * Based on a template, the user may define similar {@link DiskPoolNode} properties to be used
  * for multiple {@link hudson.model.Node}s that have a common {@link Template#label}.
  *
  * @author Alexandru Somai
  */
 public class Template implements Describable<Template> {
 
-    private final String diskPoolRefId;
     private final String label;
-    private final List<DiskNode> diskNodes;
+    private final List<DiskPoolNode> diskPoolNodes;
 
     @DataBoundConstructor
-    public Template(String diskPoolRefId, String label, List<DiskNode> diskNodes) {
-        this.diskPoolRefId = fixEmptyAndTrim(diskPoolRefId);
+    public Template(String label, List<DiskPoolNode> diskPoolNodes) {
         this.label = fixEmptyAndTrim(label);
-        this.diskNodes = fixNull(diskNodes);
-    }
-
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    @CheckForNull
-    public String getDiskPoolRefId() {
-        return diskPoolRefId;
+        this.diskPoolNodes = fixNull(diskPoolNodes);
     }
 
     @CheckForNull
@@ -55,20 +43,19 @@ public class Template implements Describable<Template> {
     }
 
     @Nonnull
-    public List<DiskNode> getDiskNodes() {
-        return diskNodes;
+    public List<DiskPoolNode> getDiskPoolNodes() {
+        return diskPoolNodes;
+    }
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return DESCRIPTOR;
     }
 
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static class DescriptorImpl extends Descriptor<Template> {
-
-        @Restricted(NoExternalUse.class)
-        @SuppressWarnings("unused")
-        public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
-            return validateRequired(value);
-        }
 
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")

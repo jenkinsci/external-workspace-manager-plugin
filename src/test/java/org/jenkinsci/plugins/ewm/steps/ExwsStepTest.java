@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -102,24 +103,12 @@ public class ExwsStepTest {
 
     @Test
     public void missingDiskPoolRefIdFromTemplate() throws Exception {
-        setUpTemplates(new Template("", "linux", Collections.<DiskNode>emptyList()));
+        setUpTemplates(new Template("linux", Collections.<DiskPoolNode>emptyList()));
 
         runWorkflowJob(job);
 
         j.assertBuildStatus(FAILURE, run);
-        j.assertLogContains("In Jenkins global config, the Template labeled 'linux' does not have defined a Disk Pool Ref ID", run);
-    }
-
-    @Test
-    public void wrongDiskPoolRefIdInTemplate() throws Exception {
-        String wrongDiskPoolId = "random";
-        setUpTemplates(new Template(wrongDiskPoolId, "linux", Collections.<DiskNode>emptyList()));
-
-        runWorkflowJob(job);
-
-        j.assertBuildStatus(FAILURE, run);
-        j.assertLogContains(format("In Jenkins global config, the Template labeled 'linux' has defined a wrong Disk Pool Ref ID '%s'." +
-                " The correct Disk Pool Ref ID should be '%s', as the one used by the exwsAllocate step", wrongDiskPoolId, DISK_POOL_ID), run);
+        j.assertLogContains(String.format("No Disk Pool Ref ID matching '%s' was found in the External Workspace Template config labeled 'linux'", DISK_POOL_ID), run);
     }
 
     @Test
@@ -182,8 +171,9 @@ public class ExwsStepTest {
 
     @Test
     public void sharedWorkspaceBetweenTwoDifferentNodesWithTemplate() throws Exception {
-        Template linuxTemplate = new Template(DISK_POOL_ID, "linux", Arrays.asList(diskNode1, diskNode2));
-        Template testTemplate = new Template(DISK_POOL_ID, "test", Arrays.asList(diskNode1, diskNode2));
+        DiskPoolNode diskPoolNode = new DiskPoolNode(DISK_POOL_ID, Arrays.asList(diskNode1, diskNode2));
+        Template linuxTemplate = new Template("linux", Collections.singletonList(diskPoolNode));
+        Template testTemplate = new Template("test", Collections.singletonList(diskPoolNode));
         setUpTemplates(linuxTemplate, testTemplate);
 
         WorkflowJob jobWithTwoNodes = createWorkflowJobWithTwoNodes();
