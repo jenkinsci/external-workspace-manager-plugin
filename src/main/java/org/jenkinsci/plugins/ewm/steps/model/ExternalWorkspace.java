@@ -16,12 +16,15 @@ public class ExternalWorkspace implements Serializable {
     private final String id;
     private final String diskPoolId;
     private final String diskId;
+    private final String masterMountPoint;
     private final String pathOnDisk;
 
-    public ExternalWorkspace(@Nonnull String diskPoolId, @Nonnull String diskId, @Nonnull String pathOnDisk) {
+    public ExternalWorkspace(@Nonnull String diskPoolId, @Nonnull String diskId,
+                             @Nonnull String masterMountPoint, @Nonnull String pathOnDisk) {
         this.id = UUID.randomUUID().toString();
         this.diskPoolId = diskPoolId;
         this.diskId = diskId;
+        this.masterMountPoint = masterMountPoint;
         this.pathOnDisk = pathOnDisk;
     }
 
@@ -38,6 +41,11 @@ public class ExternalWorkspace implements Serializable {
     @Nonnull
     public String getDiskId() {
         return diskId;
+    }
+
+    @Nonnull
+    public String getMasterMountPoint() {
+        return masterMountPoint;
     }
 
     @Nonnull

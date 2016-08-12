@@ -92,7 +92,12 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
                 }
             }
 
-            exws = new ExternalWorkspace(diskPoolId, diskId, pathOnDisk);
+            String masterMountPoint = disk.getMasterMountPoint();
+            if (masterMountPoint == null) {
+                String message = String.format("Mounting point from Master to the disk is not defined for Disk ID '%s'", diskId);
+                throw new AbortException(message);
+            }
+            exws = new ExternalWorkspace(diskPoolId, diskId, masterMountPoint, pathOnDisk);
         } else {
             // this is the downstream job
 
