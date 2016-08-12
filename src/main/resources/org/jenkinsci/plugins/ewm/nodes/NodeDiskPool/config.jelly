@@ -4,6 +4,6 @@
         <f:textbox/>
     </f:entry>
     <f:entry>
-        <f:repeatableProperty field="diskNodes" add="${%Add Disk}" header="${%Disk}"/>
+        <f:repeatableProperty field="nodeDisks" add="${%Add Disk}" header="${%Disk}"/>
     </f:entry>
 </j:jelly>

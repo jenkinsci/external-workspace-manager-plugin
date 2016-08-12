@@ -13,22 +13,22 @@ import java.util.List;
 import static hudson.Util.fixNull;
 
 /**
- * A {@link NodeProperty} where are defined the {@link DiskPoolNode} definitions.
+ * A {@link NodeProperty} where are defined the {@link NodeDiskPool} definitions.
  *
  * @author Alexandru Somai
  */
 public class ExternalWorkspaceProperty extends NodeProperty<Node> {
 
-    private final List<DiskPoolNode> diskPoolNodes;
+    private final List<NodeDiskPool> nodeDiskPools;
 
     @DataBoundConstructor
-    public ExternalWorkspaceProperty(List<DiskPoolNode> diskPoolNodes) {
-        this.diskPoolNodes = fixNull(diskPoolNodes);
+    public ExternalWorkspaceProperty(List<NodeDiskPool> nodeDiskPools) {
+        this.nodeDiskPools = fixNull(nodeDiskPools);
     }
 
     @Nonnull
-    public List<DiskPoolNode> getDiskPoolNodes() {
-        return diskPoolNodes;
+    public List<NodeDiskPool> getNodeDiskPools() {
+        return nodeDiskPools;
     }
 
     @Extension

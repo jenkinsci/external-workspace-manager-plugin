@@ -6,7 +6,7 @@ import hudson.model.Result;
 import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
-import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.After;
 import org.junit.Before;
@@ -64,9 +64,9 @@ public class WorkspaceCleanupTest {
     @Before
     public void setUpFolder() throws IOException {
         mountToDisk = tmp.newFolder("mount-to-disk");
-        DiskNode diskNode = new DiskNode(DISK_ID_ONE, mountToDisk.getPath());
-        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode);
-        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode);
+        NodeDisk nodeDisk = new NodeDisk(DISK_ID_ONE, mountToDisk.getPath());
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, nodeDisk);
+        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, nodeDisk);
     }
 
     @After

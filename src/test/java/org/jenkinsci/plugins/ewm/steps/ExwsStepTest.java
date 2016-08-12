@@ -7,8 +7,8 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.definitions.Template;
-import org.jenkinsci.plugins.ewm.nodes.DiskNode;
-import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
+import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
+import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -56,8 +56,8 @@ public class ExwsStepTest {
 
     private static Disk disk1;
     private static Disk disk2;
-    private static DiskNode diskNode1;
-    private static DiskNode diskNode2;
+    private static NodeDisk nodeDisk1;
+    private static NodeDisk nodeDisk2;
 
     private static WorkflowJob job;
 
@@ -76,8 +76,8 @@ public class ExwsStepTest {
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, null, null, Arrays.asList(disk1, disk2));
         setUpDiskPools(j.jenkins, diskPool);
 
-        diskNode1 = new DiskNode(DISK_ID_ONE, pathToDisk1.getPath());
-        diskNode2 = new DiskNode(DISK_ID_TWO, pathToDisk2.getPath());
+        nodeDisk1 = new NodeDisk(DISK_ID_ONE, pathToDisk1.getPath());
+        nodeDisk2 = new NodeDisk(DISK_ID_TWO, pathToDisk2.getPath());
 
         job = createWorkflowJob();
     }
@@ -103,7 +103,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingDiskPoolRefIdFromTemplate() throws Exception {
-        setUpTemplates(new Template("linux", Collections.<DiskPoolNode>emptyList()));
+        setUpTemplates(new Template("linux", Collections.<NodeDiskPool>emptyList()));
 
         runWorkflowJob(job);
 
@@ -121,7 +121,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingDiskPoolRefIdFromNodeProperty() throws Exception {
-        addExternalWorkspaceNodeProperty(node1, "", diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, "", nodeDisk1, nodeDisk2);
 
         runWorkflowJob(job);
 
@@ -131,7 +131,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingDiskRefIdFromNodeProperty() throws Exception {
-        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new DiskNode("", "local-path"));
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new NodeDisk("", "local-path"));
 
         runWorkflowJob(job);
 
@@ -142,7 +142,7 @@ public class ExwsStepTest {
 
     @Test
     public void missingLocalRootPathFromNodeProperty() throws Exception {
-        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new DiskNode(DISK_ID_ONE, ""));
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new NodeDisk(DISK_ID_ONE, ""));
 
         runWorkflowJob(job);
 
@@ -153,8 +153,8 @@ public class ExwsStepTest {
 
     @Test
     public void sharedWorkspaceBetweenTwoDifferentNodes() throws Exception {
-        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
-        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, nodeDisk1, nodeDisk2);
+        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, nodeDisk1, nodeDisk2);
 
         WorkflowJob jobWithTwoNodes = createWorkflowJobWithTwoNodes();
         runWorkflowJob(jobWithTwoNodes);
@@ -171,9 +171,9 @@ public class ExwsStepTest {
 
     @Test
     public void sharedWorkspaceBetweenTwoDifferentNodesWithTemplate() throws Exception {
-        DiskPoolNode diskPoolNode = new DiskPoolNode(DISK_POOL_ID, Arrays.asList(diskNode1, diskNode2));
-        Template linuxTemplate = new Template("linux", Collections.singletonList(diskPoolNode));
-        Template testTemplate = new Template("test", Collections.singletonList(diskPoolNode));
+        NodeDiskPool nodeDiskPool = new NodeDiskPool(DISK_POOL_ID, Arrays.asList(nodeDisk1, nodeDisk2));
+        Template linuxTemplate = new Template("linux", Collections.singletonList(nodeDiskPool));
+        Template testTemplate = new Template("test", Collections.singletonList(nodeDiskPool));
         setUpTemplates(linuxTemplate, testTemplate);
 
         WorkflowJob jobWithTwoNodes = createWorkflowJobWithTwoNodes();
@@ -191,8 +191,8 @@ public class ExwsStepTest {
 
     @Test
     public void twoDifferentJobsUsingTheSameWorkspace() throws Exception {
-        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, diskNode1, diskNode2);
-        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, diskNode1, diskNode2);
+        addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, nodeDisk1, nodeDisk2);
+        addExternalWorkspaceNodeProperty(node2, DISK_POOL_ID, nodeDisk1, nodeDisk2);
 
         WorkflowJob upstreamJob = createWorkflowJob();
         WorkflowRun upstreamRun = runWorkflowJob(upstreamJob);

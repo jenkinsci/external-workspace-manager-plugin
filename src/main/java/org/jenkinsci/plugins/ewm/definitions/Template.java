@@ -5,7 +5,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
+import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,7 +21,7 @@ import static hudson.util.FormValidation.validateRequired;
 
 /**
  * Describable used in the Jenkins global config.
- * Based on a template, the user may define similar {@link DiskPoolNode} properties to be used
+ * Based on a template, the user may define similar {@link NodeDiskPool} properties to be used
  * for multiple {@link hudson.model.Node}s that have a common {@link Template#label}.
  *
  * @author Alexandru Somai
@@ -29,12 +29,12 @@ import static hudson.util.FormValidation.validateRequired;
 public class Template implements Describable<Template> {
 
     private final String label;
-    private final List<DiskPoolNode> diskPoolNodes;
+    private final List<NodeDiskPool> nodeDiskPools;
 
     @DataBoundConstructor
-    public Template(String label, List<DiskPoolNode> diskPoolNodes) {
+    public Template(String label, List<NodeDiskPool> nodeDiskPools) {
         this.label = fixEmptyAndTrim(label);
-        this.diskPoolNodes = fixNull(diskPoolNodes);
+        this.nodeDiskPools = fixNull(nodeDiskPools);
     }
 
     @CheckForNull
@@ -43,8 +43,8 @@ public class Template implements Describable<Template> {
     }
 
     @Nonnull
-    public List<DiskPoolNode> getDiskPoolNodes() {
-        return diskPoolNodes;
+    public List<NodeDiskPool> getNodeDiskPools() {
+        return nodeDiskPools;
     }
 
     @Override

@@ -12,34 +12,36 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
+import static hudson.Util.fixNull;
 import static hudson.util.FormValidation.validateRequired;
 
 /**
- * Describable used to define disk properties for each {@link hudson.model.Node} configuration.
+ * Describable used to define disk pool properties for each {@link hudson.model.Node} configuration.
  *
  * @author Alexandru Somai
  */
-public class DiskNode implements Describable<DiskNode> {
+public class NodeDiskPool implements Describable<NodeDiskPool> {
 
-    private final String diskRefId;
-    private final String localRootPath;
+    private final String diskPoolRefId;
+    private final List<NodeDisk> nodeDisks;
 
     @DataBoundConstructor
-    public DiskNode(String diskRefId, String localRootPath) {
-        this.diskRefId = fixEmptyAndTrim(diskRefId);
-        this.localRootPath = fixEmptyAndTrim(localRootPath);
+    public NodeDiskPool(String diskPoolRefId, List<NodeDisk> nodeDisks) {
+        this.diskPoolRefId = fixEmptyAndTrim(diskPoolRefId);
+        this.nodeDisks = fixNull(nodeDisks);
     }
 
     @CheckForNull
-    public String getDiskRefId() {
-        return diskRefId;
+    public String getDiskPoolRefId() {
+        return diskPoolRefId;
     }
 
-    @CheckForNull
-    public String getLocalRootPath() {
-        return localRootPath;
+    @Nonnull
+    public List<NodeDisk> getNodeDisks() {
+        return nodeDisks;
     }
 
     @Override
@@ -50,24 +52,18 @@ public class DiskNode implements Describable<DiskNode> {
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-    public static class DescriptorImpl extends Descriptor<DiskNode> {
+    public static class DescriptorImpl extends Descriptor<NodeDiskPool> {
 
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
-        public FormValidation doCheckDiskRefId(@QueryParameter String value) {
-            return validateRequired(value);
-        }
-
-        @Restricted(NoExternalUse.class)
-        @SuppressWarnings("unused")
-        public FormValidation doCheckLocalRootPath(@QueryParameter String value) {
+        public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
             return validateRequired(value);
         }
 
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.definitions_Disk_DisplayName();
+            return Messages.definitions_DiskPool_DisplayName();
         }
     }
 }

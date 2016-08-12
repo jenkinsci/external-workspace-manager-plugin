@@ -8,7 +8,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
-import org.jenkinsci.plugins.ewm.nodes.DiskNode;
+import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -57,8 +57,8 @@ public class CustomWorkspaceTest {
         setUpDiskPools(j.jenkins, diskPool);
 
         tmpFolder = tmp.newFolder();
-        DiskNode diskNode = new DiskNode(DISK_ID_ONE, tmpFolder.getAbsolutePath());
-        addExternalWorkspaceNodeProperty(j.jenkins, DISK_POOL_ID, diskNode);
+        NodeDisk nodeDisk = new NodeDisk(DISK_ID_ONE, tmpFolder.getAbsolutePath());
+        addExternalWorkspaceNodeProperty(j.jenkins, DISK_POOL_ID, nodeDisk);
     }
 
     @After

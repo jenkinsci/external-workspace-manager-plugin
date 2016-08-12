@@ -11,9 +11,9 @@ import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.WorkspaceList;
 import hudson.util.DescribableList;
 import org.jenkinsci.plugins.ewm.definitions.Template;
-import org.jenkinsci.plugins.ewm.nodes.DiskNode;
-import org.jenkinsci.plugins.ewm.nodes.DiskPoolNode;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
+import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
+import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
 import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
@@ -59,14 +59,14 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         }
 
         String diskPoolId = exws.getDiskPoolId();
-        DiskPoolNode diskPoolNode;
+        NodeDiskPool nodeDiskPool;
 
         listener.getLogger().println("Searching for disk definitions in the External Workspace Templates from Jenkins global config");
         Template template = findTemplate(node.getLabelString(), step.getDescriptor().getTemplates());
 
         if (template != null) {
-            diskPoolNode = findDiskPoolNode(diskPoolId, template.getDiskPoolNodes());
-            if (diskPoolNode == null) {
+            nodeDiskPool = findNodeDiskPool(diskPoolId, template.getNodeDiskPools());
+            if (nodeDiskPool == null) {
                 String message = format("No Disk Pool Ref ID matching '%s' was found in the External Workspace Template config labeled '%s'", diskPoolId, template.getLabel());
                 throw new AbortException(message);
             }
@@ -75,16 +75,16 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
             listener.getLogger().println("Searching for disk definitions in the Node config");
             ExternalWorkspaceProperty exwsNodeProperty = findNodeProperty(node);
 
-            diskPoolNode = findDiskPoolNode(diskPoolId, exwsNodeProperty.getDiskPoolNodes());
-            if (diskPoolNode == null) {
+            nodeDiskPool = findNodeDiskPool(diskPoolId, exwsNodeProperty.getNodeDiskPools());
+            if (nodeDiskPool == null) {
                 String message = format("No Disk Pool Ref ID matching '%s' was found in Node '%s' config", diskPoolId, node.getDisplayName());
                 throw new AbortException(message);
             }
         }
 
-        DiskNode diskNode = findDiskNode(exws.getDiskId(), diskPoolNode.getDiskNodes(), node.getDisplayName());
+        NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
 
-        FilePath diskFilePath = new FilePath(node.getChannel(), diskNode.getLocalRootPath());
+        FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getLocalRootPath());
         FilePath baseWorkspace = diskFilePath.child(exws.getPathOnDisk());
 
         WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
@@ -153,20 +153,20 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     }
 
     /**
-     * Selects the {@link DiskPoolNode} that has the {@link DiskPoolNode#diskPoolRefId} equal to the given
+     * Selects the {@link NodeDiskPool} that has the {@link NodeDiskPool#diskPoolRefId} equal to the given
      * {@code diskPoolRefId} param.
      *
      * @param diskPoolRefId the disk pool reference id to be searching for
-     * @param diskPoolNodes the list of disk pools
+     * @param nodeDiskPools the list of disk pools
      * @return the Disk Pool that has the matching reference id, {@code null} otherwise
      */
     @CheckForNull
-    private static DiskPoolNode findDiskPoolNode(@Nonnull String diskPoolRefId,
-                                                 @Nonnull List<DiskPoolNode> diskPoolNodes) {
-        DiskPoolNode selected = null;
-        for (DiskPoolNode diskPoolNode : diskPoolNodes) {
-            if (diskPoolRefId.equals(diskPoolNode.getDiskPoolRefId())) {
-                selected = diskPoolNode;
+    private static NodeDiskPool findNodeDiskPool(@Nonnull String diskPoolRefId,
+                                                 @Nonnull List<NodeDiskPool> nodeDiskPools) {
+        NodeDiskPool selected = null;
+        for (NodeDiskPool nodeDiskPool : nodeDiskPools) {
+            if (diskPoolRefId.equals(nodeDiskPool.getDiskPoolRefId())) {
+                selected = nodeDiskPool;
                 break;
             }
         }
@@ -178,31 +178,31 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
      * Finds the disk definition from the given disks list that matches the given disk id.
      *
      * @param diskId    the disk id that the node definition should have
-     * @param diskNodes the list of available disk definitions
+     * @param nodeDisks the list of available disk definitions
      * @param nodeName  the name of the current node
      * @return the disk definition that matches the given disk id
      * @throws IOException if no disk definition was found
      *                     if the disk definition has its local root path null
      */
     @Nonnull
-    private static DiskNode findDiskNode(String diskId, List<DiskNode> diskNodes, String nodeName) throws IOException {
-        DiskNode selectedDiskNode = null;
-        for (DiskNode diskNode : diskNodes) {
-            if (diskId.equals(diskNode.getDiskRefId())) {
-                selectedDiskNode = diskNode;
+    private static NodeDisk findNodeDisk(String diskId, List<NodeDisk> nodeDisks, String nodeName) throws IOException {
+        NodeDisk selected = null;
+        for (NodeDisk nodeDisk : nodeDisks) {
+            if (diskId.equals(nodeDisk.getDiskRefId())) {
+                selected = nodeDisk;
                 break;
             }
         }
-        if (selectedDiskNode == null) {
+        if (selected == null) {
             String message = format("The Node '%s' config does not have defined any Disk Ref ID '%s'", nodeName, diskId);
             throw new AbortException(message);
         }
-        if (selectedDiskNode.getLocalRootPath() == null) {
+        if (selected.getLocalRootPath() == null) {
             String message = format("The Node '%s' config does not have defined any local root path for Disk Ref ID '%s'", nodeName, diskId);
             throw new AbortException(message);
         }
 
-        return selectedDiskNode;
+        return selected;
     }
 
     private static final class Callback extends BodyExecutionCallback {
