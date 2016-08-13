@@ -6,21 +6,17 @@
             <j:forEach var="exws" items="${it.allocatedWorkspaces}">
                 <h2>${%Allocated External Workspace}</h2>
                 <p>
-                    ${%Disk Pool ID}:
-                    <j:out value="${exws.diskPoolId}"/>
+                    ${%Disk Pool ID}: ${exws.diskPoolId}
                 </p>
                 <p>
-                    ${%Disk ID}:
-                    <j:out value="${exws.diskId}"/>
+                    ${%Disk ID}: ${exws.diskId}
                 </p>
                 <p>
-                    ${%Workspace path on} <j:out value="${exws.diskId}"/>:
-                    <j:out value="${exws.pathOnDisk}"/>
+                    ${%Workspace path on} ${exws.diskId}: ${exws.pathOnDisk}
                 </p>
                 <p>
-                    ${%Complete workspace path on} <j:out value="${exws.diskId}"/>
-                    (${%from Jenkins master}):
-                    <j:out value="${exws.masterMountPoint + '/' + exws.pathOnDisk}"/>
+                    ${%Complete workspace path on} ${exws.diskId}
+                    (${%from Jenkins master}): ${exws.masterMountPoint + '/' + exws.pathOnDisk}
                 </p>
             </j:forEach>
             <j:if test="${it.allocatedWorkspaces.size() > 1}">
