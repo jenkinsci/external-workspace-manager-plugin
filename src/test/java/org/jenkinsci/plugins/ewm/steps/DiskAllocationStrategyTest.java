@@ -42,7 +42,7 @@ public class DiskAllocationStrategyTest {
         TestUtil.setUpDiskPools(j.jenkins, diskPool);
 
         WorkflowRun run = TestUtil.createWorkflowJobAndRun(j.jenkins, format("" +
-                "exwsAllocate diskPoolId: '%s', strategy: [$class: 'FastestWriteSpeedStrategy']", diskPool.getDiskPoolId()));
+                "exwsAllocate diskPoolId: '%s', strategy: fastestWriteSpeed()", diskPool.getDiskPoolId()));
 
         j.assertBuildStatusSuccess(run);
         j.assertLogContains(format("Using Disk allocation strategy: '%s'", new FastestWriteSpeedStrategy().getDescriptor().getDisplayName()), run);
@@ -60,7 +60,7 @@ public class DiskAllocationStrategyTest {
 
         WorkflowRun run = TestUtil.createWorkflowJobAndRun(j.jenkins, format("" +
                         "exwsAllocate diskPoolId: '%s', " +
-                        " strategy: [$class: 'FastestWriteSpeedStrategy', estimatedWorkspaceSize: %s]",
+                        " strategy: fastestWriteSpeed(estimatedWorkspaceSize: %s)",
                 diskPool.getDiskPoolId(), estimatedWorkspaceSize));
 
         j.assertBuildStatus(Result.FAILURE, run);
