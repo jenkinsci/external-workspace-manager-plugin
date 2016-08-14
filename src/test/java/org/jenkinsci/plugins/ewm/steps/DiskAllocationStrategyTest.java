@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.Result;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -11,6 +13,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.jvnet.hudson.test.BuildWatcher;
 import org.jvnet.hudson.test.JenkinsRule;
 
@@ -21,6 +24,7 @@ import static java.lang.String.format;
  *
  * @author Alexandru Somai
  */
+@RunWith(JUnitParamsRunner.class)
 public class DiskAllocationStrategyTest {
 
     @ClassRule
@@ -35,14 +39,16 @@ public class DiskAllocationStrategyTest {
     }
 
     @Test
-    public void useAllocationStrategyInPipeline() throws Exception {
+    @Parameters({"fastestWriteSpeed()",
+                 "[$class: 'FastestWriteSpeedStrategy']"})
+    public void useAllocationStrategyInPipeline(String strategy) throws Exception {
         Disk disk1 = TestUtil.createDisk(new UserProvidedDiskInfo(0, 1));
         Disk disk2 = TestUtil.createDisk(new UserProvidedDiskInfo(0, 3));
         DiskPool diskPool = TestUtil.createDiskPool(disk1, disk2);
         TestUtil.setUpDiskPools(j.jenkins, diskPool);
 
         WorkflowRun run = TestUtil.createWorkflowJobAndRun(j.jenkins, format("" +
-                "exwsAllocate diskPoolId: '%s', strategy: [$class: 'FastestWriteSpeedStrategy']", diskPool.getDiskPoolId()));
+                "exwsAllocate diskPoolId: '%s', strategy: %s", diskPool.getDiskPoolId(), strategy));
 
         j.assertBuildStatusSuccess(run);
         j.assertLogContains(format("Using Disk allocation strategy: '%s'", new FastestWriteSpeedStrategy().getDescriptor().getDisplayName()), run);
@@ -50,7 +56,9 @@ public class DiskAllocationStrategyTest {
     }
 
     @Test
-    public void diskHasNotEnoughUsableSpace() throws Exception {
+    @Parameters({"fastestWriteSpeed(estimatedWorkspaceSize: 300)",
+                 "[$class: 'FastestWriteSpeedStrategy'\\, estimatedWorkspaceSize: 300]"})
+    public void diskHasNotEnoughUsableSpace(String strategy) throws Exception {
         // The Disk mounting point parameter isn't an actual mount.
         // Therefore, the disk's usable space will be 0, and the job will fail as expected
         Disk disk = new Disk("disk", null, "not-an-actual-mounting-point", null, null);
@@ -59,9 +67,8 @@ public class DiskAllocationStrategyTest {
         long estimatedWorkspaceSize = 300;
 
         WorkflowRun run = TestUtil.createWorkflowJobAndRun(j.jenkins, format("" +
-                        "exwsAllocate diskPoolId: '%s', " +
-                        " strategy: [$class: 'FastestWriteSpeedStrategy', estimatedWorkspaceSize: %s]",
-                diskPool.getDiskPoolId(), estimatedWorkspaceSize));
+                "exwsAllocate diskPoolId: '%s', " +
+                " strategy: %s", diskPool.getDiskPoolId(), strategy));
 
         j.assertBuildStatus(Result.FAILURE, run);
         j.assertLogContains(format("Using Disk allocation strategy: '%s'", new FastestWriteSpeedStrategy().getDescriptor().getDisplayName()), run);
