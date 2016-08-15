@@ -8,8 +8,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.TestUtil;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
-import org.jenkinsci.plugins.ewm.nodes.DiskNode;
-import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
+import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -30,10 +29,7 @@ import static java.lang.String.format;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.jenkinsci.plugins.ewm.TestUtil.DISK_ID_ONE;
-import static org.jenkinsci.plugins.ewm.TestUtil.DISK_POOL_ID;
-import static org.jenkinsci.plugins.ewm.TestUtil.removeDiskPools;
-import static org.jenkinsci.plugins.ewm.TestUtil.setUpDiskPools;
+import static org.jenkinsci.plugins.ewm.TestUtil.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -61,13 +57,13 @@ public class CustomWorkspaceTest {
         setUpDiskPools(j.jenkins, diskPool);
 
         tmpFolder = tmp.newFolder();
-        DiskNode diskNode = new DiskNode(DISK_ID_ONE, tmpFolder.getAbsolutePath());
-        j.jenkins.getNodeProperties().add(new ExternalWorkspaceProperty(DISK_POOL_ID, Collections.singletonList(diskNode)));
+        NodeDisk nodeDisk = new NodeDisk(DISK_ID_ONE, tmpFolder.getAbsolutePath());
+        addExternalWorkspaceNodeProperty(j.jenkins, DISK_POOL_ID, nodeDisk);
     }
 
     @After
     public void tearDown() throws IOException {
-        j.jenkins.getNodeProperties().removeAll(ExternalWorkspaceProperty.class);
+        removeExternalWorkspaceNodeProperty(j.jenkins);
         removeDiskPools(j.jenkins);
     }
 

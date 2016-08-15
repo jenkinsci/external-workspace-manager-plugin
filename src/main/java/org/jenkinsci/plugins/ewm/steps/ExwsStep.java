@@ -59,7 +59,7 @@ public class ExwsStep extends AbstractStepImpl {
 
         @Nonnull
         public List<Template> getTemplates() {
-            return templates;
+            return Collections.unmodifiableList(templates);
         }
 
         @Override
