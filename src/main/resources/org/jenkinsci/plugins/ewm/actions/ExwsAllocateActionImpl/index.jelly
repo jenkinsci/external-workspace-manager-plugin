@@ -18,6 +18,9 @@
                     ${%Complete workspace path on} ${exws.diskId}
                     (${%from Jenkins master}): ${exws.completeWorkspacePath}
                 </p>
+                <!--<st:include it="${exws}" page="index.jelly"/>-->
+
+                <l:task icon="images/24x24/folder.png" href="ws?exwsId=${exws.id}" title="${%Workspace}"/>
             </j:forEach>
             <j:if test="${it.allocatedWorkspaces.size() > 1}">
                 <div style="color: rgba(0,0,0,.6); margin-top: 20px;">
