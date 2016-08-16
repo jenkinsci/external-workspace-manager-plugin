@@ -62,11 +62,12 @@ public class ExwsAllocateActionImpl implements RunAction2 {
     }
 
     @Restricted(NoExternalUse.class)
-    public DirectoryBrowserSupport doWs(StaplerRequest req, StaplerResponse rsp, @QueryParameter String exwsId) throws IOException, ServletException, InterruptedException {
+    public DirectoryBrowserSupport doWs(StaplerRequest req, StaplerResponse rsp, @QueryParameter String id) throws IOException, ServletException, InterruptedException {
         ExternalWorkspace exws = null;
 
+        // TODO makes sense to make #allocatedWorkspaces a HashMap
         for (ExternalWorkspace allocatedWorkspace : allocatedWorkspaces) {
-            if (allocatedWorkspace.getId().equals(exwsId)) {
+            if (allocatedWorkspace.getId().equals(id)) {
                 exws = allocatedWorkspace;
                 break;
             }
@@ -81,7 +82,7 @@ public class ExwsAllocateActionImpl implements RunAction2 {
             req.getView(this, "noWorkspace.jelly").forward(req, rsp);
             return null;
         } else {
-            return new DirectoryBrowserSupport(exws, ws, getDisplayName(), "folder.png", true);
+            return new DirectoryBrowserSupport(exws, ws, exws.getDisplayName(), "folder.png", true);
         }
     }
 

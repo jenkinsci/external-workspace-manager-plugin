@@ -3,8 +3,8 @@ package org.jenkinsci.plugins.ewm.model;
 import org.jenkinsci.plugins.ewm.utils.RandomUtil;
 
 import hudson.FilePath;
-import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
+import hudson.model.ModelObject;
 import org.jenkinsci.plugins.ewm.utils.Util;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -23,7 +23,7 @@ import java.io.Serializable;
  *
  * @author Alexandru Somai
  */
-public class ExternalWorkspace implements Serializable, Action {
+public class ExternalWorkspace implements Serializable, ModelObject {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,21 +81,12 @@ public class ExternalWorkspace implements Serializable, Action {
     }
 
     @Override
-    public String getIconFileName() {
-        return null;
-    }
-
-    @Override
     public String getDisplayName() {
         return String.format("External Workspace on Disk ID: %s from Disk Pool ID: %s", diskId, diskPoolId);
     }
 
-    @Override
-    public String getUrlName() {
-        return "exwsModel";
-    }
-
     @Restricted(NoExternalUse.class)
+    // TODO how to reference this from index.jelly file?
     public DirectoryBrowserSupport doWs(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         FilePath ws = new FilePath(new File(masterMountPoint, pathOnDisk));
         if (!ws.exists()) {
