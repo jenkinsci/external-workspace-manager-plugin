@@ -32,6 +32,7 @@ public class ExternalWorkspace implements Serializable, ModelObject {
     private final String diskId;
     private final String masterMountPoint;
     private final String pathOnDisk;
+    private String workspaceUrl;
 
     public ExternalWorkspace(@Nonnull String diskPoolId, @Nonnull String diskId,
                              @Nonnull String masterMountPoint, @Nonnull String pathOnDisk) {
@@ -78,6 +79,15 @@ public class ExternalWorkspace implements Serializable, ModelObject {
     @SuppressWarnings("unused")
     public String getCompleteWorkspacePath() {
         return new File(masterMountPoint, pathOnDisk).getPath();
+    }
+
+    public void setWorkspaceUrl(@Nonnull String workspaceUrl) {
+        this.workspaceUrl = workspaceUrl;
+    }
+
+    @Nonnull
+    public String getWorkspaceUrl() {
+        return workspaceUrl;
     }
 
     @Override

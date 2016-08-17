@@ -9,10 +9,12 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
+import org.jenkinsci.plugins.ewm.actions.ExternalWorkspaceActionImpl;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
@@ -46,6 +48,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     private transient TaskListener listener;
     @StepContextParameter
     private transient EnvVars envVars;
+    @StepContextParameter
+    private transient FlowNode flowNode;
 
     @Override
     protected ExternalWorkspace run() throws Exception {
@@ -136,6 +140,10 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             String message = format("Disk Pool identified by '%s' is not accessible due to the applied Disk Pool restriction: %s", diskPoolId, restriction.getDescriptor().getDisplayName());
             throw new AbortException(message);
         }
+
+        ExternalWorkspaceActionImpl externalWorkspaceAction = new ExternalWorkspaceActionImpl(exws, flowNode);
+        flowNode.addAction(externalWorkspaceAction);
+        exws.setWorkspaceUrl(flowNode.getUrl() + externalWorkspaceAction.getUrlName());
 
         ExwsAllocateActionImpl allocateAction = run.getAction(ExwsAllocateActionImpl.class);
         if (allocateAction == null) {

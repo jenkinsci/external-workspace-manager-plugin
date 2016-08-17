@@ -22,7 +22,10 @@
                 <st:include it="${exws}" page="index.jelly"/>
 
                 TODO partially working workspace locator
-                <l:task icon="images/24x24/folder.png" href="ws/?id=${exws.id}" title="${%Workspace}"/>
+                <l:task icon="images/24x24/folder.png" href="ws/?id=${exws.id}" title="${%External Workspace}"/>
+
+                Working workspace locator
+                <l:task icon="images/24x24/folder.png" href="${rootURL + '/' + exws.workspaceUrl}" title="${%External Workspace}"/>
             </j:forEach>
             <j:if test="${it.allocatedWorkspaces.size() > 1}">
                 <div style="color: rgba(0,0,0,.6); margin-top: 20px;">

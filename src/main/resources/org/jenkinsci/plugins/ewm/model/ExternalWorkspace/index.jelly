@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
     TODO not working workspace locator
-    <l:task icon="images/24x24/folder.png" href="ws/" title="${%Workspace}"/>
+    <l:task icon="images/24x24/folder.png" href="ws/" title="${%External Workspace}"/>
 </j:jelly>

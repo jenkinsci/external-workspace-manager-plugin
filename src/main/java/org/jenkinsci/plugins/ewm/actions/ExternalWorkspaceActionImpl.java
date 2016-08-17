@@ -7,7 +7,7 @@ import hudson.model.Queue;
 import hudson.model.labels.LabelAtom;
 import hudson.security.AccessControlled;
 import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
+import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.actions.FlowNodeAction;
 import org.jenkinsci.plugins.workflow.actions.WorkspaceAction;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
