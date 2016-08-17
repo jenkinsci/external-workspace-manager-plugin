@@ -10,11 +10,14 @@ import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.WorkspaceList;
 import hudson.util.DescribableList;
+import org.jenkinsci.plugins.ewm.actions.ExternalWorkspaceActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
+import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
@@ -44,6 +47,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     private transient Computer computer;
     @StepContextParameter
     private transient TaskListener listener;
+    @StepContextParameter
+    private transient FlowNode flowNode;
     private BodyExecution body;
 
     @Override
@@ -89,6 +94,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
         FilePath workspace = lease.path;
+        flowNode.addAction(new ExternalWorkspaceActionImpl(exws, flowNode));
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
                 .withContext(workspace)
