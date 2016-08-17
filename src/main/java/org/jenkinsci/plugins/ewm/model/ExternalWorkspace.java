@@ -1,8 +1,9 @@
 package org.jenkinsci.plugins.ewm.model;
 
+import org.jenkinsci.plugins.ewm.utils.RandomUtil;
+
 import javax.annotation.Nonnull;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * POJO used to pass fields from one step to another.
@@ -21,7 +22,7 @@ public class ExternalWorkspace implements Serializable {
 
     public ExternalWorkspace(@Nonnull String diskPoolId, @Nonnull String diskId,
                              @Nonnull String masterMountPoint, @Nonnull String pathOnDisk) {
-        this.id = UUID.randomUUID().toString();
+        this.id = RandomUtil.generateRandomHexString(32);
         this.diskPoolId = diskPoolId;
         this.diskId = diskId;
         this.masterMountPoint = masterMountPoint;
