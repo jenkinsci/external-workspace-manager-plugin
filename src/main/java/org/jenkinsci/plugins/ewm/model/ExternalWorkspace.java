@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.model;
 import org.jenkinsci.plugins.ewm.utils.RandomUtil;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -52,5 +53,18 @@ public class ExternalWorkspace implements Serializable {
     @Nonnull
     public String getPathOnDisk() {
         return pathOnDisk;
+    }
+
+    /**
+     * Computes the complete workspace path, by appending {@link #pathOnDisk} to the {@link #masterMountPoint}.
+     * It's recommended to use this method when the complete workspace path is needed, instead of manually appending
+     * the two strings, with separator between.
+     *
+     * @return the complete workspace path from Jenkins master
+     */
+    @Nonnull
+    @SuppressWarnings("unused")
+    public String getCompleteWorkspacePath() {
+        return new File(masterMountPoint, pathOnDisk).getPath();
     }
 }
