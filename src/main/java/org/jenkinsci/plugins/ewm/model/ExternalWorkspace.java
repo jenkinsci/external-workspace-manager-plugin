@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.ewm.steps.model;
+package org.jenkinsci.plugins.ewm.model;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;

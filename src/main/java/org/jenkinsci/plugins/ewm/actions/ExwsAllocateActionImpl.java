@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.ewm.actions;
 import hudson.model.Run;
 import jenkins.model.RunAction2;
 import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
+import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
