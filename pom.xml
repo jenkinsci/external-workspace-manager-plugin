@@ -15,6 +15,8 @@
     <properties>
         <jenkins.version>1.642.3</jenkins.version>
         <java.level>7</java.level>
+
+        <argLine>-Xmx1024m</argLine>
     </properties>
 
     <name>External Workspace Manager Plugin</name>
