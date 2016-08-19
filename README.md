@@ -21,7 +21,7 @@ It eliminates the need to copy, archive or move files.
 
 ## Current status
 
-Currently the plugin is under development. See the links to get more info about the current status.
+Version 1.0.0 has been released!
 
 ## Design document
 
