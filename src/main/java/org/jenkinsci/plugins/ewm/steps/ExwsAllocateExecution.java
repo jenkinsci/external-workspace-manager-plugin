@@ -12,7 +12,7 @@ import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
-import org.jenkinsci.plugins.ewm.steps.model.ExternalWorkspace;
+import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
@@ -21,6 +21,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static hudson.Util.isRelativePath;
@@ -225,8 +226,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             throw new AbortException(message);
         }
 
-        FilePath diskFilePath = new FilePath(new File(physicalPathOnDisk));
-        return new FilePath(diskFilePath, run.getParent().getFullName() + '/' + run.getNumber()).getRemote();
+        File pathOnDisk = Paths.get(physicalPathOnDisk, run.getParent().getFullName(), String.valueOf(run.getNumber())).toFile();
+        return new FilePath(pathOnDisk).getRemote();
     }
 
     /**

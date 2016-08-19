@@ -16,7 +16,7 @@
                 </p>
                 <p>
                     ${%Complete workspace path on} ${exws.diskId}
-                    (${%from Jenkins master}): ${exws.masterMountPoint + '/' + exws.pathOnDisk}
+                    (${%from Jenkins master}): ${exws.completeWorkspacePath}
                 </p>
             </j:forEach>
             <j:if test="${it.allocatedWorkspaces.size() > 1}">
