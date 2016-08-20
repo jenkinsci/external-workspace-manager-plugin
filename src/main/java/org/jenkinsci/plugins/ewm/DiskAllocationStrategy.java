@@ -51,11 +51,11 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
     public abstract Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException;
 
     /**
-     * Calculates the usable space for the given {@link Disk} entry.
+     * Retrieves the usable space in bytes for the given {@link Disk} entry.
      * It uses the mounting point property that is defined in the Jenkins global config for each Disk.
      *
      * @param disk the disk entry
-     * @return the usable space for the disk
+     * @return the usable space in bytes for the disk
      * @throws IOException if mounting point from Jenkins master to Disk is {@code null}, or
      *                     if the usable space can't be retrieved for security reasons
      * @see File#getUsableSpace
@@ -85,11 +85,11 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
 
     /**
      * Assuming that the {@link #estimatedWorkspaceSize} is provided by the user in MB,
-     * this method returns the size in KB (multiplied by 1024).
+     * this method returns the size in bytes (multiplied by 1024 * 1024).
      *
-     * @return the estimated workspace size in KB (multiplied by 1024)
+     * @return the estimated workspace size in bytes (multiplied by 1024 * 1024)
      */
-    public long getEstimatedWorkspaceSizeInKilobytes() {
-        return estimatedWorkspaceSize * 1024;
+    public long getEstimatedWorkspaceSizeInBytes() {
+        return estimatedWorkspaceSize * 1024 * 1024;
     }
 }

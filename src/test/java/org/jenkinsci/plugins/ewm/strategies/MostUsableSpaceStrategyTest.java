@@ -59,11 +59,13 @@ public class MostUsableSpaceStrategyTest {
 
     @Test
     public void estimatedWorkspaceSizeGreaterThanUsableSpace() throws Exception {
+        // estimated workspace size of 200 MB
         long estimatedWorkspaceSize = 200L;
         strategy.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
         Disk disk = TestUtil.createDisk();
 
-        when(strategy.retrieveUsableSpace(disk)).thenReturn(100000L);
+        // simulate 100 MB available space
+        when(strategy.retrieveUsableSpace(disk)).thenReturn(100000000L);
 
         thrown.expect(AbortException.class);
         thrown.expectMessage(format("The selected Disk with the most usable space doesn't have at least %s MB space", estimatedWorkspaceSize));

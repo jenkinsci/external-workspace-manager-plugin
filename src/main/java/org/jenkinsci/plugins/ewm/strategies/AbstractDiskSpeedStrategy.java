@@ -20,13 +20,13 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
     @Nonnull
     @Override
     public Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException {
-        long estimatedWorkspaceSizeInKilobytes = getEstimatedWorkspaceSizeInKilobytes();
+        long estimatedWorkspaceSizeInBytes = getEstimatedWorkspaceSizeInBytes();
         Disk candidate = null;
 
         for (Disk disk : disks) {
             long usableSpace = retrieveUsableSpace(disk);
 
-            if (candidate == null && usableSpace >= estimatedWorkspaceSizeInKilobytes) {
+            if (candidate == null && usableSpace >= estimatedWorkspaceSizeInBytes) {
                 // found a possible candidate that has the usable space >= estimated workspace size
                 candidate = disk;
             }
@@ -36,7 +36,7 @@ public abstract class AbstractDiskSpeedStrategy extends DiskAllocationStrategy {
                 int candidateSpeed = getDiskSpeed(candidate.getDiskInfo());
                 int diskSpeed = getDiskSpeed(disk.getDiskInfo());
 
-                if (diskSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSizeInKilobytes) {
+                if (diskSpeed > candidateSpeed && usableSpace >= estimatedWorkspaceSizeInBytes) {
                     // found another disk that has higher speed than the candidate's speed and the usable space >= estimated workspace size
                     candidate = disk;
                 }
