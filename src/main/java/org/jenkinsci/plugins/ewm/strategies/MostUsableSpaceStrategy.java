@@ -37,19 +37,19 @@ public class MostUsableSpaceStrategy extends DiskAllocationStrategy {
     public Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException {
         Iterator<Disk> iterator = disks.iterator();
         Disk selectedDisk = iterator.next();
-        long selectedDiskUsableSpace = retrieveUsableSpace(selectedDisk);
+        long selectedDiskUsableSpaceBytes = retrieveUsableSpaceInBytes(selectedDisk);
 
         while (iterator.hasNext()) {
             Disk disk = iterator.next();
-            long diskUsableSpace = retrieveUsableSpace(disk);
+            long diskUsableSpaceBytes = retrieveUsableSpaceInBytes(disk);
 
-            if (diskUsableSpace > selectedDiskUsableSpace) {
+            if (diskUsableSpaceBytes > selectedDiskUsableSpaceBytes) {
                 selectedDisk = disk;
-                selectedDiskUsableSpace = diskUsableSpace;
+                selectedDiskUsableSpaceBytes = diskUsableSpaceBytes;
             }
         }
 
-        if (selectedDiskUsableSpace < getEstimatedWorkspaceSizeInBytes()) {
+        if (retrieveUsableSpaceInMegaBytes(selectedDisk) < getEstimatedWorkspaceSize()) {
             String message = String.format("The selected Disk with the most usable space doesn't have at least %s MB space", getEstimatedWorkspaceSize());
             throw new AbortException(message);
         }

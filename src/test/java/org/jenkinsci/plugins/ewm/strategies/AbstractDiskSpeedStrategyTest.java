@@ -45,8 +45,8 @@ public abstract class AbstractDiskSpeedStrategyTest<T extends AbstractDiskSpeedS
         strategy.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
         Disk disk = TestUtil.createDisk();
 
-        // simulate 100 MB available space
-        when(strategy.retrieveUsableSpace(disk)).thenReturn(100000000L);
+        // simulate ~100 MB available space
+        when(strategy.retrieveUsableSpaceInBytes(disk)).thenReturn(100000000L);
 
         thrown.expect(AbortException.class);
         thrown.expectMessage(format("Couldn't find any Disk with at least %s MB usable space", estimatedWorkspaceSize));

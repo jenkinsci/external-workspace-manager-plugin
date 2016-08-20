@@ -40,9 +40,9 @@ public class MostUsableSpaceStrategyTest {
         Disk disk2 = TestUtil.createDisk();
         Disk disk3 = TestUtil.createDisk();
 
-        when(strategy.retrieveUsableSpace(disk1)).thenReturn(1L);
-        when(strategy.retrieveUsableSpace(disk2)).thenReturn(200L);
-        when(strategy.retrieveUsableSpace(disk3)).thenReturn(3L);
+        when(strategy.retrieveUsableSpaceInBytes(disk1)).thenReturn(1L);
+        when(strategy.retrieveUsableSpaceInBytes(disk2)).thenReturn(200L);
+        when(strategy.retrieveUsableSpaceInBytes(disk3)).thenReturn(3L);
 
         Disk allocatedDisk = strategy.allocateDisk(Arrays.asList(disk1, disk2));
         assertThat(allocatedDisk, is(disk2));
@@ -64,8 +64,8 @@ public class MostUsableSpaceStrategyTest {
         strategy.setEstimatedWorkspaceSize(estimatedWorkspaceSize);
         Disk disk = TestUtil.createDisk();
 
-        // simulate 100 MB available space
-        when(strategy.retrieveUsableSpace(disk)).thenReturn(100000000L);
+        // simulate ~100 MB available space
+        when(strategy.retrieveUsableSpaceInBytes(disk)).thenReturn(100000000L);
 
         thrown.expect(AbortException.class);
         thrown.expectMessage(format("The selected Disk with the most usable space doesn't have at least %s MB space", estimatedWorkspaceSize));
