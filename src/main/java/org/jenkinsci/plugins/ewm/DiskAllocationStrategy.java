@@ -21,6 +21,9 @@ import java.util.List;
  */
 public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<DiskAllocationStrategy> implements ExtensionPoint {
 
+    private static final long MEGABYTE = 1024L * 1024L;
+
+    // estimated workspace size has to be in MB
     private long estimatedWorkspaceSize;
 
     /**
@@ -51,17 +54,17 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
     public abstract Disk allocateDisk(@Nonnull List<Disk> disks) throws IOException;
 
     /**
-     * Calculates the usable space for the given {@link Disk} entry.
+     * Retrieves the usable space in bytes for the given {@link Disk} entry.
      * It uses the mounting point property that is defined in the Jenkins global config for each Disk.
      *
      * @param disk the disk entry
-     * @return the usable space for the disk
+     * @return the disk's usable space in bytes
      * @throws IOException if mounting point from Jenkins master to Disk is {@code null}, or
      *                     if the usable space can't be retrieved for security reasons
      * @see File#getUsableSpace
      */
     @Restricted(NoExternalUse.class)
-    public long retrieveUsableSpace(Disk disk) throws IOException {
+    public long retrieveUsableSpaceInBytes(Disk disk) throws IOException {
         String masterMountPoint = disk.getMasterMountPoint();
         if (masterMountPoint == null) {
             String message = String.format("Mounting point from Master to the disk is not defined for Disk ID '%s'", disk.getDiskId());
@@ -75,21 +78,48 @@ public abstract class DiskAllocationStrategy extends AbstractDescribableImpl<Dis
         }
     }
 
+    /**
+     * Retrieves the usable space in MB for the given {@link Disk} entry.
+     * It converts the value returned by {@link #retrieveUsableSpaceInBytes(Disk)} to MB.
+     *
+     * @param disk the disk entry
+     * @return the disk's usable space in MB
+     * @throws IOException same as {@link #retrieveUsableSpaceInBytes(Disk)}
+     * @see #retrieveUsableSpaceInBytes(Disk)
+     * @see #bytesToMega(long)
+     */
+    @Restricted(NoExternalUse.class)
+    protected final long retrieveUsableSpaceInMegaBytes(Disk disk) throws IOException {
+        return bytesToMega(retrieveUsableSpaceInBytes(disk));
+    }
+
+    /**
+     * Converts the given bytes value to megabytes.
+     * The formula used is bytes / (1024 * 1024).
+     *
+     * @param bytes the given value in bytes
+     * @return the converted value to megabytes
+     */
+    private static long bytesToMega(long bytes) {
+        return bytes / MEGABYTE;
+    }
+
+    /**
+     * Returns the estimated workspace size in MB.
+     *
+     * @return the estimated workspace size in MB
+     */
     public long getEstimatedWorkspaceSize() {
         return estimatedWorkspaceSize;
     }
 
+    /**
+     * Sets the estimated workspace size.
+     * It must be set in MB.
+     *
+     * @param estimatedWorkspaceSize the estimated workspace size in MB
+     */
     public void setEstimatedWorkspaceSize(long estimatedWorkspaceSize) {
         this.estimatedWorkspaceSize = estimatedWorkspaceSize;
-    }
-
-    /**
-     * Assuming that the {@link #estimatedWorkspaceSize} is provided by the user in MB,
-     * this method returns the size in KB (multiplied by 1024).
-     *
-     * @return the estimated workspace size in KB (multiplied by 1024)
-     */
-    public long getEstimatedWorkspaceSizeInKilobytes() {
-        return estimatedWorkspaceSize * 1024;
     }
 }
