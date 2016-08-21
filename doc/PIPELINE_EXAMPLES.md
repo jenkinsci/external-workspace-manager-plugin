@@ -144,3 +144,9 @@ The `exws` step concatenates the node’s local path with the path returned by t
 In this scenario, the complete path for running tests is: 
 _/mount-from-test-node/to/disk-one/jenkins-project/disk1/upstream/14_.
 It will reuse the workspace defined in the _upstream_ job.
+
+**Demo 2. Upstream job**
+![Example two upstream](gif/demo2-upstream-job.gif)
+
+**Demo 2. Downstream job**
+![Example two downstream](gif/demo2-downstream-job.gif)
