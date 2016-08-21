@@ -11,7 +11,7 @@ The workspace can be deleted without taking into the consideration the build res
 _try-finally_ block.
 
 ```groovy
-def extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+def extWorkspace = exwsAllocate 'diskpool1'
 
 node ('linux') {
     exws (extWorkspace) {
@@ -32,7 +32,7 @@ and delete it otherwise.
 For this, it may come in hand the _try-catch-finally_ block, along with the _cleanWhenFailure_ parameter set to _false_.
 
 ```groovy
-def extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+def extWorkspace = exwsAllocate 'diskpool1'
 
 node ('linux') {
     exws (extWorkspace) {
@@ -56,7 +56,7 @@ Pattern examples may be found in the
 The following example deletes all the _.class_ files/dirs in a directory tree.
 
 ```groovy
-def extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+def extWorkspace = exwsAllocate 'diskpool1'
 
 node ('linux') {
     exws (extWorkspace) {
@@ -78,7 +78,7 @@ want to delete the workspace in the downstream job.
 **Pipeline for the upstream job**
 
 ```groovy
-def extWorkspace = exwsAllocate diskPoolId: 'diskpool1'
+def extWorkspace = exwsAllocate 'diskpool1'
 
 node ('linux') {
     exws (extWorkspace) {
@@ -91,7 +91,8 @@ node ('linux') {
 **Pipeline for the downstream job**
 
 ```groovy
-def extWorkspace = exwsAllocate upstream: 'upstream-full-name'
+def run = selectRun 'upstream-full-name'
+def extWorkspace = exwsAllocate selectedRun: run
 
 node ('test') {
     exws (extWorkspace) {
