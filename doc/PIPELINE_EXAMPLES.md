@@ -125,11 +125,15 @@ The final workspace path is: _/mount-from-linux-node/to/disk-one/jenkins-project
 
 **Stage 3. Select the upstream run**
 
+:exclamation: You must have the [Run Selector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Selector+Plugin)
+installed to use the `selectRun` step described bellow.
+
 We can use the `selectRun` step from the *Run Selector plugin* to select the upstream run.
 By default, if no selectors are provided, the step will select the last stable build from the given Jenkins job.
 By providing the `selector` parameter, we can specify different build selection strategies.
-More details and examples of how the `selectRun` step works may be found at 
-[Run Selector plugin](https://github.com/jenkinsci/run-selector-plugin), Pipeline examples section.
+More details and examples of how the `selectRun` step works may be found at the
+Run Selector plugin's [documentation page](https://github.com/jenkinsci/run-selector-plugin/blob/master/README.md), 
+Pipeline examples section.
 
 **Stage 4. Allocate workspace in the downstream job**
 
