@@ -4,20 +4,7 @@
         <st:include it="${it.parent}" page="sidepanel.jelly"/>
         <l:main-panel>
             <j:forEach var="exws" items="${it.allocatedWorkspaces}">
-                <h2>${%Allocated External Workspace}</h2>
-                <p>
-                    ${%Disk Pool ID}: ${exws.diskPoolId}
-                </p>
-                <p>
-                    ${%Disk ID}: ${exws.diskId}
-                </p>
-                <p>
-                    ${%Workspace path on} ${exws.diskId}: ${exws.pathOnDisk}
-                </p>
-                <p>
-                    ${%Complete workspace path on} ${exws.diskId}
-                    (${%from Jenkins master}): ${exws.completeWorkspacePath}
-                </p>
+                <st:include it="${exws}" page="main.jelly"/>
             </j:forEach>
             <j:if test="${it.allocatedWorkspaces.size() > 1}">
                 <div style="color: rgba(0,0,0,.6); margin-top: 20px;">

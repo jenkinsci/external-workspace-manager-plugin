@@ -7,6 +7,7 @@ import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -61,5 +62,33 @@ public class ExwsAllocateActionImpl implements RunAction2 {
     @Override
     public void onLoad(Run<?, ?> run) {
         this.parent = run;
+    }
+
+    @SuppressWarnings("unused")
+    public ExternalWorkspace getDynamic(String token) {
+        return getExternalWorkspaceById(token);
+    }
+
+    /**
+     * Returns the {@link ExternalWorkspace} that has the id equal to the given {@code id}.
+     * Returns {@code null} if none was found.
+     *
+     * @param id the external workspace id
+     * @return the external workspace whose id matches the given token, {@code null} otherwise
+     */
+    @CheckForNull
+    private ExternalWorkspace getExternalWorkspaceById(String id) {
+        // TODO use transient map to cache workspaces by id
+        for (ExternalWorkspace allocatedWorkspace : allocatedWorkspaces) {
+            if (allocatedWorkspace == null) {
+                // be defensive
+                continue;
+            }
+            if (allocatedWorkspace.getId().equals(id)) {
+                return allocatedWorkspace;
+            }
+        }
+
+        return null;
     }
 }
