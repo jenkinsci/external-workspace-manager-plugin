@@ -87,7 +87,6 @@ public class ExternalWorkspace implements Serializable, ModelObject {
     public DirectoryBrowserSupport doWs(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
         FilePath ws = new FilePath(new File(masterMountPoint, pathOnDisk));
         if (!ws.exists()) {
-            // TODO create noWorkspace.jelly file
             req.getView(this, "noWorkspace.jelly").forward(req, rsp);
             return null;
         } else {

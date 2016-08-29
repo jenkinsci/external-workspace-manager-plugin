@@ -1,0 +1,30 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <st:statusCode value="404"/>
+    <l:layout>
+        <st:include page="sidepanel.jelly"/>
+        <l:main-panel>
+            <h1>
+                <l:icon class="icon-error icon-xlg"/>${%Error: No Workspace}
+            </h1>
+            <p>
+                ${%Could not find any workspace at the requested location:} ${it.completeWorkspacePath}
+            </p>
+            <p>
+                ${%Possible reasons are:}
+            </p>
+            <ul>
+                <li>
+                    ${%The workspace is not accessible from the Jenkins master}
+                </li>
+                <li>
+                    ${%The workspace has been removed in the meantime}
+                </li>
+                <li>
+                    ${%You did not call} <i>exws</i> ${%Pipeline step after allocating the workspace with}
+                    <i>exwsAllocate</i>
+                </li>
+            </ul>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
