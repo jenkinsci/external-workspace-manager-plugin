@@ -10,8 +10,10 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link RunAction2} implementation for the {@link org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep}.
@@ -24,12 +26,14 @@ public class ExwsAllocateActionImpl implements RunAction2 {
     private final List<ExternalWorkspace> allocatedWorkspaces = new LinkedList<>();
     private Run parent;
 
+    private transient Map<String, ExternalWorkspace> workspacesMap;
+
     @Restricted(NoExternalUse.class)
     public Run getParent() {
         return parent;
     }
 
-    public void addAllocatedWorkspace(ExternalWorkspace externalWorkspace) {
+    public void addAllocatedWorkspace(@Nonnull ExternalWorkspace externalWorkspace) {
         allocatedWorkspaces.add(externalWorkspace);
     }
 
@@ -78,17 +82,13 @@ public class ExwsAllocateActionImpl implements RunAction2 {
      */
     @CheckForNull
     private ExternalWorkspace getExternalWorkspaceById(String id) {
-        // TODO use transient map to cache workspaces by id
-        for (ExternalWorkspace allocatedWorkspace : allocatedWorkspaces) {
-            if (allocatedWorkspace == null) {
-                // be defensive
-                continue;
-            }
-            if (allocatedWorkspace.getId().equals(id)) {
-                return allocatedWorkspace;
+        if (workspacesMap == null || workspacesMap.size() != allocatedWorkspaces.size()) {
+            workspacesMap = new HashMap<>();
+            for (ExternalWorkspace workspace : allocatedWorkspaces) {
+                workspacesMap.put(workspace.getId(), workspace);
             }
         }
 
-        return null;
+        return workspacesMap.get(id);
     }
 }
