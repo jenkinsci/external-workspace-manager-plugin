@@ -3,7 +3,7 @@
     <f:entry title="${%Disk Ref ID}" field="diskRefId">
         <f:textbox/>
     </f:entry>
-    <f:entry title="${%Local root path}" field="localRootPath">
+    <f:entry title="${%Node mount point}" field="nodeMountPoint">
         <f:textbox/>
     </f:entry>
     <f:entry>

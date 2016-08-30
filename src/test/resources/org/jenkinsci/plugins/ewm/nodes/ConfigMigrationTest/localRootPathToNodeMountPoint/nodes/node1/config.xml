@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<slave>
+  <name>node1</name>
+  <description></description>
+  <remoteFS>/tmp/jenkins</remoteFS>
+  <numExecutors>1</numExecutors>
+  <mode>NORMAL</mode>
+  <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+  <launcher class="hudson.slaves.JNLPLauncher"/>
+  <label></label>
+  <nodeProperties>
+    <org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty plugin="external-workspace-manager@1.0.0">
+      <nodeDiskPools>
+        <org.jenkinsci.plugins.ewm.nodes.NodeDiskPool>
+          <diskPoolRefId>dp1</diskPoolRefId>
+          <nodeDisks>
+            <org.jenkinsci.plugins.ewm.nodes.NodeDisk>
+              <diskRefId>d1</diskRefId>
+              <localRootPath>/tmp/dp1/d1</localRootPath>
+            </org.jenkinsci.plugins.ewm.nodes.NodeDisk>
+          </nodeDisks>
+        </org.jenkinsci.plugins.ewm.nodes.NodeDiskPool>
+      </nodeDiskPools>
+    </org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty>
+  </nodeProperties>
+</slave>
