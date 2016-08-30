@@ -4,12 +4,16 @@ import com.google.inject.Inject;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Computer;
+import hudson.model.Fingerprint;
+import hudson.model.FingerprintMap;
 import hudson.model.Node;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.WorkspaceList;
 import hudson.util.DescribableList;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
@@ -44,6 +48,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     private transient Computer computer;
     @StepContextParameter
     private transient TaskListener listener;
+    @StepContextParameter
+    private transient Run run;
     private BodyExecution body;
 
     @Override
@@ -89,12 +95,34 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
         FilePath workspace = lease.path;
+
+        registerFingerprint(exws.getId());
+
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
                 .withContext(workspace)
                 .withCallback(new Callback(getContext(), lease))
                 .start();
         return false;
+    }
+
+    /**
+     * TODO JAVADOC
+     * @param workspaceId
+     * @throws IOException
+     */
+    private void registerFingerprint(String workspaceId) throws IOException {
+        FingerprintMap map = Jenkins.getActiveInstance().getFingerprintMap();
+        Fingerprint f = map.get(workspaceId);
+        if (f == null) {
+            return;
+        }
+
+        Fingerprint.RangeSet set = f.getUsages().get(run.getParent().getFullName());
+        if (set == null || !set.includes(run.getNumber())) {
+            f.addFor(run);
+            f.save();
+        }
     }
 
     @Override
