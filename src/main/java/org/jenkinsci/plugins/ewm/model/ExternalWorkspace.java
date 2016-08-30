@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.model;
 import hudson.FilePath;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.model.ModelObject;
+import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.utils.RandomUtil;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -79,7 +80,7 @@ public class ExternalWorkspace implements Serializable, ModelObject {
 
     @Override
     public String getDisplayName() {
-        return "Workspace on " + diskId + " from " + diskPoolId;
+        return Messages.model_ExternalWorkspace_DisplayName(diskId, diskPoolId);
     }
 
     @Restricted(NoExternalUse.class)

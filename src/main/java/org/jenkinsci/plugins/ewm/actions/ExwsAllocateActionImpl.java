@@ -68,6 +68,7 @@ public class ExwsAllocateActionImpl implements RunAction2 {
         this.parent = run;
     }
 
+    @Restricted(NoExternalUse.class)
     @SuppressWarnings("unused")
     public ExternalWorkspace getDynamic(String token) {
         return getExternalWorkspaceById(token);
@@ -81,7 +82,7 @@ public class ExwsAllocateActionImpl implements RunAction2 {
      * @return the external workspace whose id matches the given token, {@code null} otherwise
      */
     @CheckForNull
-    private ExternalWorkspace getExternalWorkspaceById(String id) {
+    private synchronized ExternalWorkspace getExternalWorkspaceById(String id) {
         if (workspacesMap == null || workspacesMap.size() != allocatedWorkspaces.size()) {
             workspacesMap = new HashMap<>();
             for (ExternalWorkspace workspace : allocatedWorkspaces) {
