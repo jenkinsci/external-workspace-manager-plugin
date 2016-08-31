@@ -84,7 +84,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
 
-        FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getLocalRootPath());
+        FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getNodeMountPoint());
         FilePath baseWorkspace = diskFilePath.child(exws.getPathOnDisk());
 
         WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
@@ -182,7 +182,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
      * @param nodeName  the name of the current node
      * @return the disk definition that matches the given disk id
      * @throws IOException if no disk definition was found,
-     *                     or if the disk definition has its local root path null
+     *                     or if the disk definition has its node mount point null
      */
     @Nonnull
     private static NodeDisk findNodeDisk(String diskId, List<NodeDisk> nodeDisks, String nodeName) throws IOException {
@@ -197,8 +197,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
             String message = format("The Node '%s' config does not have defined any Disk Ref ID '%s'", nodeName, diskId);
             throw new AbortException(message);
         }
-        if (selected.getLocalRootPath() == null) {
-            String message = format("The Node '%s' config does not have defined any local root path for Disk Ref ID '%s'", nodeName, diskId);
+        if (selected.getNodeMountPoint() == null) {
+            String message = format("The Node '%s' config does not have defined any node mount point for Disk Ref ID '%s'", nodeName, diskId);
             throw new AbortException(message);
         }
 

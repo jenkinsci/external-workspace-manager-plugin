@@ -24,12 +24,23 @@ import static hudson.util.FormValidation.validateRequired;
 public class NodeDisk implements Describable<NodeDisk> {
 
     private final String diskRefId;
-    private final String localRootPath;
+
+    @Deprecated
+    private transient String localRootPath;
+
+    private String nodeMountPoint;
 
     @DataBoundConstructor
-    public NodeDisk(String diskRefId, String localRootPath) {
+    public NodeDisk(String diskRefId, String nodeMountPoint) {
         this.diskRefId = fixEmptyAndTrim(diskRefId);
-        this.localRootPath = fixEmptyAndTrim(localRootPath);
+        this.nodeMountPoint = fixEmptyAndTrim(nodeMountPoint);
+    }
+
+    protected Object readResolve() {
+        if (localRootPath != null) {
+            nodeMountPoint = localRootPath;
+        }
+        return this;
     }
 
     @CheckForNull
@@ -37,9 +48,14 @@ public class NodeDisk implements Describable<NodeDisk> {
         return diskRefId;
     }
 
-    @CheckForNull
+    @Deprecated
     public String getLocalRootPath() {
-        return localRootPath;
+        return getNodeMountPoint();
+    }
+
+    @CheckForNull
+    public String getNodeMountPoint() {
+        return nodeMountPoint;
     }
 
     @Override
@@ -60,7 +76,7 @@ public class NodeDisk implements Describable<NodeDisk> {
 
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
-        public FormValidation doCheckLocalRootPath(@QueryParameter String value) {
+        public FormValidation doCheckNodeMountPoint(@QueryParameter String value) {
             return validateRequired(value);
         }
 

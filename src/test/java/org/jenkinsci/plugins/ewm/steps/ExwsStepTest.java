@@ -141,14 +141,14 @@ public class ExwsStepTest {
     }
 
     @Test
-    public void missingLocalRootPathFromNodeProperty() throws Exception {
+    public void missingNodeMountPointFromNodeProperty() throws Exception {
         addExternalWorkspaceNodeProperty(node1, DISK_POOL_ID, new NodeDisk(DISK_ID_ONE, ""));
 
         runWorkflowJob(job);
 
         Disk selectedDisk = findAllocatedDisk(disk1, disk2);
         j.assertBuildStatus(FAILURE, run);
-        j.assertLogContains(format("The Node 'node-one' config does not have defined any local root path for Disk Ref ID '%s'", selectedDisk.getDiskId()), run);
+        j.assertLogContains(format("The Node 'node-one' config does not have defined any node mount point for Disk Ref ID '%s'", selectedDisk.getDiskId()), run);
     }
 
     @Test
