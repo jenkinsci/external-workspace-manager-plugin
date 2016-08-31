@@ -6,7 +6,6 @@ import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 /**
@@ -23,32 +22,28 @@ public class WorkspaceBrowserFacet extends FingerprintFacet {
     /**
      * TODO JAVADOC
      *
+     * @param fingerprint
      * @return
      */
     @Restricted(NoExternalUse.class)
-    @SuppressWarnings("unused")
-    public String getWorkspaceLink() {
-        ExternalWorkspace workspace = getWorkspace();
-        if (workspace == null) {
-            return "#";
-        }
-
-        Fingerprint.BuildPtr original = getFingerprint().getOriginal();
-        if (original == null) {
-            return "#";
-        }
-
-        return original.getJob().getAbsoluteUrl() + original.getRun().getSearchUrl() +
-                "exwsAllocate/" + workspace.getId() + "/ws/";
-    }
-
-    @CheckForNull
-    private ExternalWorkspace getWorkspace() {
-        DiskStatsInfoFacet stats = getFingerprint().getFacet(DiskStatsInfoFacet.class);
+    @Nonnull
+    public static ExternalWorkspace getWorkspace(Fingerprint fingerprint) {
+        DiskStatsInfoFacet stats = fingerprint.getFacet(DiskStatsInfoFacet.class);
         if (stats == null) {
-            return null;
+            throw new IllegalArgumentException("Couldn't find the Fingerprint Facet that holds the Workspace metadata");
         }
 
         return stats.getWorkspace();
+    }
+
+    /**
+     * TODO JAVADOC
+     *
+     * @return
+     */
+    @Restricted(NoExternalUse.class)
+    @Nonnull
+    public ExternalWorkspace getWorkspace() {
+        return getWorkspace(getFingerprint());
     }
 }

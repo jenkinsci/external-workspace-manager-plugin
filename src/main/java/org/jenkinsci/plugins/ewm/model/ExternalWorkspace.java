@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.model;
 import hudson.FilePath;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.model.ModelObject;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.utils.RandomUtil;
 import org.kohsuke.accmod.Restricted;
@@ -93,5 +94,17 @@ public class ExternalWorkspace implements Serializable, ModelObject {
         } else {
             return new DirectoryBrowserSupport(this, ws, getDisplayName(), "folder.png", true);
         }
+    }
+
+    /**
+     * TODO JAVADOC
+     *
+     * @return
+     */
+    @Restricted(NoExternalUse.class)
+    @Nonnull
+    @SuppressWarnings("unused")
+    public String getBrowseUrl() {
+        return Jenkins.getActiveInstance().getRootUrl() + "exws/browse/" + id + "/ws/";
     }
 }
