@@ -5,7 +5,6 @@ import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Fingerprint;
-import hudson.model.FingerprintMap;
 import hudson.model.Node;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -108,14 +107,14 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
     /**
      * TODO JAVADOC
+     *
      * @param workspaceId
      * @throws IOException
      */
     private void registerFingerprint(String workspaceId) throws IOException {
-        FingerprintMap map = Jenkins.getActiveInstance().getFingerprintMap();
-        Fingerprint f = map.get(workspaceId);
+        Fingerprint f = Jenkins.getActiveInstance()._getFingerprint(workspaceId);
         if (f == null) {
-            return;
+            throw new AbortException("Couldn't find any Fingerprint for: " + workspaceId);
         }
 
         Fingerprint.RangeSet set = f.getUsages().get(run.getParent().getFullName());
