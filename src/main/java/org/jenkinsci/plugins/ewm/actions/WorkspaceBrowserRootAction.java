@@ -10,14 +10,16 @@ import org.jenkinsci.plugins.ewm.facets.WorkspaceBrowserFacet;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * TODO JAVADOC
+ * {@link RootAction} implementation that handles workspace browsing by its id.
  *
  * @author Alexandru Somai
  */
 @Extension
+@SuppressWarnings("unused")
 public class WorkspaceBrowserRootAction implements RootAction {
 
     @Override
@@ -36,20 +38,28 @@ public class WorkspaceBrowserRootAction implements RootAction {
     }
 
     /**
-     * TODO JAVADOC
+     * Method accessed by the Stapler framework when the following url is accessed:
+     * <i>JENKINS_ROOT_URL/exws/browse/workspaceId/</i>
      *
-     * @param token
-     * @return
-     * @throws IOException
+     * @param workspaceId the workspace's unique id
+     * @return the workspace whose id matches the given input id, or {@link NoFingerprintMatch} if fingerprint is not found
+     * @throws IOException              if fingerprint load operation fails
+     * @throws IllegalArgumentException if {@link WorkspaceBrowserFacet} is not registered for the matching fingerprint
      */
     @Restricted(NoExternalUse.class)
     @SuppressWarnings("unused")
-    public Object getBrowse(String token) throws IOException {
-        Fingerprint f = Jenkins.getActiveInstance()._getFingerprint(token);
-        if (f == null) {
-            return new NoFingerprintMatch(token);
+    @Nonnull
+    public Object getBrowse(String workspaceId) throws IOException {
+        Fingerprint fingerprint = Jenkins.getActiveInstance()._getFingerprint(workspaceId);
+        if (fingerprint == null) {
+            return new NoFingerprintMatch(workspaceId);
         }
 
-        return WorkspaceBrowserFacet.getWorkspace(f);
+        WorkspaceBrowserFacet facet = fingerprint.getFacet(WorkspaceBrowserFacet.class);
+        if (facet == null) {
+            throw new IllegalArgumentException("Couldn't find the Fingerprint Facet that holds the Workspace metadata");
+        }
+
+        return facet.getWorkspace();
     }
 }

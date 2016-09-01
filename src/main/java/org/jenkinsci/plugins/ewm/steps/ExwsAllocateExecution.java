@@ -15,7 +15,6 @@ import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
-import org.jenkinsci.plugins.ewm.facets.DiskStatsInfoFacet;
 import org.jenkinsci.plugins.ewm.facets.WorkspaceBrowserFacet;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
@@ -159,19 +158,17 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
     }
 
     /**
-     * TODO JAVADOC
-     * @param exws
-     * @throws IOException
+     * Registers a fingerprint for the given workspace's id.
+     *
+     * @param exws the workspace to register the fingerprint for
+     * @throws IOException if fingerprint load operation fails
      */
     private void registerFingerprint(ExternalWorkspace exws) throws IOException {
         FingerprintMap map = Jenkins.getActiveInstance().getFingerprintMap();
         Fingerprint f = map.getOrCreate(run, exws.getDisplayName(), exws.getId());
 
-        if (f.getFacet(DiskStatsInfoFacet.class) == null) {
-            f.getFacets().add(new DiskStatsInfoFacet(f, System.currentTimeMillis(), exws));
-        }
         if (f.getFacet(WorkspaceBrowserFacet.class) == null) {
-            f.getFacets().add(new WorkspaceBrowserFacet(f, System.currentTimeMillis()));
+            f.getFacets().add(new WorkspaceBrowserFacet(f, System.currentTimeMillis(), exws));
         }
 
         f.save();

@@ -95,7 +95,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
         FilePath workspace = lease.path;
 
-        registerFingerprint(exws.getId());
+        updateFingerprint(exws.getId());
 
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
@@ -106,12 +106,13 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     }
 
     /**
-     * TODO JAVADOC
+     * Adds the current run to the fingerprint's usages.
      *
-     * @param workspaceId
-     * @throws IOException
+     * @param workspaceId the workspace's id
+     * @throws IOException if fingerprint load operation fails,
+     *                     or if no fingerprint is found for the given workspace id
      */
-    private void registerFingerprint(String workspaceId) throws IOException {
+    private void updateFingerprint(String workspaceId) throws IOException {
         Fingerprint f = Jenkins.getActiveInstance()._getFingerprint(workspaceId);
         if (f == null) {
             throw new AbortException("Couldn't find any Fingerprint for: " + workspaceId);

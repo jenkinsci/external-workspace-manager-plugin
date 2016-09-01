@@ -97,13 +97,14 @@ public class ExternalWorkspace implements Serializable, ModelObject {
     }
 
     /**
-     * TODO JAVADOC
+     * Computes the browsing url from which this workspace can be accessed from.
+     * The url follows the next pattern: <i>JENKINS_ROOT_URL/exws/browse/workspaceId/ws/</i>
      *
-     * @return
+     * @return the workspace's browsing url
      */
     @Restricted(NoExternalUse.class)
-    @Nonnull
     @SuppressWarnings("unused")
+    @Nonnull
     public String getBrowseUrl() {
         return Jenkins.getActiveInstance().getRootUrl() + "exws/browse/" + id + "/ws/";
     }
