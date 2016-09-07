@@ -4,12 +4,15 @@ import com.google.inject.Inject;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Computer;
+import hudson.model.Fingerprint;
 import hudson.model.Node;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.WorkspaceList;
 import hudson.util.DescribableList;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
@@ -44,6 +47,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     private transient Computer computer;
     @StepContextParameter
     private transient TaskListener listener;
+    @StepContextParameter
+    private transient Run run;
     private BodyExecution body;
 
     @Override
@@ -89,12 +94,35 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
         FilePath workspace = lease.path;
+
+        updateFingerprint(exws.getId());
+
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
                 .withContext(workspace)
                 .withCallback(new Callback(getContext(), lease))
                 .start();
         return false;
+    }
+
+    /**
+     * Adds the current run to the fingerprint's usages.
+     *
+     * @param workspaceId the workspace's id
+     * @throws IOException if fingerprint load operation fails,
+     *                     or if no fingerprint is found for the given workspace id
+     */
+    private void updateFingerprint(String workspaceId) throws IOException {
+        Fingerprint f = Jenkins.getActiveInstance()._getFingerprint(workspaceId);
+        if (f == null) {
+            throw new AbortException("Couldn't find any Fingerprint for: " + workspaceId);
+        }
+
+        Fingerprint.RangeSet set = f.getUsages().get(run.getParent().getFullName());
+        if (set == null || !set.includes(run.getNumber())) {
+            f.addFor(run);
+            f.save();
+        }
     }
 
     @Override

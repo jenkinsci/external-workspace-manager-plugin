@@ -7,13 +7,10 @@ import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * {@link RunAction2} implementation for the {@link org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep}.
@@ -25,8 +22,6 @@ public class ExwsAllocateActionImpl implements RunAction2 {
 
     private final List<ExternalWorkspace> allocatedWorkspaces = new LinkedList<>();
     private Run parent;
-
-    private transient Map<String, ExternalWorkspace> workspacesMap;
 
     @Restricted(NoExternalUse.class)
     public Run getParent() {
@@ -66,30 +61,5 @@ public class ExwsAllocateActionImpl implements RunAction2 {
     @Override
     public void onLoad(Run<?, ?> run) {
         this.parent = run;
-    }
-
-    @Restricted(NoExternalUse.class)
-    @SuppressWarnings("unused")
-    public ExternalWorkspace getDynamic(String token) {
-        return getExternalWorkspaceById(token);
-    }
-
-    /**
-     * Returns the {@link ExternalWorkspace} that has the id equal to the given {@code id}.
-     * Returns {@code null} if none was found.
-     *
-     * @param id the external workspace id
-     * @return the external workspace whose id matches the given token, {@code null} otherwise
-     */
-    @CheckForNull
-    private synchronized ExternalWorkspace getExternalWorkspaceById(String id) {
-        if (workspacesMap == null || workspacesMap.size() != allocatedWorkspaces.size()) {
-            workspacesMap = new HashMap<>();
-            for (ExternalWorkspace workspace : allocatedWorkspaces) {
-                workspacesMap.put(workspace.getId(), workspace);
-            }
-        }
-
-        return workspacesMap.get(id);
     }
 }

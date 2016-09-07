@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.model;
 import hudson.FilePath;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.model.ModelObject;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.utils.RandomUtil;
 import org.kohsuke.accmod.Restricted;
@@ -93,5 +94,18 @@ public class ExternalWorkspace implements Serializable, ModelObject {
         } else {
             return new DirectoryBrowserSupport(this, ws, getDisplayName(), "folder.png", true);
         }
+    }
+
+    /**
+     * Computes the browsing url from which this workspace can be accessed from.
+     * The url follows the next pattern: <i>JENKINS_ROOT_URL/exws/browse/workspaceId/ws/</i>
+     *
+     * @return the workspace's browsing url
+     */
+    @Restricted(NoExternalUse.class)
+    @SuppressWarnings("unused")
+    @Nonnull
+    public String getBrowseUrl() {
+        return Jenkins.getActiveInstance().getRootUrl() + "exws/browse/" + id + "/ws/";
     }
 }

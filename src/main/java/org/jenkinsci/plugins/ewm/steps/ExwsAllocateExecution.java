@@ -5,13 +5,17 @@ import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestri
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.model.Fingerprint;
+import hudson.model.FingerprintMap;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.ewm.facets.WorkspaceBrowserFacet;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
@@ -148,7 +152,26 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         listener.getLogger().println(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", exws.getDiskId(), diskPoolId));
         listener.getLogger().println(format("The path on Disk is: %s", exws.getPathOnDisk()));
 
+        registerFingerprint(exws);
+
         return exws;
+    }
+
+    /**
+     * Registers a fingerprint for the given workspace's id.
+     *
+     * @param exws the workspace to register the fingerprint for
+     * @throws IOException if fingerprint load operation fails
+     */
+    private void registerFingerprint(ExternalWorkspace exws) throws IOException {
+        FingerprintMap map = Jenkins.getActiveInstance().getFingerprintMap();
+        Fingerprint f = map.getOrCreate(run, exws.getDisplayName(), exws.getId());
+
+        if (f.getFacet(WorkspaceBrowserFacet.class) == null) {
+            f.getFacets().add(new WorkspaceBrowserFacet(f, System.currentTimeMillis(), exws));
+        }
+
+        f.save();
     }
 
     /**
