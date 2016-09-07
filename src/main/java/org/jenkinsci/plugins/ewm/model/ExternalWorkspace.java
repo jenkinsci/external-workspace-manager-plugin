@@ -1,17 +1,27 @@
 package org.jenkinsci.plugins.ewm.model;
 
+import hudson.FilePath;
+import hudson.model.DirectoryBrowserSupport;
+import hudson.model.ModelObject;
+import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.utils.RandomUtil;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 import javax.annotation.Nonnull;
+import javax.servlet.ServletException;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
- * POJO used to pass fields from one step to another.
+ * {@link ModelObject} used to hold relevant information about the External Workspace.
  *
  * @author Alexandru Somai
  */
-public class ExternalWorkspace implements Serializable {
+public class ExternalWorkspace implements Serializable, ModelObject {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,5 +76,22 @@ public class ExternalWorkspace implements Serializable {
     @SuppressWarnings("unused")
     public String getCompleteWorkspacePath() {
         return new File(masterMountPoint, pathOnDisk).getPath();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return Messages.model_ExternalWorkspace_DisplayName(diskId, diskPoolId);
+    }
+
+    @Restricted(NoExternalUse.class)
+    @SuppressWarnings("unused")
+    public DirectoryBrowserSupport doWs(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
+        FilePath ws = new FilePath(new File(masterMountPoint, pathOnDisk));
+        if (!ws.exists()) {
+            req.getView(this, "noWorkspace.jelly").forward(req, rsp);
+            return null;
+        } else {
+            return new DirectoryBrowserSupport(this, ws, getDisplayName(), "folder.png", true);
+        }
     }
 }

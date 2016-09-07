@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
+    <j:set var="buildUrl" value="${h.decompose(request)}"/>
+    <h2>${%Allocated External Workspace}</h2>
+    <p>
+        ${%Disk Pool ID}: ${it.diskPoolId}
+    </p>
+    <p>
+        ${%Disk ID}: ${it.diskId}
+    </p>
+    <p>
+        ${%Workspace path on} ${it.diskId}: ${it.pathOnDisk}
+    </p>
+    <p>
+        ${%Complete workspace path on} ${it.diskId}
+        (${%from Jenkins master}): ${it.completeWorkspacePath}
+    </p>
+    <l:task icon="images/24x24/folder.png" href="${buildUrl.baseUrl + '/exwsAllocate/' + it.id + '/ws/'}"
+            title="${%Workspace}"/>
+</j:jelly>
