@@ -8,7 +8,7 @@ It facilitates workspace share and reuse across multiple Jenkins jobs.
 It eliminates the need to copy, archive or move files.
 
 ## Table of contents
-1. [Current status](#current-status)
+1. [Changelog](CHANGELOG.md)
 1. [Design document](#design-document)
 1. [Prerequisites](doc/PREREQUISITES.md)
 1. [Pipeline examples](doc/PIPELINE_EXAMPLES.md)
@@ -18,10 +18,6 @@ It eliminates the need to copy, archive or move files.
 1. [Custom workspace path](doc/CUSTOM_WORKSPACE_PATH.md)
 1. [Disk Pool restriction](doc/DISK_POOL_RESTRICTION.md)
 1. [Disk allocation strategies](doc/ALLOCATION_STRATEGIES.md)
-
-## Current status
-
-Version 1.0.0 has been released!
 
 ## Design document
 
