@@ -90,17 +90,14 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
 
         FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getNodeMountPoint());
-        FilePath baseWorkspace = diskFilePath.child(exws.getPathOnDisk());
-
-        WorkspaceList.Lease lease = computer.getWorkspaceList().allocate(baseWorkspace);
-        FilePath workspace = lease.path;
+        FilePath workspace = diskFilePath.child(exws.getPathOnDisk());
 
         updateFingerprint(exws.getId());
 
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
                 .withContext(workspace)
-                .withCallback(new Callback(getContext(), lease))
+                .withCallback(BodyExecutionCallback.wrap(getContext()))
                 .start();
         return false;
     }
@@ -233,6 +230,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         return selected;
     }
 
+    @Deprecated
     private static final class Callback extends BodyExecutionCallback {
 
         private final StepContext context;
