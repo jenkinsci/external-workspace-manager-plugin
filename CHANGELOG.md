@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Add delete disk pool button to template and nodes
+[#49](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/49)
+
 ## 1.1.1 - 2016-11-08
 ### Fixed
 - [[JENKINS-39198]](https://issues.jenkins-ci.org/browse/JENKINS-39198) Fix workspace allocation in parallel test 
