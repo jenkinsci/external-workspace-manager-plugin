@@ -6,3 +6,6 @@ work
 
 # IntelliJ
 .idea
+
+# Vim
+*.swp

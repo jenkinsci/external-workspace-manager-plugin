@@ -6,4 +6,9 @@
     <f:entry>
         <f:repeatableProperty field="nodeDisks" add="${%Add Disk}" header="${%Disk}"/>
     </f:entry>
+    <f:entry>
+        <div align="right">
+            <f:repeatableDeleteButton value="${%Delete Disk Pool}"/>
+        </div>
+    </f:entry>
 </j:jelly>
