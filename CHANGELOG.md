@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.1.2 - 2016-07-30
+## 1.1.2 - 2017-07-30
 ### Fixed
 - Add delete disk pool button to template and nodes
 [#49](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/49)
