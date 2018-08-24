@@ -1,7 +1,7 @@
 # Prerequisites
 A set of prerequisites needs to be set to have this plugin usable.
 
- - One ore more physical disks accessible from Jenkins Master, most commonly via mounting points.
+ - One or more physical disks accessible from Jenkins Master, most commonly via mounting points.
 The disks may also be shared directories via NFS or Samba.
  - The same disks must be accessible from Jenkins Nodes.
 
