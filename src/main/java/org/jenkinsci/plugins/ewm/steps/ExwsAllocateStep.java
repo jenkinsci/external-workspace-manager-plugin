@@ -111,6 +111,11 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
             return Collections.unmodifiableList(diskPools);
         }
 
+        public void setDiskPools(List<DiskPool> diskPools) {
+            this.diskPools.clear();
+            this.diskPools.addAll(diskPools);
+        }
+
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
         public FormValidation doCheckPath(@QueryParameter String value) {
