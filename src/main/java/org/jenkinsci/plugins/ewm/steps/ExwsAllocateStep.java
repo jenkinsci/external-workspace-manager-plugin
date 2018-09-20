@@ -100,6 +100,11 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
             load();
         }
 
+        @Nonnull
+        public List<DiskPool> getDiskPools() {
+            return Collections.unmodifiableList(diskPools);
+        }
+
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             req.bindJSON(this, formData);
