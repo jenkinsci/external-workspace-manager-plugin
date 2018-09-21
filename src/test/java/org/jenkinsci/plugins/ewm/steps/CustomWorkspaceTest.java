@@ -2,7 +2,9 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
+import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
+import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.TestUtil;
@@ -78,6 +80,9 @@ public class CustomWorkspaceTest {
                 "       writeFile file: 'foobar.txt', text: 'foobar' \n" +
                 "   } \n" +
                 "} \n", DISK_POOL_ID)));
+
+        job.addProperty(new ParametersDefinitionProperty(
+                new StringParameterDefinition("PR_BUILD_NUMBER", "")));
 
         String prBuildNumberValue = "22";
         ParameterValue parameterValue = new StringParameterValue("PR_BUILD_NUMBER", prBuildNumberValue);
