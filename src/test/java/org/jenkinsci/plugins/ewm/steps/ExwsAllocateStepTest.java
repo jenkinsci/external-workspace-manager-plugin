@@ -14,6 +14,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -107,7 +108,7 @@ public class ExwsAllocateStepTest {
 
         j.assertBuildStatusSuccess(upstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), upstreamRun);
-        j.assertLogContains(format("The path on Disk is: %s/%d", upstreamRun.getParent().getFullDisplayName(), upstreamRun.getNumber()), upstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s", Paths.get(upstreamRun.getParent().getFullDisplayName(), Integer.toString(upstreamRun.getNumber()))), upstreamRun);
     }
 
     @Test
@@ -130,7 +131,7 @@ public class ExwsAllocateStepTest {
 
         j.assertBuildStatusSuccess(upstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", allocatedDisk.getDiskId(), DISK_POOL_ID), upstreamRun);
-        j.assertLogContains(format("The path on Disk is: %s/%s/%d", allocatedDisk.getPhysicalPathOnDisk(), upstreamRun.getParent().getFullDisplayName(), upstreamRun.getNumber()), upstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s", Paths.get(allocatedDisk.getPhysicalPathOnDisk(), upstreamRun.getParent().getFullDisplayName(), Integer.toString(upstreamRun.getNumber()))), upstreamRun);
     }
 
     /* ##### Tests for the downstream Job ###### */
@@ -157,7 +158,7 @@ public class ExwsAllocateStepTest {
         j.assertBuildStatusSuccess(upstreamRun);
         j.assertBuildStatusSuccess(downstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), downstreamRun);
-        j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s", Paths.get(disk.getPhysicalPathOnDisk(), upstreamName, Integer.toString(upstreamRun.getNumber()))), downstreamRun);
     }
 
     @Test
@@ -176,7 +177,7 @@ public class ExwsAllocateStepTest {
         j.assertLogContains("WARNING: Both 'selectedRun' and 'diskPoolId' parameters were provided. " +
                 "The 'diskPoolId' parameter will be ignored. The step will allocate the workspace used by the selected run.", downstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, DISK_POOL_ID), downstreamRun);
-        j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s", Paths.get(disk.getPhysicalPathOnDisk(), upstreamName, Integer.toString(upstreamRun.getNumber()))), downstreamRun);
     }
 
     @Test
@@ -197,7 +198,7 @@ public class ExwsAllocateStepTest {
         j.assertLogContains(format("WARNING: The selected run '%s' have recorded multiple external workspace allocations. " +
                 "Did you call exwsAllocate step multiple times in the same run? This downstream Jenkins job will use the first recorded workspace allocation.", upstreamRun), downstreamRun);
         j.assertLogContains(format("Selected Disk ID '%s' from the Disk Pool ID '%s'", DISK_ID_ONE, diskPool1.getDiskPoolId()), downstreamRun);
-        j.assertLogContains(format("The path on Disk is: %s/%s/%d", disk.getPhysicalPathOnDisk(), upstreamName, upstreamRun.getNumber()), downstreamRun);
+        j.assertLogContains(format("The path on Disk is: %s", Paths.get(disk.getPhysicalPathOnDisk(), upstreamName, Integer.toString(upstreamRun.getNumber()))), downstreamRun);
     }
 
     private void setUpDiskPool(Disk... disks) {
