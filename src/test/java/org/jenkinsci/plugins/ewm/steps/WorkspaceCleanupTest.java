@@ -19,6 +19,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -116,8 +117,8 @@ public class WorkspaceCleanupTest {
         Collection<File> files = listFiles(tmp.getRoot(), nameFileFilter("foo.txt"), directoryFileFilter());
         assertThat(files, hasSize(1));
         File workspaceFile = files.iterator().next();
-        String expectedFilePath = format("%s/%s/%s/%s/foo.txt", mountToDisk.getAbsolutePath(),
-                PATH_ON_DISK, run.getParent().getFullName(), run.getNumber());
+        String expectedFilePath = Paths.get(mountToDisk.getAbsolutePath(),
+                PATH_ON_DISK, run.getParent().getFullName(), Integer.toString(run.getNumber()), "foo.txt").toString();
         assertThat(workspaceFile.getAbsolutePath(), is(expectedFilePath));
     }
 
@@ -138,7 +139,7 @@ public class WorkspaceCleanupTest {
         j.assertBuildStatusSuccess(run);
         j.assertLogContains("[WS-CLEANUP] Deleting project workspace...[WS-CLEANUP] done", run);
 
-        File wsDirectory = new File(mountToDisk, PATH_ON_DISK + "/" + run.getParent().getFullName() + "/" + run.getNumber());
+        File wsDirectory = new File(mountToDisk, PATH_ON_DISK + File.separator + run.getParent().getFullName() + File.separator + run.getNumber());
         File[] wsFiles = wsDirectory.listFiles();
         assertThat(wsFiles, notNullValue());
         assertThat(wsFiles, arrayWithSize(1));

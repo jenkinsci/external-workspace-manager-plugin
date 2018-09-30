@@ -22,6 +22,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import static hudson.model.Result.FAILURE;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.countMatches;
+import org.apache.commons.io.FilenameUtils;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.*;
@@ -71,8 +73,8 @@ public class ExwsStepTest {
         File pathToDisk1 = tmp1.newFolder("mount-to-disk-one");
         File pathToDisk2 = tmp2.newFolder("mount-to-disk-two");
 
-        disk1 = new Disk(DISK_ID_ONE, "name one", pathToDisk1.getPath(), "jenkins-project/disk-one", null);
-        disk2 = new Disk(DISK_ID_TWO, "name two", pathToDisk2.getPath(), "jenkins-project/disk-two", null);
+        disk1 = new Disk(DISK_ID_ONE, "name one", pathToDisk1.getPath(), FilenameUtils.separatorsToSystem("jenkins-project/disk-one"), null);
+        disk2 = new Disk(DISK_ID_TWO, "name two", pathToDisk2.getPath(), FilenameUtils.separatorsToSystem("jenkins-project/disk-two"), null);
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, null, null, Arrays.asList(disk1, disk2));
         setUpDiskPools(j.jenkins, diskPool);
 
@@ -163,10 +165,14 @@ public class ExwsStepTest {
         j.assertBuildStatusSuccess(run);
         j.assertLogContains("Searching for disk definitions in the External Workspace Templates from Jenkins global config", run);
         j.assertLogContains("Searching for disk definitions in the Node config", run);
-        j.assertLogContains(format("Running in %s/%s/%s/%d",
-                allocatedDisk.getMasterMountPoint(), allocatedDisk.getPhysicalPathOnDisk(), run.getParent().getName(), run.getNumber()), run);
-        // The text written to file should be printed twice on the console output (when writing and when reading the file)
-        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(2));
+        j.assertLogContains(format("Running in %s", Paths.get(
+            allocatedDisk.getMasterMountPoint(),
+            allocatedDisk.getPhysicalPathOnDisk(),
+            run.getParent().getName(),
+            Integer.toString(run.getNumber()))),
+            run);
+        // The text written to file should be printed once on the console output (after reading the file)
+        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(1));
     }
 
     @Test
@@ -183,10 +189,14 @@ public class ExwsStepTest {
         j.assertBuildStatusSuccess(run);
         j.assertLogContains("Searching for disk definitions in the External Workspace Templates from Jenkins global config", run);
         j.assertLogNotContains("Searching for disk definitions in the Node config", run);
-        j.assertLogContains(format("Running in %s/%s/%s/%d",
-                allocatedDisk.getMasterMountPoint(), allocatedDisk.getPhysicalPathOnDisk(), run.getParent().getName(), run.getNumber()), run);
-        // The text written to file should be printed twice on the console output (when writing and when reading the file)
-        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(2));
+        j.assertLogContains(format("Running in %s", Paths.get(
+            allocatedDisk.getMasterMountPoint(),
+            allocatedDisk.getPhysicalPathOnDisk(),
+            run.getParent().getName(),
+            Integer.toString(run.getNumber()))),
+            run);
+        // The text written to file should be printed once on the console output (after reading the file)
+        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(1));
     }
 
     @Test
@@ -205,8 +215,12 @@ public class ExwsStepTest {
         j.assertBuildStatusSuccess(downstreamRun);
         j.assertLogContains("Searching for disk definitions in the External Workspace Templates from Jenkins global config", downstreamRun);
         j.assertLogContains("Searching for disk definitions in the Node config", downstreamRun);
-        j.assertLogContains(format("Running in %s/%s/%s/%d",
-                allocatedDisk.getMasterMountPoint(), allocatedDisk.getPhysicalPathOnDisk(), upstreamJob.getFullDisplayName(), upstreamRun.getNumber()), downstreamRun);
+        j.assertLogContains(format("Running in %s", Paths.get(
+            allocatedDisk.getMasterMountPoint(),
+            allocatedDisk.getPhysicalPathOnDisk(),
+            upstreamJob.getFullDisplayName(),
+            Integer.toString(upstreamRun.getNumber()))),
+            downstreamRun);
         // The text written to file in the upstream job should be printed in the downstream job
         j.assertLogContains("foo", downstreamRun);
     }
@@ -232,7 +246,7 @@ public class ExwsStepTest {
                         " def externalWorkspace = exwsAllocate diskPoolId: '%s' \n" +
                         " node('linux') { \n" +
                         "   exws(externalWorkspace) { \n" +
-                        "     sh \"echo 'foo' > bar.txt\" \n" +
+                        "       writeFile file: 'bar.txt', text: 'foo'\n" +
                         "   } \n" +
                         " } ",
                 DISK_POOL_ID);
@@ -246,7 +260,8 @@ public class ExwsStepTest {
                         " def externalWorkspace = exwsAllocate selectedRun: run \n" +
                         " node('test') { \n" +
                         "   exws(externalWorkspace) { \n" +
-                        "     sh \"cat bar.txt\"\n" +
+                        "       def text = readFile file: 'bar.txt'\n" +
+                        "       echo(text)\n" +
                         "   } \n" +
                         " } ",
                 upstreamJobName);
@@ -261,12 +276,13 @@ public class ExwsStepTest {
                         " def externalWorkspace = exwsAllocate diskPoolId: '%s' \n" +
                         " node('linux') { \n" +
                         "    exws(externalWorkspace) { \n" +
-                        "        sh \"echo '%s' > bar.txt\"\n" +
+                        "        writeFile file: 'bar.txt', text: '%s'\n" +
                         "    } \n" +
                         " } \n" +
                         " node('test') { \n" +
                         "    exws(externalWorkspace) { \n" +
-                        "       sh \"cat bar.txt\"\n" +
+                        "       def text = readFile file: 'bar.txt'\n" +
+                        "       echo(text)\n" +
                         "    } \n" +
                         " } ",
                 DISK_POOL_ID, TEXT);
