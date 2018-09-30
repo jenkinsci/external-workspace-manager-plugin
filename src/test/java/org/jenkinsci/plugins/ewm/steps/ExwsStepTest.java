@@ -171,8 +171,8 @@ public class ExwsStepTest {
             run.getParent().getName(),
             Integer.toString(run.getNumber()))),
             run);
-        // The text written to file should be printed twice on the console output (when writing and when reading the file)
-        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(2));
+        // The text written to file should be printed once on the console output (after reading the file)
+        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(1));
     }
 
     @Test
@@ -195,8 +195,8 @@ public class ExwsStepTest {
             run.getParent().getName(),
             Integer.toString(run.getNumber()))),
             run);
-        // The text written to file should be printed twice on the console output (when writing and when reading the file)
-        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(2));
+        // The text written to file should be printed once on the console output (after reading the file)
+        assertThat(countMatches(JenkinsRule.getLog(run), TEXT), is(1));
     }
 
     @Test
@@ -246,7 +246,7 @@ public class ExwsStepTest {
                         " def externalWorkspace = exwsAllocate diskPoolId: '%s' \n" +
                         " node('linux') { \n" +
                         "   exws(externalWorkspace) { \n" +
-                        "     sh \"echo 'foo' > bar.txt\" \n" +
+                        "       writeFile file: 'bar.txt', text: 'foo'\n" +
                         "   } \n" +
                         " } ",
                 DISK_POOL_ID);
@@ -260,7 +260,8 @@ public class ExwsStepTest {
                         " def externalWorkspace = exwsAllocate selectedRun: run \n" +
                         " node('test') { \n" +
                         "   exws(externalWorkspace) { \n" +
-                        "     sh \"cat bar.txt\"\n" +
+                        "       def text = readFile file: 'bar.txt'\n" +
+                        "       echo(text)\n" +
                         "   } \n" +
                         " } ",
                 upstreamJobName);
@@ -275,12 +276,13 @@ public class ExwsStepTest {
                         " def externalWorkspace = exwsAllocate diskPoolId: '%s' \n" +
                         " node('linux') { \n" +
                         "    exws(externalWorkspace) { \n" +
-                        "        sh \"echo '%s' > bar.txt\"\n" +
+                        "        writeFile file: 'bar.txt', text: '%s'\n" +
                         "    } \n" +
                         " } \n" +
                         " node('test') { \n" +
                         "    exws(externalWorkspace) { \n" +
-                        "       sh \"cat bar.txt\"\n" +
+                        "       def text = readFile file: 'bar.txt'\n" +
+                        "       echo(text)\n" +
                         "    } \n" +
                         " } ",
                 DISK_POOL_ID, TEXT);
