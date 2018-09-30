@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
 import hudson.util.FormValidation;
+import hudson.util.PersistedList;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.Messages;
@@ -92,23 +93,23 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        private List<DiskPool> diskPools = Collections.emptyList();
+        public final PersistedList<DiskPool> diskPools = new PersistedList<>(this);
 
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
             load();
         }
 
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            diskPools = req.bindJSONToList(DiskPool.class, formData.get("diskPools"));
-            save();
-            return super.configure(req, formData);
-        }
-
         @Nonnull
         public List<DiskPool> getDiskPools() {
             return Collections.unmodifiableList(diskPools);
+        }
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
+            req.bindJSON(this, formData);
+            save();
+            return true;
         }
 
         @Restricted(NoExternalUse.class)
