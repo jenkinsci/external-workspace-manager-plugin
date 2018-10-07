@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.ewm;
 
 import hudson.model.Node;
 import hudson.model.queue.QueueTaskFuture;
+import hudson.util.PersistedList;
 import hudson.util.ReflectionUtils;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.RandomStringUtils;
@@ -44,20 +45,17 @@ public final class TestUtil {
         // do not instantiate
     }
 
-    public static void setUpDiskPools(Jenkins jenkins, DiskPool... diskPools) {
+    public static void setUpDiskPools(Jenkins jenkins, DiskPool... diskPools) throws IOException {
         setUpDiskPools(jenkins, Arrays.asList(diskPools));
     }
 
-    public static void removeDiskPools(Jenkins jenkins) {
+    public static void removeDiskPools(Jenkins jenkins) throws IOException {
         setUpDiskPools(jenkins, Collections.<DiskPool>emptyList());
     }
 
-    private static void setUpDiskPools(Jenkins jenkins, List<DiskPool> diskPools) {
+    private static void setUpDiskPools(Jenkins jenkins, List<DiskPool> diskPools) throws IOException {
         ExwsAllocateStep.DescriptorImpl descriptor = (ExwsAllocateStep.DescriptorImpl) jenkins.getDescriptor(ExwsAllocateStep.class);
-
-        Field diskPoolsField = ReflectionUtils.findField(ExwsAllocateStep.DescriptorImpl.class, "diskPools");
-        diskPoolsField.setAccessible(true);
-        ReflectionUtils.setField(diskPoolsField, descriptor, diskPools);
+        descriptor.diskPools.replaceBy(diskPools);
     }
 
     public static Disk findAllocatedDisk(Disk... disks) {

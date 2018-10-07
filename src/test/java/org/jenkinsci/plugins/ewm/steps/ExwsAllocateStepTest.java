@@ -51,7 +51,7 @@ public class ExwsAllocateStepTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         removeDiskPools(j.jenkins);
     }
 
@@ -201,7 +201,7 @@ public class ExwsAllocateStepTest {
         j.assertLogContains(format("The path on Disk is: %s", Paths.get(disk.getPhysicalPathOnDisk(), upstreamName, Integer.toString(upstreamRun.getNumber()))), downstreamRun);
     }
 
-    private void setUpDiskPool(Disk... disks) {
+    private void setUpDiskPool(Disk... disks) throws IOException {
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, "name", "desc", null, null, null, Arrays.asList(disks));
         setUpDiskPools(j.jenkins, diskPool);
     }

@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.model.Result;
+import java.io.IOException;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.jenkinsci.plugins.ewm.TestUtil;
@@ -34,7 +35,7 @@ public class DiskAllocationStrategyTest {
     public static BuildWatcher watcher = new BuildWatcher();
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         TestUtil.removeDiskPools(j.jenkins);
     }
 

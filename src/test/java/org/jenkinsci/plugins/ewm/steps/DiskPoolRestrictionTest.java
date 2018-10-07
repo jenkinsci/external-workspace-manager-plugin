@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.BuildWatcher;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.Future;
 
@@ -50,7 +51,7 @@ public class DiskPoolRestrictionTest {
     public static BuildWatcher watcher = new BuildWatcher();
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         SecurityContextHolder.getContext().setAuthentication(null);
         removeDiskPools(j.jenkins);
     }
@@ -180,7 +181,7 @@ public class DiskPoolRestrictionTest {
         j.assertLogContains(format("Disk Pool identified by '%s' is not accessible due to the applied Disk Pool restriction: Regular Expression (Job Name)", DISK_POOL_ID), run);
     }
 
-    private static void setUpDiskPoolRestriction(JobRestriction restriction) {
+    private static void setUpDiskPoolRestriction(JobRestriction restriction) throws IOException {
         Disk disk = new Disk(DISK_ID_ONE, null, "any", null, null);
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, null, restriction, null, singletonList(disk));
         setUpDiskPools(j.jenkins, diskPool);

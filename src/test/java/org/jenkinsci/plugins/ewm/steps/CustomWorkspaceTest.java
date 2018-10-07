@@ -190,7 +190,7 @@ public class CustomWorkspaceTest {
                 "The resulting path is: ${JOB_NAME_WITH_TYPO}" + File.separator + "1. Did you provide all the needed environment variables?", run);
     }
 
-    private static void setGlobalWorkspaceTemplate(String template) {
+    private static void setGlobalWorkspaceTemplate(String template) throws IOException {
         Disk disk = new Disk(DISK_ID_ONE, null, "mount", null, null);
         DiskPool diskPool = new DiskPool(DISK_POOL_ID, null, null, FilenameUtils.separatorsToSystem(template), null, null, Collections.singletonList(disk));
         setUpDiskPools(j.jenkins, diskPool);
