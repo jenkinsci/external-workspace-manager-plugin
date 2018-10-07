@@ -93,7 +93,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
-        public PersistedList<DiskPool> diskPools = new PersistedList<>(this);
+        public final PersistedList<DiskPool> diskPools = new PersistedList<>(this);
 
         public DescriptorImpl() {
             super(ExwsAllocateExecution.class);
