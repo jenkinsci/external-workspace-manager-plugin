@@ -2,8 +2,32 @@ unclassified:
     exwsallocatestep:
       diskPools:
           - diskPoolId: "diskpool1"
+            displayName: "diskpool1 display name"
+            description: "diskpool1 description"
+            workspaceTemplate: "${JOB_NAME}/${CUSTOM_BUILD_PARAM}/${BUILD_NUMBER}"
+
             disks:
                 - diskId: "disk1"
                   displayName: "disk one display name"
                   masterMountPoint: "/tmp"
-            displayName: "diskpool1 display name"
+                  physicalPathOnDisk: "some/path"
+                  diskInfo:
+                      userProvidedDiskInfo:
+                          readSpeed: 10
+                          writeSpeed: 5
+
+            restriction:
+                and:
+                    first:
+                        regexNameRestriction:
+                            checkShortName: false
+                            regexExpression: "jobName.*"
+                    second:
+                        startedByUserRestriction:
+                            acceptAnonymousUsers: true
+                            acceptAutomaticRuns: false
+                            checkUpstreamProjects: true
+                            usersList:
+                                - selectedUserId: "martin"
+                                - selectedUserId: "sally"
+
