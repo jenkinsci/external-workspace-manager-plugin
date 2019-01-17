@@ -24,5 +24,4 @@ public class ConfigAsCodeTest {
         ConfigurationAsCode.get().configure(config);
         assertTrue(true); // check plugin has been configured as expected );
     }
-
 }

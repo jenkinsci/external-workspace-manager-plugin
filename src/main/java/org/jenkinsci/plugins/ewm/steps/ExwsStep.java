@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.CheckForNull;
@@ -45,6 +46,12 @@ public class ExwsStep extends AbstractStepImpl {
 
         private List<Template> templates = Collections.emptyList();
 
+
+        @DataBoundSetter
+        public void setTemplates(List<Template> templates) {
+            this.templates.clear();
+            this.templates.addAll(templates);
+        }
         public DescriptorImpl() {
             super(ExwsExecution.class);
             load();
