@@ -1,10 +1,9 @@
 unclassified:
-    exwsallocatestep:
-        diskPools:
-            - diskPoolId: "diskpool1"
-              disks:
-                  - diskId: "disk1"
-                    displayName: "disk one display name"
-                    masterMountPoint: "/tmp"
-              displayName: "diskpool1 display name"
-
+  exwsallocatestep:
+    diskPools:
+      - diskPoolId: "diskpool1"
+        disks:
+          - diskId: "disk1"
+            displayName: "disk one display name"
+            masterMountPoint: "/tmp"
+        displayName: "diskpool1 display name"
