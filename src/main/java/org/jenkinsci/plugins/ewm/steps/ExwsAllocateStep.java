@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.ewm.steps;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -89,6 +90,8 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         return (DescriptorImpl) super.getDescriptor();
     }
 
+
+    @Symbol("exwsallocatestep")
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 

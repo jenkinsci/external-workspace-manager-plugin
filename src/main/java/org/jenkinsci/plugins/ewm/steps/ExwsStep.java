@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
 import net.sf.json.JSONObject;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
@@ -41,6 +42,7 @@ public class ExwsStep extends AbstractStepImpl {
         return (DescriptorImpl) super.getDescriptor();
     }
 
+    @Symbol("exwsstep")
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
