@@ -42,7 +42,6 @@ public class ExwsStep extends AbstractStepImpl {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    @Symbol("exwsstep")
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
@@ -51,8 +50,7 @@ public class ExwsStep extends AbstractStepImpl {
 
         @DataBoundSetter
         public void setTemplates(List<Template> templates) {
-            this.templates.clear();
-            this.templates.addAll(templates);
+            this.templates = templates;
         }
         public DescriptorImpl() {
             super(ExwsExecution.class);

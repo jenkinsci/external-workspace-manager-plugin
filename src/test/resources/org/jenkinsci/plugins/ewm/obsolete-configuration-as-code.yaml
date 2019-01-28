@@ -1,0 +1,16 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code Plugin\n\n"
+  numExecutors: 5
+  scmCheckoutRetryCount: 2
+  mode: NORMAL
+configuration-as-code:
+  deprecated: warn
+unclassified:
+  exwsallocatestep:
+    diskPools:
+      - diskPoolId: "diskpool1"
+        disks:
+          - diskId: "disk1"
+            displayName: "disk one display name"
+            masterMountPoint: "/tmp"
+        displayName: "diskpool1 display name"

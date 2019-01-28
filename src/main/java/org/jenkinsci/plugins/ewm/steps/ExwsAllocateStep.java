@@ -90,8 +90,6 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-
-    @Symbol("exwsallocatestep")
     @Extension
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
@@ -116,8 +114,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
 
         @DataBoundSetter
         public void setDiskPools(List<DiskPool> diskPools) {
-            this.diskPools.clear();
-            this.diskPools.addAll(diskPools);
+            this.diskPools = diskPools;
         }
 
         @Restricted(NoExternalUse.class)
