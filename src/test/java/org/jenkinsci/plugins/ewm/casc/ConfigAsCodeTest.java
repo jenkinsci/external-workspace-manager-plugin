@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.ewm.casc;
 
+import hudson.ExtensionList;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
@@ -15,6 +16,7 @@ import io.jenkins.plugins.casc.ConfigurationAsCode;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
@@ -30,21 +32,20 @@ public class ConfigAsCodeTest {
 
     @Test
     public void should_support_configuration_as_code() throws Exception {
-        String config = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml").toString();
+        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
+        String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
-
         // parse the yaml file and check if they match
-        File file  = new File(ConfigAsCodeTest.class.getResource("configuration-as-code.yaml").getFile());
+        File file  = new File(resource.getFile());
         String configContent = new String(Files.readAllBytes(file.toPath()));
         Yaml yaml = new Yaml();
         Map<String, Object> map = (Map<String, Object>) yaml.load(configContent);
-
-
         // get the jenkins rule object.
-        Jenkins jenkins = r.getInstance();
-        ExwsAllocateStep.DescriptorImpl descriptor = (ExwsAllocateStep.DescriptorImpl) jenkins.getDescriptor(ExwsAllocateStep.class);
-        List<DiskPool> diskPoolList = descriptor.getDiskPools();
-        DiskPool diskPool = diskPoolList.get(0);
+
+        ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
+        List<DiskPool> diskPools = descriptor.getDiskPools();
+        DiskPool diskPool = diskPools.get(0);
+
         // assertion
         assertThat(diskPool.getDiskPoolId(), is("diskpool1"));
         assertThat(diskPool.getDisplayName(), is("diskpool1 display name"));
@@ -59,10 +60,9 @@ public class ConfigAsCodeTest {
         System.out.println("config: " + config);
         ConfigurationAsCode.get().configure(config);
 
-        Jenkins jenkins = r.getInstance();
-        ExwsAllocateStep.DescriptorImpl descriptor = (ExwsAllocateStep.DescriptorImpl) jenkins.getDescriptor(ExwsAllocateStep.class);
-        List<DiskPool> diskPoolList = descriptor.getDiskPools();
-        DiskPool diskPool = diskPoolList.get(0);
+        ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
+        List<DiskPool> diskPools = descriptor.getDiskPools();
+        DiskPool diskPool = diskPools.get(0);
 
         assertThat(diskPool.getDiskPoolId(), is("diskpool1"));
         assertThat(diskPool.getDisplayName(), is("diskpool1 display name"));
