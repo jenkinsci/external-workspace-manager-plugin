@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.ewm.steps;
 
 import hudson.Extension;
 import net.sf.json.JSONObject;
-import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;

@@ -35,11 +35,6 @@ public class ConfigAsCodeTest {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
-        // parse the yaml file and check if they match
-        File file  = new File(resource.getFile());
-        String configContent = new String(Files.readAllBytes(file.toPath()));
-        Yaml yaml = new Yaml();
-        Map<String, Object> map = (Map<String, Object>) yaml.load(configContent);
         // get the jenkins rule object.
 
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
@@ -57,7 +52,6 @@ public class ConfigAsCodeTest {
     @Test
     public void should_be_backward_compatible() throws Exception {
         String config = ConfigAsCodeTest.class.getResource("obsolete-configuration-as-code.yaml").toString();
-        System.out.println("config: " + config);
         ConfigurationAsCode.get().configure(config);
 
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
