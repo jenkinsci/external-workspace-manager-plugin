@@ -4,7 +4,7 @@ jenkins:
   scmCheckoutRetryCount: 2
   mode: NORMAL
 unclassified:
-  exwsallocatestep:
+  exwsAllocateStep:
     diskPools:
       - diskPoolId: "diskpool1"
         disks:
@@ -12,3 +12,6 @@ unclassified:
             displayName: "disk one display name"
             masterMountPoint: "/tmp"
         displayName: "diskpool1 display name"
+
+
+

@@ -6,7 +6,7 @@ jenkins:
 configuration-as-code:
   deprecated: warn
 unclassified:
-  exwsallocatestep:
+  exwsAllocateStep:
     diskPools:
       - diskPoolId: "diskpool1"
         disks:
