@@ -89,6 +89,11 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
 
+        if (nodeDisk.getNodeMountPoint() == null) {
+            String message = format("The Node '%s' config does not have defined any node mount point for Disk Ref ID '%s'", nodeName, diskId);
+            throw new AbortException(message);
+        }
+
         FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getNodeMountPoint());
         FilePath workspace = diskFilePath.child(exws.getPathOnDisk());
 
