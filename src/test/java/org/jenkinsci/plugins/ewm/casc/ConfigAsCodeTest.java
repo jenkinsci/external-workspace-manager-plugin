@@ -9,15 +9,16 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+
+
 import org.jvnet.hudson.test.JenkinsRule;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class ConfigAsCodeTest {
     @ClassRule public static JenkinsRule r = new JenkinsRule();
 
     @Test
-    public void should_support_configuration_as_code() throws Exception {
+    public void shouldSupportConfigurationAsCode() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
@@ -49,8 +50,9 @@ public class ConfigAsCodeTest {
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
     }
 
+
     @Test
-    public void export_configuration() throws Exception {
+    public void exportConfiguration() throws Exception {
         Yaml yaml = new Yaml();
 
         // get the CasC configure

@@ -46,7 +46,6 @@ public class ExwsStep extends AbstractStepImpl {
 
         private List<Template> templates = Collections.emptyList();
 
-
         @DataBoundSetter
         public void setTemplates(List<Template> templates) {
             this.templates = templates;
