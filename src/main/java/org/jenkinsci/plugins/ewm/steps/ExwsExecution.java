@@ -8,6 +8,7 @@ import hudson.model.Fingerprint;
 import hudson.model.Node;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.WorkspaceList;
@@ -89,7 +90,10 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
 
-        FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getNodeMountPoint());
+        String nodeMountPoint = nodeDisk.getNodeMountPoint();
+        VirtualChannel channel = node.getChannel();
+
+        FilePath diskFilePath = new FilePath(channel, nodeMountPoint);
         FilePath workspace = diskFilePath.child(exws.getPathOnDisk());
 
         updateFingerprint(exws.getId());
@@ -178,7 +182,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     }
 
     /**
-     * Selects the {@link NodeDiskPool} that has the {@link NodeDiskPool#diskPoolRefId} equal to the given
+     * Selects the {@link NodeDiskPool} that has the {@link NodeDiskPool#getDiskPoolRefId()} equal to the given
      * {@code diskPoolRefId} param.
      *
      * @param diskPoolRefId the disk pool reference id to be searching for
