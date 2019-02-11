@@ -29,7 +29,6 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import static java.lang.String.format;
 
@@ -108,7 +107,6 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
                 .withContext(workspace)
                 .withCallback(BodyExecutionCallback.wrap(getContext()))
                 .start();
-
         return false;
     }
 
