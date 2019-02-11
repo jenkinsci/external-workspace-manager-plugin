@@ -92,6 +92,9 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         String nodeMountPoint = nodeDisk.getNodeMountPoint();
         VirtualChannel channel = node.getChannel();
 
+        if (nodeMountPoint == null) {
+            throw new AbortException();
+        }
         FilePath diskFilePath = new FilePath(channel, nodeMountPoint);
         FilePath workspace = diskFilePath.child(exws.getPathOnDisk());
 

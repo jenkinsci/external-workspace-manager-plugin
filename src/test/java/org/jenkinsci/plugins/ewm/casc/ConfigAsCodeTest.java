@@ -12,12 +12,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-
 import org.jvnet.hudson.test.JenkinsRule;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,6 @@ public class ConfigAsCodeTest {
         assertThat(diskPool.getDisks().get(0).getDisplayName(), is("disk one display name"));
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
     }
-
 
     @Test
     public void exportConfiguration() throws Exception {
