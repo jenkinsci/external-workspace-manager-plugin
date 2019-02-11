@@ -29,6 +29,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.String.format;
 
@@ -91,6 +92,10 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
 
         String nodeMountPoint = nodeDisk.getNodeMountPoint();
+        if (nodeMountPoint == null) {
+            String message = format("The Node '%s' config does not have defined any node mount point for Disk Ref ID '%s'", node.getDisplayName(), exws.getDiskId());
+            throw new AbortException(message);
+        }
         VirtualChannel channel = node.getChannel();
 
         FilePath diskFilePath = new FilePath(channel, nodeMountPoint);
