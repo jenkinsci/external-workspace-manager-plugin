@@ -7,6 +7,7 @@ import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -41,7 +42,7 @@ public class ExwsStep extends AbstractStepImpl {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    @Extension
+    @Extension @Symbol("exws")
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
         private List<Template> templates = Collections.emptyList();
