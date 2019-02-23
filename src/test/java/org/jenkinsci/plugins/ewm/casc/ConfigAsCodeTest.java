@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.jvnet.hudson.test.JenkinsRule;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
-import org.yaml.snakeyaml.Yaml;
+import io.jenkins.plugins.casc.snakeyaml.Yaml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
