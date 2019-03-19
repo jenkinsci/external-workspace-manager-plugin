@@ -42,7 +42,8 @@ public class ExwsStep extends AbstractStepImpl {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    @Extension @Symbol("exws")
+    @Extension
+    @Symbol("exwsGlobalConfigurationTemplates")
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
         private List<Template> templates = Collections.emptyList();

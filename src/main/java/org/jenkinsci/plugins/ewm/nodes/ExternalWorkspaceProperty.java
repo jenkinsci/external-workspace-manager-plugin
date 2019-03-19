@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.model.Node;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -33,6 +34,7 @@ public class ExternalWorkspaceProperty extends NodeProperty<Node> {
     }
 
     @Extension
+    @Symbol("exwsNodeConfigurationDiskPools")
     public static class DescriptorImpl extends NodePropertyDescriptor {
 
         @Nonnull

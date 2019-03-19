@@ -10,6 +10,7 @@ import org.jenkinsci.plugins.ewm.utils.FormValidationUtil;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
+import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -90,6 +91,7 @@ public final class ExwsAllocateStep extends AbstractStepImpl {
     }
 
     @Extension
+    @Symbol("exwsGlobalConfigurationDiskPools")
     public static class DescriptorImpl extends AbstractStepDescriptorImpl {
 
         private List<DiskPool> diskPools = Collections.emptyList();
