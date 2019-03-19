@@ -5,6 +5,9 @@ import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep;
+import org.jenkinsci.plugins.ewm.steps.ExwsStep;
+import org.jenkinsci.plugins.ewm.definitions.Template;
+import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -50,6 +53,22 @@ public class ConfigAsCodeTest {
         assertThat(diskPool.getDisks().get(0).getDiskId(), is("disk1"));
         assertThat(diskPool.getDisks().get(0).getDisplayName(), is("disk one display name"));
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
+
+        ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
+        List<Template> templates = globalTemplateDescriptor.getTemplates();
+
+        assertThat(templates.get(0).getLabel(), is("all"));
+        assertThat(templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp1"));
+        NodeDisk nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp1refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template11"));
+        nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp1refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template12"));
+        assertThat(templates.get(0).getNodeDiskPools().get(1).getDiskPoolRefId(), is("dp2"));
+        nodeDisk = templates.get(0).getNodeDiskPools().get(1).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp2refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
     }
 
     @Test
@@ -68,6 +87,10 @@ public class ConfigAsCodeTest {
         Map<String, Object> yamlMap = (Map<String, Object>) yaml.load(fileInputStream);
 
         // assert
+        System.out.println("yaml unclassified: "+yamlMap.get("unclassified"));
+        System.out.println("exported unclassified: "+exportMap.get("unclassified"));
+        System.out.println("yaml jenkins: "+yamlMap.get("jenkins"));
+        System.out.println("exported unclassified: "+exportMap.get("jenkins"));
         assertEquals(yamlMap.get("unclassified"), exportMap.get("unclassified"));
     }
 }

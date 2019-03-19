@@ -1,10 +1,40 @@
 jenkins:
-  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code Plugin\n\n"
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code Plugin"
   numExecutors: 5
   scmCheckoutRetryCount: 2
   mode: NORMAL
+  nodeProperties:
+    - exwsNodeConfigurationDiskPools:
+        nodeDiskPools:
+          - diskPoolRefId: "master-node-id"
+            nodeDisks:
+              - diskRefId: "master-node-disk"
+                nodeMountPoint: "/tmp/master-node"
+
+# TODO [Martin]: The following code crashes JCasC for reasons I do not understand
+#  nodes:
+#    - permanent:
+#      name: "localhost"
+#      labelString: "all"
+#      nodeDescription: "the local host"
+#      numExecutors: 1
+#      remoteFS: "/tmp/localhost"
+#      launcher:
+#        sSHLauncher:
+#          host: "localhost"
+#          launchTimeoutSeconds: 210
+#          maxNumRetries: 10
+#          port: 22
+#          retryWaitTime: 15
+#      nodeProperties:
+#        - exwsNodeConfigurationDiskPools:
+#          nodeDiskPools:
+#            - diskPoolRefId: "localhostdiskpool"
+#              nodeDisks:
+#                - diskRefId: "localdisk"
+#                  nodeMountPoint: "/tmp/localdisk"
 unclassified:
-  exwsAllocateStep:
+  exwsGlobalConfigurationDiskPools:
     diskPools:
       - diskPoolId: "diskpool1"
         disks:
@@ -12,3 +42,17 @@ unclassified:
             displayName: "disk one display name"
             masterMountPoint: "/tmp"
         displayName: "diskpool1 display name"
+  exwsGlobalConfigurationTemplates:
+    templates:
+      - label: "all"
+        nodeDiskPools:
+          - diskPoolRefId: "dp1"
+            nodeDisks:
+              - diskRefId: "dp1refid1"
+                nodeMountPoint: "/tmp/template11"
+              - diskRefId: "dp1refid2"
+                nodeMountPoint: "/tmp/template12"
+          - diskPoolRefId: "dp2"
+            nodeDisks:
+              - diskRefId: "dp2refid1"
+                nodeMountPoint: "/tmp/template21"
