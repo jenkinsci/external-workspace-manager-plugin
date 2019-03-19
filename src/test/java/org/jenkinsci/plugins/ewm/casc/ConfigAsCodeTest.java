@@ -41,7 +41,6 @@ public class ConfigAsCodeTest {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
-        // get the jenkins rule object.
 
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
         List<DiskPool> diskPools = descriptor.getDiskPools();
