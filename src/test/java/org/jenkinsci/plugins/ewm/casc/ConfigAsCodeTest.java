@@ -7,7 +7,9 @@ import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep;
 import org.jenkinsci.plugins.ewm.steps.ExwsStep;
 import org.jenkinsci.plugins.ewm.definitions.Template;
+import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
+import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -42,11 +44,17 @@ public class ConfigAsCodeTest {
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
 
+        ExternalWorkspaceProperty.DescriptorImpl exwsNodeProperty = ExtensionList.lookupSingleton(ExternalWorkspaceProperty.DescriptorImpl.class);
+        List<NodeDiskPool> nodeDiskPools = exwsNodeProperty.getNodeDiskPools();
+        assertThat(nodeDiskPools.size(), is(1));
+        assertThat(nodeDiskPools.get(0).getDiskPoolRefId(), is("master-node-id"));
+        NodeDisk nodeDisk = nodeDiskPools.get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("master-node-disk"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/master-node"));
+
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
         List<DiskPool> diskPools = descriptor.getDiskPools();
         DiskPool diskPool = diskPools.get(0);
-
-        // assertion
         assertThat(diskPool.getDiskPoolId(), is("diskpool1"));
         assertThat(diskPool.getDisplayName(), is("diskpool1 display name"));
         assertThat(diskPool.getDisks().get(0).getDiskId(), is("disk1"));
@@ -55,7 +63,6 @@ public class ConfigAsCodeTest {
 
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
-
         assertThat(templates.get(0).getLabel(), is("all"));
         assertThat(templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp1"));
         NodeDisk nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
