@@ -7,6 +7,7 @@ import hudson.slaves.NodePropertyDescriptor;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -21,26 +22,41 @@ import static hudson.Util.fixNull;
  */
 public class ExternalWorkspaceProperty extends NodeProperty<Node> {
 
-    private final List<NodeDiskPool> nodeDiskPools;
-
     @DataBoundConstructor
     public ExternalWorkspaceProperty(List<NodeDiskPool> nodeDiskPools) {
-        this.nodeDiskPools = fixNull(nodeDiskPools);
+        this.getDescriptor().setDiskPools(fixNull(nodeDiskPools));
+    }
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
     }
 
     @Nonnull
     public List<NodeDiskPool> getNodeDiskPools() {
-        return Collections.unmodifiableList(nodeDiskPools);
+        return getDescriptor().getNodeDiskPools();
     }
 
     @Extension
     @Symbol("exwsNodeConfigurationDiskPools")
     public static class DescriptorImpl extends NodePropertyDescriptor {
 
+        private List<NodeDiskPool> nodeDiskPools = Collections.emptyList();
+
         @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.nodes_ExternalWorkspaceProperty_DisplayName();
+        }
+
+        @Nonnull
+        public List<NodeDiskPool> getNodeDiskPools() {
+            return Collections.unmodifiableList(nodeDiskPools);
+        }
+
+        @DataBoundSetter
+        public void setDiskPools(List<NodeDiskPool> nodeDiskPools) {
+            this.nodeDiskPools = nodeDiskPools;
         }
     }
 }

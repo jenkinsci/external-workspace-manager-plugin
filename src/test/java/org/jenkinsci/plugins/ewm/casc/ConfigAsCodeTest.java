@@ -65,7 +65,7 @@ public class ConfigAsCodeTest {
         List<Template> templates = globalTemplateDescriptor.getTemplates();
         assertThat(templates.get(0).getLabel(), is("all"));
         assertThat(templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp1"));
-        NodeDisk nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp1refid1"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template11"));
         nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(1);
