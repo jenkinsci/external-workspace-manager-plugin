@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.ewm.Messages;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
@@ -26,23 +27,20 @@ import static hudson.util.FormValidation.validateRequired;
  */
 public class NodeDiskPool implements Describable<NodeDiskPool> {
 
-    private final String diskPoolRefId;
-    private final List<NodeDisk> nodeDisks;
-
     @DataBoundConstructor
     public NodeDiskPool(String diskPoolRefId, List<NodeDisk> nodeDisks) {
-        this.diskPoolRefId = fixEmptyAndTrim(diskPoolRefId);
-        this.nodeDisks = fixNull(nodeDisks);
+        this.getDescriptor().setDiskPoolRefId(fixEmptyAndTrim(diskPoolRefId));
+        this.getDescriptor().setNodeDisks(fixNull(nodeDisks));
     }
 
     @CheckForNull
     public String getDiskPoolRefId() {
-        return diskPoolRefId;
+        return getDescriptor().getDiskPoolRefId();
     }
 
     @Nonnull
     public List<NodeDisk> getNodeDisks() {
-        return Collections.unmodifiableList(nodeDisks);
+        return getDescriptor().getNodeDisks();
     }
 
     @Override
@@ -55,6 +53,9 @@ public class NodeDiskPool implements Describable<NodeDiskPool> {
 
     public static class DescriptorImpl extends Descriptor<NodeDiskPool> {
 
+        private String diskPoolRefId;
+        private List<NodeDisk> nodeDisks;
+
         @Restricted(NoExternalUse.class)
         @SuppressWarnings("unused")
         public FormValidation doCheckDiskPoolRefId(@QueryParameter String value) {
@@ -65,6 +66,26 @@ public class NodeDiskPool implements Describable<NodeDiskPool> {
         @Override
         public String getDisplayName() {
             return Messages.definitions_DiskPool_DisplayName();
+        }
+
+        @Nonnull
+        public List<NodeDisk> getNodeDisks() {
+            return Collections.unmodifiableList(nodeDisks);
+        }
+
+        @DataBoundSetter
+        public void setNodeDisks(List<NodeDisk> nodeDisks) {
+            this.nodeDisks = nodeDisks;
+        }
+
+        @CheckForNull
+        public String getDiskPoolRefId() {
+            return diskPoolRefId;
+        }
+
+        @DataBoundSetter
+        public void setDiskPoolRefId(String diskPoolRefId) {
+            this.diskPoolRefId = diskPoolRefId;
         }
     }
 }
