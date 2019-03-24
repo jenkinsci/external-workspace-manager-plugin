@@ -43,12 +43,13 @@ public class ConfigAsCodeTest {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
-
+        NodeDisk nodeDisk;
+/*
         ExternalWorkspaceProperty.DescriptorImpl exwsNodeProperty = ExtensionList.lookupSingleton(ExternalWorkspaceProperty.DescriptorImpl.class);
         List<NodeDiskPool> nodeDiskPools = exwsNodeProperty.getNodeDiskPools();
         assertThat(nodeDiskPools.size(), is(1));
         assertThat(nodeDiskPools.get(0).getDiskPoolRefId(), is("master-node-id"));
-        NodeDisk nodeDisk = nodeDiskPools.get(0).getNodeDisks().get(0);
+        nodeDisk = nodeDiskPools.get(0).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("master-node-disk"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/master-node"));
 
@@ -60,10 +61,13 @@ public class ConfigAsCodeTest {
         assertThat(diskPool.getDisks().get(0).getDiskId(), is("disk1"));
         assertThat(diskPool.getDisks().get(0).getDisplayName(), is("disk one display name"));
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
-
+*/
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
         assertThat(templates.get(0).getLabel(), is("all"));
+        System.out.println("Should be dp1: "+templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId());
+        System.out.println("Should be dp2: "+templates.get(0).getNodeDiskPools().get(1).getDiskPoolRefId());
+
         assertThat(templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp1"));
         nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp1refid1"));
@@ -93,10 +97,6 @@ public class ConfigAsCodeTest {
         Map<String, Object> yamlMap = (Map<String, Object>) yaml.load(fileInputStream);
 
         // assert
-        System.out.println("yaml unclassified: "+yamlMap.get("unclassified"));
-        System.out.println("exported unclassified: "+exportMap.get("unclassified"));
-        System.out.println("yaml jenkins: "+yamlMap.get("jenkins"));
-        System.out.println("exported unclassified: "+exportMap.get("jenkins"));
         assertEquals(yamlMap.get("unclassified"), exportMap.get("unclassified"));
     }
 }
