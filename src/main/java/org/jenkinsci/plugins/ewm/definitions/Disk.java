@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.ewm.definitions;
 
 import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -24,13 +25,14 @@ import static hudson.util.FormValidation.validateRequired;
  *
  * @author Alexandru Somai
  */
-public class Disk implements Describable<Disk> {
+public abstract class Disk extends AbstractDescribableImpl<Disk> {
 
     private final String diskId;
     private final String displayName;
     private final String masterMountPoint;
     private final String physicalPathOnDisk;
     private final DiskInfoProvider diskInfo;
+
 
     @DataBoundConstructor
     public Disk(String diskId, String displayName, String masterMountPoint,
@@ -42,10 +44,7 @@ public class Disk implements Describable<Disk> {
         this.diskInfo = diskInfo == null ? new NoDiskInfo() : diskInfo;
     }
 
-    @Override
-    public Descriptor<Disk> getDescriptor() {
-        return DESCRIPTOR;
-    }
+
 
     @CheckForNull
     public String getDiskId() {
@@ -72,36 +71,7 @@ public class Disk implements Describable<Disk> {
         return diskInfo;
     }
 
-    @Extension
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-    public static class DescriptorImpl extends Descriptor<Disk> {
-
-        @Restricted(NoExternalUse.class)
-        @SuppressWarnings("unused")
-        public FormValidation doCheckDiskId(@QueryParameter String value) {
-            return validateRequired(value);
-        }
-
-        @Restricted(NoExternalUse.class)
-        @SuppressWarnings("unused")
-        public FormValidation doCheckMasterMountPoint(@QueryParameter String value) {
-            return validateRequired(value);
-        }
-
-        @Restricted(NoExternalUse.class)
-        @SuppressWarnings("unused")
-        public FormValidation doCheckPhysicalPathOnDisk(@QueryParameter String value) {
-            if (!isRelativePath(value)) {
-                return FormValidation.error(Messages.formValidation_NotRelativePath());
-            }
-            return FormValidation.ok();
-        }
-
-        @Nonnull
-        @Override
-        public String getDisplayName() {
-            return Messages.definitions_Disk_DisplayName();
-        }
-    }
 }
+
+// TODO : how to use static nested class, and how to abstract this part ?
