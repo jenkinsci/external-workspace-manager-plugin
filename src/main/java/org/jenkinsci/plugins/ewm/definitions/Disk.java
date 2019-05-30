@@ -34,8 +34,8 @@ public abstract class Disk extends AbstractDescribableImpl<Disk> {
     private final DiskInfoProvider diskInfo;
 
 
-    @DataBoundConstructor
-    public Disk(String diskId, String displayName, String masterMountPoint,
+    // TODO : should add a default constructor here ?
+    protected Disk(String diskId, String displayName, String masterMountPoint,
                 String physicalPathOnDisk, DiskInfoProvider diskInfo) {
         this.diskId = fixEmptyAndTrim(diskId);
         this.displayName = fixEmptyAndTrim(displayName);
