@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+<j:jelly  xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
     <f:entry title="${%Disk ID}" field="diskId">
         <f:textbox/>
     </f:entry>
@@ -18,4 +18,5 @@
             <f:repeatableDeleteButton value="${%Delete Disk}"/>
         </div>
     </f:entry>
+    <st:include class="${descriptor.clazz}" page="config.jelly" />
 </j:jelly>

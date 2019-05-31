@@ -20,7 +20,7 @@ import static hudson.Util.isRelativePath;
 import static hudson.util.FormValidation.validateRequired;
 
 public class AwsEfsDisk extends Disk {
-    private final Boolean isExistingEfs;
+    private final Boolean isOnDemandEfs;
     private final Boolean isOnDemandMount;
     private final String efsId;
     private final String vpcId;
@@ -36,7 +36,7 @@ public class AwsEfsDisk extends Disk {
                       String vpcId, String region, List<String> availabilityZones) {
         super(diskId, displayName, masterMountPoint, physicalPathOnDisk, diskInfo);
         this.isOnDemandMount = true;
-        this.isExistingEfs = true;
+        this.isOnDemandEfs = true;
         this.efsId = fixEmptyAndTrim(efsId);
         this.vpcId = fixEmptyAndTrim(vpcId);
         this.region = fixEmptyAndTrim(region);

@@ -1,11 +1,13 @@
 package org.jenkinsci.plugins.ewm.definitions;
 
 import hudson.Extension;
+import hudson.ExtensionList;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
+import org.jenkinsci.plugins.ewm.DiskInfoProviderDescriptor;
 import org.jenkinsci.plugins.ewm.Messages;
 import org.jenkinsci.plugins.ewm.providers.NoDiskInfo;
 import org.kohsuke.accmod.Restricted;
@@ -42,6 +44,24 @@ public abstract class Disk extends AbstractDescribableImpl<Disk> {
         this.masterMountPoint = fixEmptyAndTrim(masterMountPoint);
         this.physicalPathOnDisk = fixEmptyAndTrim(physicalPathOnDisk);
         this.diskInfo = diskInfo == null ? new NoDiskInfo() : diskInfo;
+    }
+
+    // TODO : need a descriptor all() method, to get all its subclass descriptor
+    // TODO : but why do I need this ?
+    /**
+     * @return all registered {@link Disk}s.
+     */
+    @Nonnull
+    public static ExtensionList<Disk> all() {
+        return ExtensionList.lookup(Disk.class);
+    }
+
+    /**
+     * @return the registered {@link Disk}s for the {@link Disk}.
+     */
+    @Nonnull
+    public static ExtensionList<Disk> allDescriptors() {
+        return ExtensionList.lookup(Disk.class);
     }
 
 

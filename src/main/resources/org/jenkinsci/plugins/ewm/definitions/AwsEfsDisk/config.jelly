@@ -1,0 +1,17 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="${%Existing EFS Id}" field="efsId">
+        <f:textbox/>
+    </f:entry>
+    <f:optionalBlock name="isOnDemandEfs" title="Use Jenkins to create and destroy EFS" checked="isOnDemandEfs">
+        <f:entry title="${%VPC ID}" field="vpcId">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%Region}" field="region">
+            <f:textbox/>
+        </f:entry>
+    </f:optionalBlock>
+    <f:entry title="${%Mount the EFS on-demand}" field="isOnDemandMount">
+        <f:checkbox />
+    </f:entry>
+</j:jelly>
