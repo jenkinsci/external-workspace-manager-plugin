@@ -18,5 +18,5 @@
             <f:repeatableDeleteButton value="${%Delete Disk}"/>
         </div>
     </f:entry>
-    <st:include class="${descriptor.clazz}" page="config.jelly" />
+
 </j:jelly>

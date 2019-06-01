@@ -64,8 +64,6 @@ public abstract class Disk extends AbstractDescribableImpl<Disk> {
         return ExtensionList.lookup(Disk.class);
     }
 
-
-
     @CheckForNull
     public String getDiskId() {
         return diskId;
@@ -90,8 +88,5 @@ public abstract class Disk extends AbstractDescribableImpl<Disk> {
     public DiskInfoProvider getDiskInfo() {
         return diskInfo;
     }
-
-
 }
 
-// TODO : how to use static nested class, and how to abstract this part ?

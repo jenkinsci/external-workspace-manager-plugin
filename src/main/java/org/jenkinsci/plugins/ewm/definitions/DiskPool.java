@@ -41,7 +41,7 @@ public class DiskPool implements Describable<DiskPool> {
     private final DiskAllocationStrategy strategy;
     // TODO : should I use ? extends Disk or just Disk
     // TODO : see https://reports.jenkins.io/core-taglib/jelly-taglib-ref.html
-    private final List<? extends Disk> disks;
+    private final List<Disk> disks;
 
     @DataBoundConstructor
     public DiskPool(String diskPoolId, String displayName, String description, String workspaceTemplate,

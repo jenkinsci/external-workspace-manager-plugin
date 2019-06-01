@@ -4,22 +4,18 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
-import org.jenkinsci.plugins.ewm.Messages;
-import org.jenkinsci.plugins.ewm.providers.NoDiskInfo;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
 
 import static hudson.Util.fixEmptyAndTrim;
-import static hudson.Util.isRelativePath;
 import static hudson.util.FormValidation.validateRequired;
 
-public class AwsEfsDisk extends Disk {
+public class TestTypeDisk extends Disk {
     private final Boolean isOnDemandEfs;
     private final Boolean isOnDemandMount;
     private final String efsId;
@@ -27,7 +23,7 @@ public class AwsEfsDisk extends Disk {
     private final String region;
     // private final List<String> availabilityZones;
     @DataBoundConstructor
-    public AwsEfsDisk(String diskId, String displayName, String masterMountPoint,
+    public TestTypeDisk(String diskId, String displayName, String masterMountPoint,
                       String physicalPathOnDisk, DiskInfoProvider diskInfo,
                       Boolean isExistingEfs, Boolean isOnDemandMount, String efsId,
                       String vpcId, String region, List<String> availabilityZones) {
@@ -91,7 +87,7 @@ public class AwsEfsDisk extends Disk {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "AWS EFS Disk";
+            return "TEST TYPE Disk";
         }
     }
 }
