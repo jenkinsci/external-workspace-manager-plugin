@@ -5,6 +5,7 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.clouds.Aws.EfsTag;
 import org.jenkinsci.plugins.ewm.providers.NoDiskInfo;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -25,6 +26,17 @@ public class AwsEfsDisk extends Disk {
     private final String efsId;
     private final String vpcId;
     private final String region;
+    // when manually create EFS
+    private final Boolean isEncrypted;
+    private final String kmsKeyId;
+    private final String performanceMode;
+    private final String provisionedThroughput;
+    private final String ThroughputMode;
+    private final List<EfsTag> tags;
+
+    // mount targets needed fields
+
+
     // private final List<String> availabilityZones;
     @DataBoundConstructor
     public AwsEfsDisk(String diskId, String displayName, String masterMountPoint,

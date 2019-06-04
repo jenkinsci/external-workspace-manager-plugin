@@ -13,7 +13,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
-import org.jenkinsci.plugins.ewm.clouds.AwsEfsMounter;
+import org.jenkinsci.plugins.ewm.clouds.Aws.AwsEfsMounter;
 import org.jenkinsci.plugins.ewm.definitions.AwsEfsDisk;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;

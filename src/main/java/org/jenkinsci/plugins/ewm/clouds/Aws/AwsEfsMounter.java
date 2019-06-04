@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.ewm.clouds;
+package org.jenkinsci.plugins.ewm.clouds.Aws;
 
 import com.amazonaws.services.elasticfilesystem.AmazonElasticFileSystem;
 import com.amazonaws.services.elasticfilesystem.AmazonElasticFileSystemClient;
