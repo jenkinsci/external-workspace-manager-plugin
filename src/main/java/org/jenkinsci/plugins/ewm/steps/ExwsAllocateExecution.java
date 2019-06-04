@@ -13,6 +13,8 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.ewm.DiskAllocationStrategy;
 import org.jenkinsci.plugins.ewm.actions.ExwsAllocateActionImpl;
+import org.jenkinsci.plugins.ewm.clouds.AwsEfsMounter;
+import org.jenkinsci.plugins.ewm.definitions.AwsEfsDisk;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.facets.WorkspaceBrowserFacet;
@@ -53,6 +55,7 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
     @Override
     protected ExternalWorkspace run() throws Exception {
+
         ExternalWorkspace exws;
         RunWrapper selectedRunWrapper = step.getSelectedRun();
         if (selectedRunWrapper == null) {
@@ -75,13 +78,26 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             listener.getLogger().println(format("Using Disk allocation strategy: '%s'", strategy.getDescriptor().getDisplayName()));
             Disk disk = strategy.allocateDisk(diskPool.getDisks());
+            // TODO : delete the test code
+            // TEST print all the configurables in log
+            if (disk instanceof AwsEfsDisk) {
+                listener.getLogger().println(format("TEST ! VpcId : %s", ((AwsEfsDisk)disk).getVpcId()));
+                listener.getLogger().println(format("TEST ! Region : %s", ((AwsEfsDisk)disk).getRegion()));
+                listener.getLogger().println(format("TEST ! EfsId: %s", ((AwsEfsDisk)disk).getEfsId()));
+            }
 
+            // END TEST end of test code
             String diskId = disk.getDiskId();
             if (diskId == null) {
                 String message = format("Disk ID was not provided in the Jenkins global config for the Disk Pool ID '%s'", diskPoolId);
                 throw new AbortException(message);
             }
+            // TEST : check whether it' a AwsEfsDisk
+            if (disk instanceof AwsEfsDisk) {
+                AwsEfsMounter.doMountPreparation(disk);
+            }
 
+            // ND TEST
             String pathOnDisk;
             String customPath = step.getPath();
             if (customPath != null) {
@@ -130,6 +146,17 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
             // this list always contains at least one element
             exws = allocatedWorkspaces.iterator().next();
+            // TEST
+            // TODO : get the disk Id and then see if created or not
+//            Disk diskPool = findDiskPool(exws.getDiskPoolId(), step.getDescriptor().getDiskPools())
+//            Disk disk = findDisk(exws.getDiskId(), diskPool);
+//            if (disk instanceof AwsEfsDisk) {
+//                AwsEfsMounter.doMountPreparation(disk);
+//            }
+            // TODO : add a cloud enum type and a FS id to exws
+
+
+            // END TEST
         }
 
         String diskPoolId = exws.getDiskPoolId();
@@ -154,6 +181,12 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
 
         registerFingerprint(exws);
 
+        // TODO : delete the test code
+        // TEST print all the configurables in log
+        listener.getLogger().println(format("TEST ! DiskPoolId : %s", exws.getDiskPoolId()));
+        listener.getLogger().println(format("TEST ! DiskId : %s", exws.getDiskId()));
+        listener.getLogger().println(format("TEST ! WorkspacePath : %s", exws.getCompleteWorkspacePath()));
+        // TEST end of test code
         return exws;
     }
 

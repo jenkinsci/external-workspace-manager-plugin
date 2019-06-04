@@ -17,7 +17,7 @@
     <d:dropdownGlobalConfigDescriptorSelector title="${%Disk Allocation Strategy}" field="strategy"
                                               xmlns:d="/lib/ewm"/>
     <f:entry>
-        <f:repeatableHeteroProperty field="disks" />
+        <f:repeatableHeteroProperty field="disks" addCaption="${%Add Disk}" hasHeader="true"/>
     </f:entry>
     <f:entry>
         <div align="right">

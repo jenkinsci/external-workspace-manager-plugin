@@ -71,6 +71,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         if (template != null) {
             nodeDiskPool = findNodeDiskPool(diskPoolId, template.getNodeDiskPools());
+            // TODO : delete this line when no in release
+            listener.getLogger().println(format("TEST ! nodeDiskPool : %s", nodeDiskPool.getDiskPoolRefId()));
             if (nodeDiskPool == null) {
                 String message = format("No Disk Pool Ref ID matching '%s' was found in the External Workspace Template config labeled '%s'", diskPoolId, template.getLabel());
                 throw new AbortException(message);
@@ -88,7 +90,10 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         }
 
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
+        // TEST : get the disk, and check if we need mount or not
 
+
+        // END TEST
         FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getNodeMountPoint());
         FilePath workspace = diskFilePath.child(exws.getPathOnDisk());
 

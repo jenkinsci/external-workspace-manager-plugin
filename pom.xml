@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.18</version>
+        <version>3.25</version>
     </parent>
 
     <artifactId>external-workspace-manager</artifactId>
@@ -129,6 +129,11 @@
             <artifactId>JUnitParams</artifactId>
             <version>1.0.5</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.457</version>
         </dependency>
     </dependencies>
 </project>
