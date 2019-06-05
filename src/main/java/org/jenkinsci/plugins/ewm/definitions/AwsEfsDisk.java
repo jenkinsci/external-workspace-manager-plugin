@@ -5,6 +5,7 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ewm.DiskInfoProvider;
 import org.jenkinsci.plugins.ewm.Messages;
+import org.jenkinsci.plugins.ewm.clouds.Aws.EfsMountTarget;
 import org.jenkinsci.plugins.ewm.clouds.Aws.EfsTag;
 import org.jenkinsci.plugins.ewm.providers.NoDiskInfo;
 import org.kohsuke.accmod.Restricted;
@@ -35,6 +36,7 @@ public class AwsEfsDisk extends Disk {
     private final List<EfsTag> tags;
 
     // mount targets needed fields
+    List<EfsMountTarget> mountTargets;
 
 
     // private final List<String> availabilityZones;

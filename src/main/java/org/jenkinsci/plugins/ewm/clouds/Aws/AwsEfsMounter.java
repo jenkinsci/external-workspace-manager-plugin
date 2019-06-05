@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.ewm.clouds.Aws;
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.elasticfilesystem.AmazonElasticFileSystem;
 import com.amazonaws.services.elasticfilesystem.AmazonElasticFileSystemClient;
 import com.amazonaws.services.elasticfilesystem.AmazonElasticFileSystemClientBuilder;
@@ -10,7 +11,7 @@ import org.jenkinsci.plugins.ewm.definitions.AwsEfsDisk;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import hudson.model.Node;
 
-public static class AwsEfsMounter {
+public  class AwsEfsMounter {
 
     public static void doMountPreparation(AwsEfsDisk disk) {
         String fileSystemId = doCreateElasticFileSystem(disk);

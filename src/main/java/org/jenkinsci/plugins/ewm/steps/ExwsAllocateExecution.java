@@ -94,10 +94,10 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             }
             // TEST : check whether it' a AwsEfsDisk
             if (disk instanceof AwsEfsDisk) {
-                AwsEfsMounter.doMountPreparation(disk);
+                AwsEfsMounter.doMountPreparation((AwsEfsDisk)disk);
             }
 
-            // ND TEST
+            // END TEST
             String pathOnDisk;
             String customPath = step.getPath();
             if (customPath != null) {
@@ -148,11 +148,11 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             exws = allocatedWorkspaces.iterator().next();
             // TEST
             // TODO : get the disk Id and then see if created or not
-//            Disk diskPool = findDiskPool(exws.getDiskPoolId(), step.getDescriptor().getDiskPools())
-//            Disk disk = findDisk(exws.getDiskId(), diskPool);
-//            if (disk instanceof AwsEfsDisk) {
-//                AwsEfsMounter.doMountPreparation(disk);
-//            }
+            DiskPool diskPool = findDiskPool(exws.getDiskPoolId(), step.getDescriptor().getDiskPools())
+            Disk disk = findDisk(exws.getDiskId(), diskPool);
+            if (disk instanceof AwsEfsDisk) {
+                AwsEfsMounter.doMountPreparation((AwsEfsDisk)disk);
+            }
             // TODO : add a cloud enum type and a FS id to exws
 
 
@@ -238,6 +238,25 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
         }
 
         return diskPool;
+    }
+
+    // TODO : add javadoc and test
+    @Nonnull
+    private static Disk findDisk(@Nonnull String diskId, @Nonnull DiskPool diskPool) throws IOException {
+        Disk disk = null;
+        for (Disk d : diskPool.getDisks()) {
+            if(d.getDiskId().equals(diskId)) {
+                disk = d;
+                break;
+            }
+        }
+
+        if (disk == null) {
+            String message = format("No Disk ID matching '%s' was found in the global config", diskId);
+            throw new AbortException(message);
+        }
+
+        return disk;
     }
 
     /**

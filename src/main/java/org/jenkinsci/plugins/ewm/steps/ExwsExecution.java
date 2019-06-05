@@ -90,10 +90,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         }
 
         NodeDisk nodeDisk = findNodeDisk(exws.getDiskId(), nodeDiskPool.getNodeDisks(), node.getDisplayName());
-        // TEST : get the disk, and check if we need mount or not
-        // TODO : first, just set some fields in the ExternalWorkspace, try to figure out if we need new class
 
-        // END TEST
         FilePath diskFilePath = new FilePath(node.getChannel(), nodeDisk.getNodeMountPoint());
         FilePath workspace = diskFilePath.child(exws.getPathOnDisk());
 
