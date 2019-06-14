@@ -41,12 +41,10 @@ public class ConfigAsCodeTest {
     @ClassRule public static JenkinsRule r = new JenkinsRule();
 
     @Test
-    public void shouldSupportConfigurationAsCode() throws Exception {
+    public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
-        // get the jenkins rule object.
-
 
         // Test ExwsAllocateStep
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
@@ -58,6 +56,14 @@ public class ConfigAsCodeTest {
         assertThat(diskPool.getDisks().get(0).getDiskId(), is("disk1"));
         assertThat(diskPool.getDisks().get(0).getDisplayName(), is("disk one display name"));
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
+    }
+
+
+    @Test
+    public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
+        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
+        String config = resource.toString();
+        ConfigurationAsCode.get().configure(config);
 
         // Test ExwsStep
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
@@ -75,12 +81,31 @@ public class ConfigAsCodeTest {
         nodeDisk = templates.get(0).getNodeDiskPools().get(1).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp2refid1"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
+    }
 
-        // Test nodeProperty
-        Computer computer = r.getInstance().getComputer("master");
+    @Test
+    public void shouldSupportConfigurationAsCodeMasterProperty() throws Exception {
+        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
+        String config = resource.toString();
+        ConfigurationAsCode.get().configure(config);
+
+        Computer computer = r.getInstance().getComputer("");
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
+        assertThat(nodeDiskPools.get(0).getDiskPoolRefId(), is("master-node-id"));
+        assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getDiskRefId(), is("master-node-disk"));
+        assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getNodeMountPoint(), is("/tmp/master-node"));
+    }
 
+    @Test
+    public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
+        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
+        String config = resource.toString();
+        ConfigurationAsCode.get().configure(config);
+
+        Computer computer = r.getInstance().getComputer("");
+        Node node = computer.getNode();
+        List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
     }
 
     @Test

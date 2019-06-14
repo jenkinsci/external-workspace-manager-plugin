@@ -12,27 +12,27 @@ jenkins:
                 nodeMountPoint: "/tmp/master-node"
 
 # TODO [Martin]: The following code crashes JCasC for reasons I do not understand
-#  nodes:
-#    - permanent:
-#      name: "localhost"
-#      labelString: "all"
-#      nodeDescription: "the local host"
-#      numExecutors: 1
-#      remoteFS: "/tmp/localhost"
-#      launcher:
-#        sSHLauncher:
-#          host: "localhost"
-#          launchTimeoutSeconds: 210
-#          maxNumRetries: 10
-#          port: 22
-#          retryWaitTime: 15
-#      nodeProperties:
-#        - exwsNodeConfigurationDiskPools:
-#          nodeDiskPools:
-#            - diskPoolRefId: "localhostdiskpool"
-#              nodeDisks:
-#                - diskRefId: "localdisk"
-#                  nodeMountPoint: "/tmp/localdisk"
+  nodes:
+    - permanent:
+      name: "localhost"
+      labelString: "all"
+      nodeDescription: "the local host"
+      numExecutors: 1
+      remoteFS: "/tmp/localhost"
+      launcher:
+        ssHLauncher:
+          host: "localhost"
+          launchTimeoutSeconds: 210
+          maxNumRetries: 10
+          port: 22
+          retryWaitTime: 15
+      nodeProperties:
+        - exwsNodeConfigurationDiskPools:
+          nodeDiskPools:
+            - diskPoolRefId: "localhostdiskpool"
+              nodeDisks:
+                - diskRefId: "localdisk"
+                  nodeMountPoint: "/tmp/localdisk"
 unclassified:
   exwsGlobalConfigurationDiskPools:
     diskPools:
