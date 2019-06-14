@@ -1,9 +1,13 @@
 package org.jenkinsci.plugins.ewm.casc;
 
 import hudson.ExtensionList;
+import hudson.model.Computer;
+import hudson.model.Node;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
+import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
+import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
 import org.jenkinsci.plugins.ewm.steps.ExwsAllocateStep;
 import org.jenkinsci.plugins.ewm.steps.ExwsStep;
 import org.jenkinsci.plugins.ewm.definitions.Template;
@@ -43,17 +47,19 @@ public class ConfigAsCodeTest {
         ConfigurationAsCode.get().configure(config);
         // get the jenkins rule object.
 
+
+        // Test ExwsAllocateStep
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
         List<DiskPool> diskPools = descriptor.getDiskPools();
         DiskPool diskPool = diskPools.get(0);
 
-        // assertion
         assertThat(diskPool.getDiskPoolId(), is("diskpool1"));
         assertThat(diskPool.getDisplayName(), is("diskpool1 display name"));
         assertThat(diskPool.getDisks().get(0).getDiskId(), is("disk1"));
         assertThat(diskPool.getDisks().get(0).getDisplayName(), is("disk one display name"));
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
 
+        // Test ExwsStep
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
 
@@ -69,6 +75,12 @@ public class ConfigAsCodeTest {
         nodeDisk = templates.get(0).getNodeDiskPools().get(1).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp2refid1"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
+
+        // Test nodeProperty
+        Computer computer = r.getInstance().getComputer("master");
+        Node node = computer.getNode();
+        List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
+
     }
 
     @Test
