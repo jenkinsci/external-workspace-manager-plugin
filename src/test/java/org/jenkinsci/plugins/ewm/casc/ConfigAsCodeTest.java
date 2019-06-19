@@ -123,11 +123,13 @@ public class ConfigAsCodeTest {
         FileInputStream fileInputStream = new FileInputStream(file);
         Map<String, Object> yamlMap = (Map<String, Object>) yaml.load(fileInputStream);
 
-        // assert
-        System.out.println("yaml unclassified: "+yamlMap.get("unclassified"));
-        System.out.println("exported unclassified: "+exportMap.get("unclassified"));
-        System.out.println("yaml jenkins: "+yamlMap.get("jenkins"));
-        System.out.println("exported unclassified: "+exportMap.get("jenkins"));
-        assertEquals(yamlMap.get("unclassified"), exportMap.get("unclassified"));
+        // test exwsAllocationStep and exwsStep
+        Map<String, Object >unclassified = (Map<String, Object >) yamlMap.get("unclassified");
+        Map<String, Object >unclassifiedExport = (Map<String, Object >) exportMap.get("unclassified");
+
+        assertEquals(unclassified.get("exwsGlobalConfigurationDiskPools"), unclassifiedExport.get("exwsGlobalConfigurationDiskPools"));
+        assertEquals(unclassified.get("exwsGlobalConfigurationTemplates"), unclassifiedExport.get("exwsGlobalConfigurationTemplates"));
+
+        // test node, not available now
     }
 }
