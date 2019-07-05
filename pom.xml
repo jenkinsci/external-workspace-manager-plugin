@@ -135,11 +135,5 @@
             <version>1.19</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.jenkins.configuration-as-code</groupId>
-            <artifactId>configuration-as-code-support</artifactId>
-            <version>1.19</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
