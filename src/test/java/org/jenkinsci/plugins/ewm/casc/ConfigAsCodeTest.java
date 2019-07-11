@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import org.jvnet.hudson.test.JenkinsRule;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.snakeyaml.Yaml;
+import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +41,7 @@ public class ConfigAsCodeTest {
 
     @ClassRule public static JenkinsRule r = new JenkinsRule();
 
-    @Test
+    @ConfiguredWithCode("admin.yml")
     public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -59,7 +60,7 @@ public class ConfigAsCodeTest {
     }
 
 
-    @Test
+    @ConfiguredWithCode("admin.yml")
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -83,7 +84,7 @@ public class ConfigAsCodeTest {
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
     }
 
-    @Test
+    @ConfiguredWithCode("admin.yml")
     public void shouldSupportConfigurationAsCodeMasterProperty() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -97,7 +98,7 @@ public class ConfigAsCodeTest {
         assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getNodeMountPoint(), is("/tmp/master-node"));
     }
 
-    @Test
+    @ConfiguredWithCode("admin.yml")
     public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -108,7 +109,7 @@ public class ConfigAsCodeTest {
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
     }
 
-    @Test
+    @ConfiguredWithCode("admin.yml")
     public void exportConfiguration() throws Exception {
         Yaml yaml = new Yaml();
 
