@@ -41,7 +41,7 @@ public class ConfigAsCodeTest {
 
     @ClassRule public static JenkinsRule r = new JenkinsRule();
 
-    @ConfiguredWithCode("admin.yml")
+    @ConfiguredWithCode("configuration-as-code.yml")
     public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -60,7 +60,7 @@ public class ConfigAsCodeTest {
     }
 
 
-    @ConfiguredWithCode("admin.yml")
+    @ConfiguredWithCode("configuration-as-code.yml")
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -84,7 +84,7 @@ public class ConfigAsCodeTest {
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
     }
 
-    @ConfiguredWithCode("admin.yml")
+    @ConfiguredWithCode("configuration-as-code.yml")
     public void shouldSupportConfigurationAsCodeMasterProperty() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -98,7 +98,7 @@ public class ConfigAsCodeTest {
         assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getNodeMountPoint(), is("/tmp/master-node"));
     }
 
-    @ConfiguredWithCode("admin.yml")
+    @ConfiguredWithCode("configuration-as-code.yml")
     public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
@@ -109,7 +109,7 @@ public class ConfigAsCodeTest {
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
     }
 
-    @ConfiguredWithCode("admin.yml")
+    @ConfiguredWithCode("configuration-as-code.yml")
     public void exportConfiguration() throws Exception {
         Yaml yaml = new Yaml();
 
