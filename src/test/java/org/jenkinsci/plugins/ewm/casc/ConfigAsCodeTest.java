@@ -95,7 +95,7 @@ public class ConfigAsCodeTest {
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
     }
-
+/*
     @Test
     public void exportConfiguration() throws Exception {
         Yaml yaml = new Yaml();
@@ -120,4 +120,5 @@ public class ConfigAsCodeTest {
 
         // test node, not available now
     }
+ */
 }
