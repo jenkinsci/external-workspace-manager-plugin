@@ -84,7 +84,7 @@ public class ConfigAsCodeTest {
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
     }
 
-    @ConfiguredWithCode("configuration-as-code.yml")
+    @Test
     public void shouldSupportConfigurationAsCodeMasterProperty() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
