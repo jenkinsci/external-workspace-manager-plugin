@@ -39,7 +39,9 @@ import java.util.Map;
  */
 public class ConfigAsCodeTest {
 
-    @ClassRule public static JenkinsRule r = new JenkinsRule();
+    @ClassRule
+    @ConfiguredWithCode("configuration-as-code.yml")
+    public static JenkinsConfiguredWithCodeRule j = new JenkinsConfiguredWithCodeRule();
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
