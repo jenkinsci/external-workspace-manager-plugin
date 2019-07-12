@@ -90,7 +90,7 @@ public class ConfigAsCodeTest {
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
 
-        Computer computer = r.getInstance().getComputer("");
+        Computer computer = j.getInstance().getComputer("");
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
         assertThat(nodeDiskPools.get(0).getDiskPoolRefId(), is("master-node-id"));
@@ -103,7 +103,7 @@ public class ConfigAsCodeTest {
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
 
-        Computer computer = r.getInstance().getComputer("");
+        Computer computer = j.getInstance().getComputer("");
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
     }
