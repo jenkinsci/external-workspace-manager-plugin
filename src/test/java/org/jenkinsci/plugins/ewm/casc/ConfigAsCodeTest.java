@@ -98,7 +98,7 @@ public class ConfigAsCodeTest {
         assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getNodeMountPoint(), is("/tmp/master-node"));
     }
 
-    @ConfiguredWithCode("configuration-as-code.yml")
+    @Test
     public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
