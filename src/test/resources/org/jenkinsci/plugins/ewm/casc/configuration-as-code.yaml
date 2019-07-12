@@ -15,6 +15,7 @@ jenkins:
   #nodes:
   #  - permanent:
   #      labelString: "all"
+  #      launcher:
   #      name: "localhost"
   #      numExecutors: 1
   #      remoteFS: "/tmp/localhost"
