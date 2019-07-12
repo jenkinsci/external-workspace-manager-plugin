@@ -46,9 +46,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
-        String config = resource.toString();
-        ConfigurationAsCode.get().configure(config);
-
         // Test ExwsAllocateStep
         ExwsAllocateStep.DescriptorImpl descriptor =  ExtensionList.lookupSingleton(ExwsAllocateStep.DescriptorImpl.class);
         List<DiskPool> diskPools = descriptor.getDiskPools();
@@ -64,9 +61,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
-        String config = resource.toString();
-        ConfigurationAsCode.get().configure(config);
-
         // Test ExwsStep
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
@@ -87,9 +81,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeMasterProperty() throws Exception {
-        String config = resource.toString();
-        ConfigurationAsCode.get().configure(config);
-
         Computer computer = j.getInstance().getComputer("");
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
@@ -100,9 +91,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
-        String config = resource.toString();
-        ConfigurationAsCode.get().configure(config);
-
         Computer computer = j.getInstance().getComputer("");
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
