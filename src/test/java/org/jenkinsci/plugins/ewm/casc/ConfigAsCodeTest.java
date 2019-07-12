@@ -60,7 +60,7 @@ public class ConfigAsCodeTest {
     }
 
 
-    @ConfiguredWithCode("configuration-as-code.yml")
+    @Test
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
