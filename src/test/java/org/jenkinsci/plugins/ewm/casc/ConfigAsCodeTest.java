@@ -41,7 +41,7 @@ public class ConfigAsCodeTest {
 
     @ClassRule public static JenkinsRule r = new JenkinsRule();
 
-    @ConfiguredWithCode("configuration-as-code.yml")
+    @Test
     public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
         URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
