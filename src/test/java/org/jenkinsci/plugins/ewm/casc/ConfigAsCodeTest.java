@@ -23,6 +23,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.snakeyaml.Yaml;
 import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
+import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +42,7 @@ public class ConfigAsCodeTest {
 
     @ClassRule
     @ConfiguredWithCode("configuration-as-code.yml")
-    public static JenkinsConfiguredWithCodeRule j = new JenkinsConfiguredWithCodeRule();
+    public static JenkinsConfiguredWithCodeRule  j = new JenkinsConfiguredWithCodeRule();
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsAllocateStep() throws Exception {
