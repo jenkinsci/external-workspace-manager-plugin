@@ -109,7 +109,7 @@ public class ConfigAsCodeTest {
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
     }
 
-    @ConfiguredWithCode("configuration-as-code.yml")
+    @Test
     public void exportConfiguration() throws Exception {
         Yaml yaml = new Yaml();
 
