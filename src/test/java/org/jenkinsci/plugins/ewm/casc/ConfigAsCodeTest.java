@@ -62,7 +62,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
-        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
 
@@ -86,7 +85,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeMasterProperty() throws Exception {
-        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
 
@@ -100,7 +98,6 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
-        URL resource = ConfigAsCodeTest.class.getResource("configuration-as-code.yaml");
         String config = resource.toString();
         ConfigurationAsCode.get().configure(config);
 
