@@ -1,0 +1,13 @@
+templates:
+- label: "all"
+  nodeDiskPools:
+  - diskPoolRefId: "dp1"
+    nodeDisks:
+    - diskRefId: "dp1refid1"
+      nodeMountPoint: "/tmp/template11"
+    - diskRefId: "dp1refid2"
+        nodeMountPoint: "/tmp/template12"
+  - diskPoolRefId: "dp2"
+    nodeDisks:
+    - diskRefId: "dp2refid1"
+      nodeMountPoint: "/tmp/template21"
