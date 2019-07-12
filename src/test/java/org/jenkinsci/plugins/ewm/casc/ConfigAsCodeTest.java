@@ -41,7 +41,7 @@ import java.util.Map;
 public class ConfigAsCodeTest {
 
     @ClassRule
-    @ConfiguredWithCode("configuration-as-code.yml")
+    @ConfiguredWithCode("configuration-as-code.yaml")
     public static JenkinsConfiguredWithCodeRule  j = new JenkinsConfiguredWithCodeRule();
 
     @Test
