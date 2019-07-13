@@ -12,25 +12,25 @@ jenkins:
                 nodeMountPoint: "/tmp/master-node"
 
 ## TODO [Martin]: The following code crashes JCasC for reasons I do not understand
-#  nodes:
-#    - permanent:
-#        labelString: "all"
-#        launcher:
-#          jnlp:
-#        name: "localhost"
-#        numExecutors: 1
-#        remoteFS: "/tmp/localhost"
-#        retentionStrategy: "always"
-#        nodeProperties:
-#          - exwsNodeConfigurationDiskPools:
-#            nodeDiskPools:
-#              - diskPoolRefId: "localhostdiskpool"
-#                nodeDisks:
-#                  - diskRefId: "localdisk"
-#                    nodeMountPoint: "/tmp/localdisk"
-#        slaveAgentPort: 50000
-#        agentProtocols:
-#          - "jnlp2"
+  #nodes:
+  #  - permanent:
+  #      labelString: "all"
+  #      launcher:
+  #      name: "localhost"
+  #      numExecutors: 1
+  #      remoteFS: "/tmp/localhost"
+  #      retentionStrategy: "always"
+  #      nodeProperties:
+  #        - exwsNodeConfigurationDiskPools:
+  #            nodeDiskPools:
+  #              - diskPoolRefId: "localhostdiskpool"
+  #                nodeDisks:
+  #                  - diskRefId: "localdisk"
+  #                    nodeMountPoint: "/tmp/localdisk"
+  #slaveAgentPort: 50000
+  #agentProtocols:
+  #  - "jnlp2"
+
   nodes:
     - permanent:
         name: "static-agent"

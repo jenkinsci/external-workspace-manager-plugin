@@ -1,0 +1,10 @@
+diskPools:
+- diskPoolId: "diskpool1"
+  disks:
+  - diskId: "disk1"
+    diskInfo: "noDiskInfo"
+    displayName: "disk one display name"
+    masterMountPoint: "/tmp"
+  displayName: "diskpool1 display name"
+  restriction: "any"
+  strategy: "mostUsableSpace"
