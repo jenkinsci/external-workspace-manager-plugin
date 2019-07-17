@@ -85,9 +85,12 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeAgentProperty() throws Exception {
-        Computer computer = j.getInstance().getComputer("");
+        Computer computer = j.getInstance().getComputer("static-agent");
         Node node = computer.getNode();
         List<NodeDiskPool> nodeDiskPools = node.getNodeProperties().get(ExternalWorkspaceProperty.class).getNodeDiskPools();
+        assertThat(nodeDiskPools.get(0).getDiskPoolRefId(), is("localhostdiskpool"));
+        assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getDiskRefId(), is("localdisk"));
+        assertThat(nodeDiskPools.get(0).getNodeDisks().get(0).getNodeMountPoint(), is("/tmp/localdisk"));
     }
 
     @Test
