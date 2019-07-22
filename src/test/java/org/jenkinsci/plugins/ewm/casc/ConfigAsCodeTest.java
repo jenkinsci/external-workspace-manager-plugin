@@ -126,10 +126,10 @@ public class ConfigAsCodeTest {
         nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(1);
         assertThat(nodeDisk.getDiskRefId(), is("dp10refid2"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template102"));
-        nodeDisk = templates.get(4).getNodeDiskPools().get(2).getNodeDisks().get(1);
+        nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(2);
         assertThat(nodeDisk.getDiskRefId(), is("dp10refid3"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template103"));
-        nodeDisk = templates.get(4).getNodeDiskPools().get(3).getNodeDisks().get(1);
+        nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(3);
         assertThat(nodeDisk.getDiskRefId(), is("dp10refid4"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template104"));
     }
