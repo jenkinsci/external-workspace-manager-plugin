@@ -35,3 +35,29 @@ templates:
     nodeDisks:
     - diskRefId: "dp6refid1"
       nodeMountPoint: "/tmp/template61"
+- label: "fourth"
+  nodeDiskPools:
+  - diskPoolRefId: "dp7"
+    nodeDisks:
+    - diskRefId: "dp7refid1"
+      nodeMountPoint: "/tmp/template71"
+    - diskRefId: "dp7refid2"
+      nodeMountPoint: "/tmp/template72"
+  - diskPoolRefId: "dp8"
+    nodeDisks:
+    - diskRefId: "dp8refid1"
+      nodeMountPoint: "/tmp/template81"
+- label: "fifth"
+  nodeDiskPools:
+  - diskPoolRefId: "dp9"
+    nodeDisks:
+    - diskRefId: "dp9refid1"
+      nodeMountPoint: "/tmp/template91"
+    - diskRefId: "dp9refid2"
+      nodeMountPoint: "/tmp/template92"
+  - diskPoolRefId: "dp10"
+    nodeDisks:
+    - diskRefId: "dp10refid1"
+      nodeMountPoint: "/tmp/template101"
+    - diskRefId: "dp10refid2"
+      nodeMountPoint: "/tmp/template102"
