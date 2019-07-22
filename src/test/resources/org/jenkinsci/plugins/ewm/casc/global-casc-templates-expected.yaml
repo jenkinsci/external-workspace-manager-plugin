@@ -1,5 +1,5 @@
 templates:
-- label: "all"
+- label: "first"
   nodeDiskPools:
   - diskPoolRefId: "dp1"
     nodeDisks:
@@ -11,3 +11,27 @@ templates:
     nodeDisks:
     - diskRefId: "dp2refid1"
       nodeMountPoint: "/tmp/template21"
+- label: "second"
+  nodeDiskPools:
+  - diskPoolRefId: "dp3"
+    nodeDisks:
+    - diskRefId: "dp3refid1"
+      nodeMountPoint: "/tmp/template31"
+    - diskRefId: "dp3refid2"
+      nodeMountPoint: "/tmp/template32"
+  - diskPoolRefId: "dp4"
+    nodeDisks:
+    - diskRefId: "dp4refid1"
+      nodeMountPoint: "/tmp/template41"
+- label: "third"
+  nodeDiskPools:
+  - diskPoolRefId: "dp5"
+    nodeDisks:
+    - diskRefId: "dp5refid1"
+      nodeMountPoint: "/tmp/template51"
+    - diskRefId: "dp5refid2"
+      nodeMountPoint: "/tmp/template52"
+  - diskPoolRefId: "dp6"
+    nodeDisks:
+    - diskRefId: "dp6refid1"
+      nodeMountPoint: "/tmp/template61"

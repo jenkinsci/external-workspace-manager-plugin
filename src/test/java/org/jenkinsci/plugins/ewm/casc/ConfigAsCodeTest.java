@@ -55,11 +55,11 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
-        // Test ExwsStep
+        // Test ExwsStepfirst
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
-
-        assertThat(templates.get(0).getLabel(), is("all"));
+        // First template test
+        assertThat(templates.get(0).getLabel(), is("first"));
         assertThat(templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp1"));
         NodeDisk nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp1refid1"));
@@ -71,6 +71,19 @@ public class ConfigAsCodeTest {
         nodeDisk = templates.get(0).getNodeDiskPools().get(1).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp2refid1"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
+        // Second template test
+        assertThat(templates.get(1).getLabel(), is("second"));
+        assertThat(templates.get(1).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp3"));
+        nodeDisk = templates.get(1).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp3refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template31"));
+        nodeDisk = templates.get(1).getNodeDiskPools().get(0).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp3refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template32"));
+        assertThat(templates.get(1).getNodeDiskPools().get(1).getDiskPoolRefId(), is("dp4"));
+        nodeDisk = templates.get(1).getNodeDiskPools().get(1).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp4refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template41"));
     }
 
     @Test
