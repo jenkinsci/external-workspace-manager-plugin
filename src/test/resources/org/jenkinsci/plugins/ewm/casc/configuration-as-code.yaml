@@ -102,3 +102,7 @@ unclassified:
                 nodeMountPoint: "/tmp/template101"
               - diskRefId: "dp10refid2"
                 nodeMountPoint: "/tmp/template102"
+              - diskRefId: "dp10refid3"
+                nodeMountPoint: "/tmp/template103"
+              - diskRefId: "dp10refid4"
+                nodeMountPoint: "/tmp/template104"

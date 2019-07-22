@@ -55,7 +55,7 @@ public class ConfigAsCodeTest {
 
     @Test
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
-        // Test ExwsStepfirst
+        // Test ExwsStep
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
         // First template test
@@ -126,6 +126,12 @@ public class ConfigAsCodeTest {
         nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(1);
         assertThat(nodeDisk.getDiskRefId(), is("dp10refid2"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template102"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(2).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp10refid3"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template103"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(3).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp10refid4"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template104"));
     }
 
     @Test
