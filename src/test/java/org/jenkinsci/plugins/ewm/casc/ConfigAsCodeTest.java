@@ -58,8 +58,8 @@ public class ConfigAsCodeTest {
         // Test ExwsStep
         ExwsStep.DescriptorImpl globalTemplateDescriptor = ExtensionList.lookupSingleton(ExwsStep.DescriptorImpl.class);
         List<Template> templates = globalTemplateDescriptor.getTemplates();
-
-        assertThat(templates.get(0).getLabel(), is("all"));
+        // First template test
+        assertThat(templates.get(0).getLabel(), is("first"));
         assertThat(templates.get(0).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp1"));
         NodeDisk nodeDisk = templates.get(0).getNodeDiskPools().get(0).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp1refid1"));
@@ -71,6 +71,67 @@ public class ConfigAsCodeTest {
         nodeDisk = templates.get(0).getNodeDiskPools().get(1).getNodeDisks().get(0);
         assertThat(nodeDisk.getDiskRefId(), is("dp2refid1"));
         assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template21"));
+        // Second template test
+        assertThat(templates.get(1).getLabel(), is("second"));
+        assertThat(templates.get(1).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp3"));
+        nodeDisk = templates.get(1).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp3refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template31"));
+        nodeDisk = templates.get(1).getNodeDiskPools().get(0).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp3refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template32"));
+        assertThat(templates.get(1).getNodeDiskPools().get(1).getDiskPoolRefId(), is("dp4"));
+        nodeDisk = templates.get(1).getNodeDiskPools().get(1).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp4refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template41"));
+        // Third template test
+        assertThat(templates.get(2).getLabel(), is("third"));
+        assertThat(templates.get(2).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp5"));
+        nodeDisk = templates.get(2).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp5refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template51"));
+        nodeDisk = templates.get(2).getNodeDiskPools().get(0).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp5refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template52"));
+        assertThat(templates.get(2).getNodeDiskPools().get(1).getDiskPoolRefId(), is("dp6"));
+        nodeDisk = templates.get(2).getNodeDiskPools().get(1).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp6refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template61"));
+        // Fourth template test
+        assertThat(templates.get(3).getLabel(), is("fourth"));
+        assertThat(templates.get(3).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp7"));
+        nodeDisk = templates.get(3).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp7refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template71"));
+        nodeDisk = templates.get(3).getNodeDiskPools().get(0).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp7refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template72"));
+        assertThat(templates.get(3).getNodeDiskPools().get(1).getDiskPoolRefId(), is("dp8"));
+        nodeDisk = templates.get(3).getNodeDiskPools().get(1).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp8refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template81"));
+        // Fifth template test
+        assertThat(templates.get(4).getLabel(), is("fifth"));
+        assertThat(templates.get(4).getNodeDiskPools().get(0).getDiskPoolRefId(), is("dp9"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(0).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp9refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template91"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(0).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp9refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template92"));
+        assertThat(templates.get(4).getNodeDiskPools().get(1).getDiskPoolRefId(), is("dp10"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(0);
+        assertThat(nodeDisk.getDiskRefId(), is("dp10refid1"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template101"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(1);
+        assertThat(nodeDisk.getDiskRefId(), is("dp10refid2"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template102"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(2);
+        assertThat(nodeDisk.getDiskRefId(), is("dp10refid3"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template103"));
+        nodeDisk = templates.get(4).getNodeDiskPools().get(1).getNodeDisks().get(3);
+        assertThat(nodeDisk.getDiskRefId(), is("dp10refid4"));
+        assertThat(nodeDisk.getNodeMountPoint(), is("/tmp/template104"));
     }
 
     @Test
