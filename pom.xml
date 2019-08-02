@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.18</version>
+        <version>3.43</version>
     </parent>
 
     <artifactId>external-workspace-manager</artifactId>
@@ -13,9 +13,8 @@
     <packaging>hpi</packaging>
 
     <properties>
-        <jenkins.version>2.60.3</jenkins.version>
+        <jenkins.version>2.138.1</jenkins.version>
         <java.level>8</java.level>
-
         <argLine>-Xmx1024m</argLine>
     </properties>
 
@@ -128,6 +127,19 @@
             <groupId>pl.pragmatists</groupId>
             <artifactId>JUnitParams</artifactId>
             <version>1.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins</groupId>
+            <artifactId>configuration-as-code</artifactId>
+            <version>1.22</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins</groupId>
+            <artifactId>configuration-as-code</artifactId>
+            <version>1.22</version>
+            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>
