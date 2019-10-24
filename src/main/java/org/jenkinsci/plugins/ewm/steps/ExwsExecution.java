@@ -24,6 +24,7 @@ import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
+import org.jenkinsci.plugins.workflow.support.steps.FilePathDynamicContext;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -102,7 +103,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
-                .withContext(workspace)
+                .withContext(FilePathDynamicContext.createContextualObject(workspace))
                 .withCallback(BodyExecutionCallback.wrap(getContext()))
                 .start();
         return false;
