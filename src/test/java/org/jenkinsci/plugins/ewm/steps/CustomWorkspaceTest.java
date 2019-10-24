@@ -170,6 +170,29 @@ public class CustomWorkspaceTest {
     }
 
     @Test
+    public void filePathDynamicContext() throws Exception {
+        String folder = "constant";
+        setGlobalWorkspaceTemplate(format("%s/${JOB_NAME}/${BUILD_NUMBER}", folder));
+
+        // Since Jenkins 1.150.x, Jenkins creates worksaces differently, and workspaces are somehow
+        // "reset" when entering code blocks like withEnv, withCredentials or stage.
+        // This test is needed to check that this plugin creates workspaces properly.
+        // Without the fix, this test fails.
+        WorkflowRun run = createWorkflowJobAndRun(format("" +
+                "def extWorkspace = exwsAllocate diskPoolId: '%s' \n" +
+                "node { \n" +
+                "   exws (extWorkspace) { \n" +
+                "      withEnv (['ANSWER=42']) { \n" +
+                "         writeFile file: 'foobar.txt', text: 'foobar' \n" +
+                "      } \n" +
+                "   } \n" +
+                "} \n", DISK_POOL_ID));
+
+        j.assertBuildStatusSuccess(run);
+        verifyWorkspacePath(run, folder, run.getParent().getFullName(), Integer.toString(run.getNumber()));
+    }
+
+    @Test
     public void globalWorkspaceTemplatePathIsAbsolute() throws Exception {
         setGlobalWorkspaceTemplate(Paths.get(File.separator, "${JOB_NAME}", File.separator, "${BUILD_NUMBER}").toString());
 
