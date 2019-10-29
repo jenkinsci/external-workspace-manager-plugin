@@ -16,6 +16,8 @@
         <jenkins.version>2.150.3</jenkins.version>
         <java.level>8</java.level>
         <argLine>-Xmx1024m</argLine>
+        <!-- Skip ATH test by default -->
+        <test>!ExternalWorkspaceManagerPluginTest</test>
     </properties>
 
     <name>External Workspace Manager Plugin</name>
@@ -149,6 +151,21 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci</groupId>
+            <artifactId>acceptance-test-harness</artifactId>
+            <version>1.69</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>test-ath</id>
+            <properties>
+                <test>ExternalWorkspaceManagerPluginTest</test>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
