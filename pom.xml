@@ -206,4 +206,22 @@
         </profile>
     </profiles>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <reuseForks>false</reuseForks>
+                    <environmentVariables>
+                        <!-- Read by ATH -->
+                        <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
+                        <LOCAL_JARS>target/external-workspace-manager.hpi</LOCAL_JARS>
+                        <BROWSER>firefox</BROWSER>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
