@@ -158,16 +158,28 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-net</groupId>
+                    <artifactId>commons-net</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-httpclient</groupId>
+                    <artifactId>commons-httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.sonatype.sisu</groupId>
                     <artifactId>sisu-guice</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.jenkins-ci.main</groupId>
                     <artifactId>remoting</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-net</groupId>
-                    <artifactId>commons-net</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.jenkins-ci</groupId>
@@ -178,8 +190,8 @@
                     <artifactId>args4j</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>commons-httpclient</groupId>
-                    <artifactId>commons-httpclient</artifactId>
+                    <groupId>com.github.jnr</groupId>
+                    <artifactId>jnr-unixsocket</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.github.jnr</groupId>
@@ -200,6 +212,14 @@
                 <exclusion>
                     <groupId>org.seleniumhq.selenium</groupId>
                     <artifactId>htmlunit-driver</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.inject</groupId>
+                    <artifactId>guice</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
