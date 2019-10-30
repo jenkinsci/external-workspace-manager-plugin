@@ -52,7 +52,6 @@ public class ConfigAsCodeTest {
         assertThat(diskPool.getDisks().get(0).getMasterMountPoint(), is("/tmp"));
     }
 
-
     @Test
     public void shouldSupportConfigurationAsCodeExwsStep() throws Exception {
         // Test ExwsStep
