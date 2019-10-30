@@ -66,8 +66,8 @@ public class ExternalWorkspaceManagerPluginTest extends AbstractJUnitTest {
                         "} \n" +
                         "node ('test') { \n" +
                         "   exws (extWorkspace) { \n" +
-                        "       def content = readFile(file: 'marker') \n" +
-                        "       if (content != 'content') error('Content mismatch: ' + content) \n" +
+                        "      def content = readFile(file: 'marker') \n" +
+                        "      if (content != 'content') error('Content mismatch: ' + content) \n" +
                         "   } \n" +
                         "}", DISK_POOL_ID));
 
@@ -84,7 +84,7 @@ public class ExternalWorkspaceManagerPluginTest extends AbstractJUnitTest {
                 "def extWorkspace = exwsAllocate '%s' \n" +
                         "node ('linux') { \n" +
                         "   exws (extWorkspace) { \n" +
-                        "      writeFile file: 'marker', text: 'content' \n " +
+                        "     writeFile file: 'marker', text: 'content' \n " +
                         "   } \n" +
                         "}", DISK_POOL_ID));
 
@@ -98,8 +98,8 @@ public class ExternalWorkspaceManagerPluginTest extends AbstractJUnitTest {
                 "def extWorkspace = exwsAllocate selectedRun: run \n" +
                 "node ('test') { \n" +
                 "   exws (extWorkspace) { \n" +
-                "       def content = readFile(file: 'marker') \n" +
-                "       if (content != 'content') error('Content mismatch: ' + content) \n" +
+                "      def content = readFile(file: 'marker') \n" +
+                "      if (content != 'content') error('Content mismatch: ' + content) \n" +
                 "   } \n" +
                 "}", upstreamJob.name));
 
@@ -114,13 +114,13 @@ public class ExternalWorkspaceManagerPluginTest extends AbstractJUnitTest {
         WorkflowJob job = createWorkflowJob(String.format("" +
                 "def extWorkspace = exwsAllocate '%s' \n" +
                 "node ('linux') { \n" +
-                "	exws (extWorkspace) { \n" +
-                "		try { \n" +
-                "           writeFile file: 'foobar.txt', text: 'any' \n" +
-                "		} finally { \n" +
-                "			step ([$class: 'WsCleanup']) \n" +
-                "		} \n" +
-                "	} \n" +
+                "   exws (extWorkspace) { \n" +
+                "      try { \n" +
+                "         writeFile file: 'foobar.txt', text: 'any' \n" +
+                "      } finally { \n" +
+                "         step ([$class: 'WsCleanup']) \n" +
+                "      } \n" +
+                "   } \n" +
                 "}", DISK_POOL_ID));
 
         Build build = job.startBuild();
