@@ -170,10 +170,6 @@
                     <artifactId>commons-httpclient</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.sonatype.sisu</groupId>
                     <artifactId>sisu-guice</artifactId>
                 </exclusion>
