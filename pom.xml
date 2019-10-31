@@ -237,6 +237,30 @@
                     <scope>test</scope>
                 </dependency>
                 <dependency>
+                    <groupId>net.lightbody.bmp</groupId>
+                    <artifactId>browsermob-core</artifactId>
+                    <version>2.1.5</version>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.fasterxml.jackson.core</groupId>
+                            <artifactId>jackson-core</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.bouncycastle</groupId>
+                            <artifactId>bcpkix-jdk15on</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.jcraft</groupId>
+                            <artifactId>jzlib</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.apache.commons</groupId>
+                            <artifactId>commons-lang3</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
                     <version>2.8.9</version>

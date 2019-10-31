@@ -7,7 +7,7 @@ stage("UI tests") {
             sh """
                 mvn clean package -DskipTests # Build .hpi before running ATH so the snapshot is consumed instead of latest released
                 eval \$(vnc.sh)
-                RECORD_BROWSER_TRAFFIC=off mvn test -B -Dmaven.test.failure.ignore=true -DforkCount=1 -Ptest-ath
+                mvn test -B -Dmaven.test.failure.ignore=true -DforkCount=1 -Ptest-ath
             """
         }
         junit '**/target/surefire-reports/**/*.xml'
