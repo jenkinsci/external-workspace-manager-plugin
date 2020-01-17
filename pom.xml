@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.50</version>
+        <version>3.55</version>
     </parent>
 
     <artifactId>external-workspace-manager</artifactId>
@@ -139,14 +139,13 @@
         <dependency>
             <groupId>io.jenkins</groupId>
             <artifactId>configuration-as-code</artifactId>
-            <version>1.22</version>
+            <version>1.35</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.jenkins</groupId>
-            <artifactId>configuration-as-code</artifactId>
-            <version>1.22</version>
-            <classifier>tests</classifier>
+            <groupId>io.jenkins.configuration-as-code</groupId>
+            <artifactId>test-harness</artifactId>
+            <version>1.35</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
