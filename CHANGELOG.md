@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.2 - 2020-01-19
+### Changed
+ - Upgrade to use JCasC Test Harness [#73](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/73)
+
 ## 1.2.1 - 2019-11-01
 ### Changed
  - Supported Jenkins version is 2.150.3 or newer
