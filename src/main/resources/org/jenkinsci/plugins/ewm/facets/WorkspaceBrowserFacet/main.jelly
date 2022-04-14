@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
-    <l:task icon="images/24x24/folder.png" href="${it.workspace.browseUrl}" title="${%Workspace}"/>
+    <l:task icon="icon-folder icon-md" href="${it.workspace.browseUrl}" title="${%Workspace}"/>
 </j:jelly>
