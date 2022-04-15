@@ -14,6 +14,6 @@
         ${%Complete workspace path on} ${it.diskId}
         (${%from Jenkins master}): ${it.completeWorkspacePath}
     </p>
-    <l:task icon="images/24x24/fingerprint.png" href="${rootURL}/fingerprint/${it.id}/" title="${%Fingerprints}"/>
-    <l:task icon="images/24x24/folder.png" href="${it.browseUrl}" title="${%Workspace}"/>
+    <l:task icon="icon-fingerprint icon-md" href="${rootURL}/fingerprint/${it.id}/" title="${%Fingerprints}"/>
+    <l:task icon="icon-folder icon-md" href="${it.browseUrl}" title="${%Workspace}"/>
 </j:jelly>
