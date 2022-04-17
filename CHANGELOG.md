@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.3 - 2022-04-17
+### Changed
+ - Adapt icon path removal from core [#74](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/74)
+
 ## 1.2.2 - 2020-01-19
 ### Changed
  - Upgrade to use JCasC Test Harness [#73](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/73)
