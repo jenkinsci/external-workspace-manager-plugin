@@ -19,6 +19,7 @@ import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
@@ -51,6 +52,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     private transient TaskListener listener;
     @StepContextParameter
     private transient Run run;
+    @StepContextParameter
+    private transient FlowNode flowNode;
     private BodyExecution body;
 
     @Override
@@ -102,8 +105,16 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
         updateFingerprint(exws.getId());
 
         listener.getLogger().println("Running in " + workspace);
+        // TODO pending proper dep on https://github.com/jenkinsci/workflow-durable-task-step-plugin/releases/tag/1234.v019404b_3832a
+        Object fpdc;
+        try {
+            fpdc = FilePathDynamicContext.class.getMethod("createContextualObject", FilePath.class, FlowNode.class).invoke(null, workspace, flowNode);
+        } catch (NoSuchMethodException x) {
+            // older workflow-durable-task-step version
+            fpdc = FilePathDynamicContext.createContextualObject(workspace);
+        }
         body = getContext().newBodyInvoker()
-                .withContext(FilePathDynamicContext.createContextualObject(workspace))
+                .withContext(fpdc)
                 .withCallback(BodyExecutionCallback.wrap(getContext()))
                 .start();
         return false;
