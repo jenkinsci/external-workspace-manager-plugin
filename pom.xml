@@ -55,7 +55,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-2.361.x</artifactId>
-                <version>1841.v7b_22c5218e1a</version>
+                <version>1883.vcb_768a_7c3610</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -86,8 +86,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-durable-task-step</artifactId>
-            <!-- TODO remove on next bom update -->
-            <version>1234.v019404b_3832a</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
