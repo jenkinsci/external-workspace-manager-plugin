@@ -13,12 +13,14 @@ import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.WorkspaceList;
 import hudson.util.DescribableList;
+import java.util.Hashtable;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ewm.definitions.Template;
 import org.jenkinsci.plugins.ewm.model.ExternalWorkspace;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;
 import org.jenkinsci.plugins.ewm.nodes.NodeDisk;
 import org.jenkinsci.plugins.ewm.nodes.NodeDiskPool;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
@@ -51,6 +53,8 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
     private transient TaskListener listener;
     @StepContextParameter
     private transient Run run;
+    @StepContextParameter
+    private transient FlowNode flowNode;
     private BodyExecution body;
 
     @Override
@@ -103,7 +107,7 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
 
         listener.getLogger().println("Running in " + workspace);
         body = getContext().newBodyInvoker()
-                .withContext(FilePathDynamicContext.createContextualObject(workspace))
+                .withContext(FilePathDynamicContext.createContextualObject(workspace, flowNode))
                 .withCallback(BodyExecutionCallback.wrap(getContext()))
                 .start();
         return false;
@@ -117,12 +121,16 @@ public class ExwsExecution extends AbstractStepExecutionImpl {
      *                     or if no fingerprint is found for the given workspace id
      */
     private void updateFingerprint(String workspaceId) throws IOException {
-        Fingerprint f = Jenkins.getActiveInstance()._getFingerprint(workspaceId);
+        Fingerprint f = Jenkins.get()._getFingerprint(workspaceId);
         if (f == null) {
             throw new AbortException("Couldn't find any Fingerprint for: " + workspaceId);
         }
 
-        Fingerprint.RangeSet set = f.getUsages().get(run.getParent().getFullName());
+        Hashtable<String, Fingerprint.RangeSet> usages = f.getUsages();
+        if (usages == null) {
+            throw new AbortException("Couldn't find any usages of the Fingerprint for: " + workspaceId);
+        }
+        Fingerprint.RangeSet set = usages.get(run.getParent().getFullName());
         if (set == null || !set.includes(run.getNumber())) {
             f.addFor(run);
             f.save();

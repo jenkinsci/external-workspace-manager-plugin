@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+  Provides workspace share and reuse across multiple Jenkins jobs
+</div>
