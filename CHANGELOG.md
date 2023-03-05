@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.0 - 2023-03-05
+### Fixed
+ - [[JENKINS-70693]](https://issues.jenkins.io/browse/JENKINS-70693) Local workspace is used instead of external workspace [#77](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/77)
+### Changed
+ - Refresh plugin and update dependencies [#77](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/77)
+
 ## 1.2.3 - 2022-04-17
 ### Changed
  - Adapt icon path removal from core [#74](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/74)
