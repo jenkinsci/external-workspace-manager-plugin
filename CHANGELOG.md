@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.1 - 2023-03-12
+### Fixed
+ - Fix `nodeMountPoint` help file name [#78](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/78)
+
 ## 1.3.0 - 2023-03-05
 ### Fixed
  - [[JENKINS-70693]](https://issues.jenkins.io/browse/JENKINS-70693) Local workspace is used instead of external workspace [#77](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/77)
