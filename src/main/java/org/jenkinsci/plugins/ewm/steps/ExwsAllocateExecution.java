@@ -225,6 +225,12 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             String message = format("The custom path: %s contains '${' characters. Did you resolve correctly the parameters with Build DSL?", customPath);
             throw new AbortException(message);
         }
+        for (String segment : customPath.split("[/\\\\]")) {
+            if ("..".equals(segment)) {
+                String message = format("The custom path: %s must not contain '..' segments", customPath);
+                throw new AbortException(message);
+            }
+        }
 
         return new FilePath(new File(customPath)).getRemote();
     }

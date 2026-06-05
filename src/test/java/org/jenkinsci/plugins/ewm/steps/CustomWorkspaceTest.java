@@ -105,6 +105,16 @@ public class CustomWorkspaceTest {
     }
 
     @Test
+    public void customWorkspacePathContainsParentDirectorySegment() throws Exception {
+        WorkflowRun run = createWorkflowJobAndRun(format("" +
+                "def customPath = '../../var/jenkins_home' \n" +
+                "def extWorkspace = exwsAllocate diskPoolId: '%s', path: customPath", DISK_POOL_ID));
+
+        j.assertBuildStatus(Result.FAILURE, run);
+        j.assertLogContains("ERROR: The custom path: ../../var/jenkins_home must not contain '..' segments", run);
+    }
+
+    @Test
     public void customWorkspaceUsingPathParameterWithConstantFolder() throws Exception {
         String folder = "constant";
         WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, RandomStringUtils.randomAlphanumeric(7));

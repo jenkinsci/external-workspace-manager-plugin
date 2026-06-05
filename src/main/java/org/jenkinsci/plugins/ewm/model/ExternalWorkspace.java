@@ -87,7 +87,13 @@ public class ExternalWorkspace implements Serializable, ModelObject {
     @Restricted(NoExternalUse.class)
     @SuppressWarnings("unused")
     public DirectoryBrowserSupport doWs(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, InterruptedException {
-        FilePath ws = new FilePath(new File(masterMountPoint, pathOnDisk));
+        File root = new File(masterMountPoint).getCanonicalFile();
+        File requested = new File(masterMountPoint, pathOnDisk).getCanonicalFile();
+        if (!requested.toPath().startsWith(root.toPath())) {
+            rsp.sendError(StaplerResponse.SC_FORBIDDEN);
+            return null;
+        }
+        FilePath ws = new FilePath(requested);
         if (!ws.exists()) {
             req.getView(this, "noWorkspace.jelly").forward(req, rsp);
             return null;
