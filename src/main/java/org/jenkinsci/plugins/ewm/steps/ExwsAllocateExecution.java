@@ -225,14 +225,18 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
             String message = format("The custom path: %s contains '${' characters. Did you resolve correctly the parameters with Build DSL?", customPath);
             throw new AbortException(message);
         }
-        for (String segment : customPath.split("[/\\\\]")) {
+        rejectParentDirectorySegments(customPath,
+                format("The custom path: %s must not contain '..' segments", customPath));
+
+        return new FilePath(new File(customPath)).getRemote();
+    }
+
+    private static void rejectParentDirectorySegments(@Nonnull String path, @Nonnull String message) throws AbortException {
+        for (String segment : path.split("[/\\\\]")) {
             if ("..".equals(segment)) {
-                String message = format("The custom path: %s must not contain '..' segments", customPath);
                 throw new AbortException(message);
             }
         }
-
-        return new FilePath(new File(customPath)).getRemote();
     }
 
     /**
@@ -286,6 +290,8 @@ public class ExwsAllocateExecution extends AbstractSynchronousNonBlockingStepExe
                     "Did you provide all the needed environment variables?", template, path);
             throw new AbortException(message);
         }
+        rejectParentDirectorySegments(path,
+                format("The expanded workspace template path: %s must not contain '..' segments. Check the values of any environment variables or build parameters referenced by the template.", path));
 
         return new FilePath(new File(path)).getRemote();
     }

@@ -213,6 +213,20 @@ public class CustomWorkspaceTest {
     }
 
     @Test
+    public void globalWorkspaceTemplateWithParentDirectorySegmentFromBuildParameter() throws Exception {
+        setGlobalWorkspaceTemplate("test/${BRANCH}");
+
+        WorkflowRun run = createWorkflowJobAndRun(format("" +
+                "def extWorkspace = null \n" +
+                "withEnv (['BRANCH=../../var/jenkins_home']) { \n" +
+                "   extWorkspace = exwsAllocate diskPoolId: '%s' \n" +
+                "} \n", DISK_POOL_ID));
+
+        j.assertBuildStatus(Result.FAILURE, run);
+        j.assertLogContains("must not contain '..' segments", run);
+    }
+
+    @Test
     public void globalWorkspaceTemplateWithTypo() throws Exception {
         setGlobalWorkspaceTemplate("${JOB_NAME_WITH_TYPO}/${BUILD_NUMBER}");
 
