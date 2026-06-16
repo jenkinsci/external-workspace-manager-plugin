@@ -21,7 +21,7 @@
     </properties>
 
     <name>External Workspace Manager Plugin</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/External+Workspace+Manager+Plugin</url>
+    <url>https://github.com/jenkinsci/external-workspace-manager-plugin</url>
 
     <licenses>
         <license>

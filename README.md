@@ -2,6 +2,8 @@
 
 [![Join the chat at https://gitter.im/jenkinsci/external-workspace-manager-plugin](https://badges.gitter.im/jenkinsci/external-workspace-manager-plugin.svg)](https://gitter.im/jenkinsci/external-workspace-manager-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins/external-workspace-manager-plugin/master)](https://ci.jenkins.io/job/Plugins/job/external-workspace-manager-plugin/job/master/)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/external-workspace-manager.svg)](https://plugins.jenkins.io/external-workspace-manager)
+[![Installs](https://img.shields.io/jenkins/plugin/i/external-workspace-manager.svg?color=blue)](https://stats.jenkins.io/pluginversions/external-workspace-manager.html)
 
 This plugin provides an external workspace management system.
 It facilitates workspace share and reuse across multiple Jenkins jobs.
