@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0 - 2026-06-16
+### Security
+ - Fix path traversal vulnerability in the `exwsAllocate` custom workspace path, and re-check the workspace template path after macro expansion (SECURITY-3777)
+
 ## 1.3.2 - 2026-06-16
 ### Changed
  - Documentation and project metadata refresh
