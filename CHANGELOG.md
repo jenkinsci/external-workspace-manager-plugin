@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.2 - 2026-06-16
+### Changed
+ - Documentation and project metadata refresh
+
 ## 1.3.1 - 2023-03-12
 ### Fixed
  - Fix `nodeMountPoint` help file name [#78](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/78)
