@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.1 - 2026-07-23
+### Security
+ - Require job read permission to browse an external workspace, so that a user with only `Overall/Read` can no longer read another job's workspace content through the `/exws/browse/` route (SECURITY-3907)
+
 ## 1.4.0 - 2026-06-16
 ### Security
  - Fix path traversal vulnerability in the `exwsAllocate` custom workspace path, and re-check the workspace template path after macro expansion (SECURITY-3777)
