@@ -16,6 +16,8 @@ import org.springframework.security.access.AccessDeniedException;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * {@link RootAction} implementation that handles workspace browsing by its id.
@@ -47,7 +49,8 @@ public class WorkspaceBrowserRootAction implements RootAction {
      *
      * @param workspaceId the workspace's unique id
      * @return the workspace whose id matches the given input id, or {@link NoFingerprintMatch} if the fingerprint is not
-     * found or the current user is not allowed to read any of the jobs associated with the workspace
+     * found or the current user does not have both the {@link Item#READ} and {@link Item#WORKSPACE} permissions on any
+     * of the jobs associated with the workspace
      * @throws IOException              if fingerprint load operation fails
      * @throws IllegalArgumentException if {@link WorkspaceBrowserFacet} is not registered for the matching fingerprint
      */
@@ -65,12 +68,14 @@ public class WorkspaceBrowserRootAction implements RootAction {
             throw new IllegalArgumentException("Couldn't find the Fingerprint Facet that holds the Workspace metadata");
         }
 
-        // The workspace content may only be browsed by users that are allowed to read at least one of the jobs
-        // associated with the fingerprint, i.e. the job that allocated the workspace or any job that reused it.
-        // Otherwise a user holding only Overall/Read could read another job's workspace files just by knowing the
-        // workspace id. The same NoFingerprintMatch response as for a missing fingerprint is returned on denial, so
-        // that the existence of the workspace is not leaked.
-        if (!hasReadPermissionForAnyAssociatedJob(fingerprint)) {
+        // The workspace content may only be browsed by users that hold both the Item/Read and the Item/Workspace
+        // permissions on at least one of the jobs associated with the fingerprint, i.e. the job that allocated the
+        // workspace or any job that reused it. Item/Workspace is the dedicated permission that Jenkins core uses to
+        // guard workspace browsing (see AbstractProject#doWs), because a workspace may contain secrets, and Item/Read is
+        // required to reach the job in the first place; neither permission alone is sufficient. The same NoFingerprintMatch
+        // response as for a missing fingerprint is returned on denial, so that the existence of the workspace is not
+        // leaked.
+        if (!hasWorkspacePermissionForAnyAssociatedJob(fingerprint)) {
             return new NoFingerprintMatch(workspaceId);
         }
 
@@ -78,24 +83,28 @@ public class WorkspaceBrowserRootAction implements RootAction {
     }
 
     /**
-     * Checks whether the current user is allowed to read any of the jobs associated with the given fingerprint, i.e.
-     * the job that originally allocated the workspace or any job that later reused it.
+     * Checks whether the current user holds both the {@link Item#READ} and {@link Item#WORKSPACE} permissions on any of
+     * the jobs associated with the given fingerprint, i.e. the job that originally allocated the workspace or any job
+     * that later reused it.
      *
      * @param fingerprint the fingerprint that holds the workspace metadata
-     * @return {@code true} if the current user can read at least one associated job, {@code false} otherwise
+     * @return {@code true} if the current user has {@link Item#READ} and {@link Item#WORKSPACE} on at least one
+     * associated job, {@code false} otherwise
      */
-    private static boolean hasReadPermissionForAnyAssociatedJob(@Nonnull Fingerprint fingerprint) {
+    private static boolean hasWorkspacePermissionForAnyAssociatedJob(@Nonnull Fingerprint fingerprint) {
+        Set<String> jobFullNames = new LinkedHashSet<>();
         Fingerprint.BuildPtr original = fingerprint.getOriginal();
-        if (original != null && canReadJob(original.getName())) {
-            return true;
+        if (original != null) {
+            jobFullNames.add(original.getName());
         }
-
         Hashtable<String, Fingerprint.RangeSet> usages = fingerprint.getUsages();
         if (usages != null) {
-            for (String jobFullName : usages.keySet()) {
-                if (canReadJob(jobFullName)) {
-                    return true;
-                }
+            jobFullNames.addAll(usages.keySet());
+        }
+
+        for (String jobFullName : jobFullNames) {
+            if (hasWorkspacePermission(jobFullName)) {
+                return true;
             }
         }
 
@@ -103,16 +112,20 @@ public class WorkspaceBrowserRootAction implements RootAction {
     }
 
     /**
-     * Resolves a job by its full name using the current user's authentication. {@link Jenkins#getItemByFullName(String,
-     * Class)} returns {@code null} (or throws {@link AccessDeniedException}) when the user lacks {@link Item#READ} on the
-     * resolved item, which is exactly the permission that must be enforced before serving workspace content.
+     * Checks whether the current user may browse the workspace of the job with the given full name. This requires both
+     * {@link Item#READ} and {@link Item#WORKSPACE}: {@link Jenkins#getItemByFullName(String, Class)} resolves the job
+     * using the current user's authentication and returns {@code null} (or throws {@link AccessDeniedException}) when
+     * the user lacks {@link Item#READ}, and the {@link Item#WORKSPACE} permission is then checked explicitly. This
+     * matches how Jenkins core gates workspace browsing.
      *
      * @param jobFullName the full name of the job to resolve
-     * @return {@code true} if the current user can read the job, {@code false} otherwise
+     * @return {@code true} if the current user has {@link Item#READ} and {@link Item#WORKSPACE} on the job, {@code false}
+     * otherwise
      */
-    private static boolean canReadJob(@Nonnull String jobFullName) {
+    private static boolean hasWorkspacePermission(@Nonnull String jobFullName) {
         try {
-            return Jenkins.getActiveInstance().getItemByFullName(jobFullName, Job.class) != null;
+            Job<?, ?> job = Jenkins.getActiveInstance().getItemByFullName(jobFullName, Job.class);
+            return job != null && job.hasPermission(Item.WORKSPACE);
         } catch (AccessDeniedException e) {
             return false;
         }
