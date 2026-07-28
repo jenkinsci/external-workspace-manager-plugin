@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.2 - 2026-07-28
+### Security
+ - Require the `Item/Workspace` permission (not just `Item/Read`) to browse an external workspace through the `/exws/browse/` route, matching how Jenkins core guards workspace browsing (SECURITY-3907)
+
 ## 1.4.1 - 2026-07-23
 ### Security
  - Require job read permission to browse an external workspace, so that a user with only `Overall/Read` can no longer read another job's workspace content through the `/exws/browse/` route (SECURITY-3907)
