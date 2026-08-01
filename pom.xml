@@ -9,11 +9,11 @@
     </parent>
 
     <artifactId>external-workspace-manager</artifactId>
-    <version>1.4.2</version>
+    <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
 
     <properties>
-        <revision>1.4.2</revision>
+        <revision>1.4.3</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/external-workspace-manager-plugin</gitHubRepo>
         <jenkins.version>2.361.4</jenkins.version>
