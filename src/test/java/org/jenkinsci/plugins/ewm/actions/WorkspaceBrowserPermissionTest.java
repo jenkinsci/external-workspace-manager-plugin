@@ -36,7 +36,8 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Security tests for {@link WorkspaceBrowserRootAction}, ensuring that browsing an external workspace through the global
- * {@code /exws/browse/{workspaceId}/ws/} route requires read access to a job associated with that workspace.
+ * {@code /exws/browse/{workspaceId}/ws/} route requires both the {@link Item#READ} and {@link Item#WORKSPACE}
+ * permissions on a job associated with that workspace, matching how Jenkins core guards workspace browsing.
  *
  * @author Alexandru Somai
  */
@@ -47,6 +48,8 @@ public class WorkspaceBrowserPermissionTest {
 
     private static final String ADMIN = "admin";
     private static final String READER = "reader";
+    private static final String ITEM_READER = "item-reader";
+    private static final String WORKSPACE_ONLY = "workspace-only";
     private static final String DEVELOPER = "developer";
 
     @Rule
@@ -92,19 +95,51 @@ public class WorkspaceBrowserPermissionTest {
         j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
         MockAuthorizationStrategy authorizationStrategy = new MockAuthorizationStrategy();
         authorizationStrategy.grant(Jenkins.ADMINISTER).everywhere().to(ADMIN);
-        // The reader has Overall/Read only, but no Item/Read on the job that owns the workspace.
+        // The reader has Overall/Read only, and no permission at all on the job that owns the workspace.
         authorizationStrategy.grant(Jenkins.READ).everywhere().to(READER);
-        // The developer additionally has Item/Read on the job that owns the workspace.
+        // The item-reader has Item/Read on the owning job, but not Item/Workspace: seeing the job must not grant access
+        // to its workspace files.
+        authorizationStrategy.grant(Jenkins.READ).everywhere().to(ITEM_READER);
+        authorizationStrategy.grant(Item.READ).onItems(job).to(ITEM_READER);
+        // The workspace-only user has Item/Workspace but not Item/Read on the owning job: both are required, so it must
+        // not be able to browse either.
+        authorizationStrategy.grant(Jenkins.READ).everywhere().to(WORKSPACE_ONLY);
+        authorizationStrategy.grant(Item.WORKSPACE).onItems(job).to(WORKSPACE_ONLY);
+        // The developer has both Item/Read and Item/Workspace on the owning job.
         authorizationStrategy.grant(Jenkins.READ).everywhere().to(DEVELOPER);
-        authorizationStrategy.grant(Item.READ).onItems(job).to(DEVELOPER);
+        authorizationStrategy.grant(Item.READ, Item.WORKSPACE).onItems(job).to(DEVELOPER);
         j.jenkins.setAuthorizationStrategy(authorizationStrategy);
     }
 
     @Test
-    public void overallReadUserWithoutItemReadCannotBrowseWorkspace() throws Exception {
+    public void overallReadOnlyUserCannotBrowseWorkspace() throws Exception {
+        assertCannotBrowse(READER);
+    }
+
+    @Test
+    public void itemReadWithoutWorkspacePermissionCannotBrowseWorkspace() throws Exception {
+        assertCannotBrowse(ITEM_READER);
+    }
+
+    @Test
+    public void workspacePermissionWithoutItemReadCannotBrowseWorkspace() throws Exception {
+        assertCannotBrowse(WORKSPACE_ONLY);
+    }
+
+    @Test
+    public void userWithItemReadAndWorkspacePermissionsCanBrowseWorkspace() throws Exception {
+        assertCanBrowse(DEVELOPER);
+    }
+
+    @Test
+    public void adminCanBrowseWorkspace() throws Exception {
+        assertCanBrowse(ADMIN);
+    }
+
+    private void assertCannotBrowse(String username) throws Exception {
         JenkinsRule.WebClient wc = j.createWebClient()
                 .withThrowExceptionOnFailingStatusCode(false)
-                .login(READER);
+                .login(username);
 
         Page page = wc.goTo(browseUrl(), null);
 
@@ -112,19 +147,8 @@ public class WorkspaceBrowserPermissionTest {
         assertThat(page.getWebResponse().getContentAsString(), not(containsString(CANARY_CONTENT)));
     }
 
-    @Test
-    public void userWithItemReadCanBrowseWorkspace() throws Exception {
-        JenkinsRule.WebClient wc = j.createWebClient().login(DEVELOPER);
-
-        Page page = wc.goTo(browseUrl(), null);
-
-        assertThat(page.getWebResponse().getStatusCode(), is(200));
-        assertThat(page.getWebResponse().getContentAsString(), containsString(CANARY_CONTENT));
-    }
-
-    @Test
-    public void adminCanBrowseWorkspace() throws Exception {
-        JenkinsRule.WebClient wc = j.createWebClient().login(ADMIN);
+    private void assertCanBrowse(String username) throws Exception {
+        JenkinsRule.WebClient wc = j.createWebClient().login(username);
 
         Page page = wc.goTo(browseUrl(), null);
 
