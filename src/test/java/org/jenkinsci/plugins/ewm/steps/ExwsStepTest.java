@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.ewm.steps;
 import hudson.model.Node;
 import hudson.model.queue.QueueTaskFuture;
 import hudson.util.ReflectionUtils;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.definitions.Template;
@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 import static hudson.model.Result.FAILURE;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.countMatches;
+import static org.apache.commons.lang3.StringUtils.countMatches;
 import org.apache.commons.io.FilenameUtils;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;

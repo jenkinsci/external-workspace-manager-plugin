@@ -4,7 +4,7 @@ import hudson.model.Node;
 import hudson.model.queue.QueueTaskFuture;
 import hudson.util.ReflectionUtils;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jenkinsci.plugins.ewm.definitions.Disk;
 import org.jenkinsci.plugins.ewm.definitions.DiskPool;
 import org.jenkinsci.plugins.ewm.nodes.ExternalWorkspaceProperty;

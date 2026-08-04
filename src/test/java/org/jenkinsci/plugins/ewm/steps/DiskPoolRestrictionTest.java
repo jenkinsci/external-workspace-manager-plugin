@@ -28,7 +28,7 @@ import java.util.concurrent.Future;
 
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jenkinsci.plugins.ewm.TestUtil.DISK_ID_ONE;
 import static org.jenkinsci.plugins.ewm.TestUtil.DISK_POOL_ID;
