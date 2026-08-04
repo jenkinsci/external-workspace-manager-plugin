@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.3 - 2026-08-04
+### Changed
+ - Migrate from Commons Lang 2 to Commons Lang 3 [#83](https://github.com/jenkinsci/external-workspace-manager-plugin/pull/83)
+
 ## 1.4.2 - 2026-07-28
 ### Security
  - Require the `Item/Workspace` permission (not just `Item/Read`) to browse an external workspace through the `/exws/browse/` route, matching how Jenkins core guards workspace browsing (SECURITY-3907)
